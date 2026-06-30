@@ -73,3 +73,36 @@ export async function warpToUnix(context: ProgramTestContext, unixSecs: number) 
   const c = await context.banksClient.getClock();
   context.setClock(new Clock(c.slot, c.epochStartTimestamp, c.epoch, c.leaderScheduleEpoch, BigInt(unixSecs)));
 }
+
+export function loadGolden() {
+  const g = JSON.parse(readFileSync(__dirname + "/../golden/validate-stat-args.json", "utf8"));
+  const node = (n: any) => ({ hash: n.hash, isRightSibling: n.isRightSibling });
+  return {
+    raw: {
+      fixtureId: g.fixtureSummary.fixtureId,      // decimal string
+      statKey: g.statA.statToProve.key,           // 1
+      statPeriod: g.statA.statToProve.period,     // 7
+    },
+    maxTsMs: Number(g.fixtureSummary.updateStats.maxTimestamp), // 1782788999466
+    args: {
+      ts: new BN(g.ts),
+      fixtureSummary: {
+        fixtureId: new BN(g.fixtureSummary.fixtureId),
+        updateStats: {
+          updateCount: g.fixtureSummary.updateStats.updateCount,
+          minTimestamp: new BN(g.fixtureSummary.updateStats.minTimestamp),
+          maxTimestamp: new BN(g.fixtureSummary.updateStats.maxTimestamp),
+        },
+        eventsSubTreeRoot: g.fixtureSummary.eventsSubTreeRoot,
+      },
+      fixtureProof: g.fixtureProof.map(node),
+      mainTreeProof: g.mainTreeProof.map(node),
+      statA: {
+        statToProve: { key: g.statA.statToProve.key, value: g.statA.statToProve.value, period: g.statA.statToProve.period },
+        eventStatRoot: g.statA.eventStatRoot,
+        statProof: g.statA.statProof.map(node),
+      },
+      statB: null,
+    },
+  };
+}
