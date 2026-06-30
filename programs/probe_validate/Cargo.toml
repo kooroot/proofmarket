@@ -1,0 +1,28 @@
+[package]
+name = "probe_validate"
+version = "0.1.0"
+edition = "2021"
+
+# cdylib + lib: cdylib satisfies anchor build (generates empty IDL + .so without deploy);
+# lib part is what `cargo test -p probe_validate` exercises.
+# This is the minimal fix per spec §(E): keep G0 green while keeping probe_validate
+# in the workspace (required for `cargo test -p probe_validate` from the workspace root).
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "probe_validate"
+
+[features]
+default = []
+cpi = ["no-entrypoint"]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+idl-build = ["anchor-lang/idl-build"]
+
+[dependencies]
+anchor-lang = "0.31.1"
+
+[dev-dependencies]
+hex = "0.4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
