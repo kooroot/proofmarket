@@ -1,0 +1,38 @@
+[
+  {
+    "FixtureId": 18172280,
+    "StartTime": 1782781200000,
+    "Competition": "International Friendlies",
+    "CompetitionId": 72,
+    "FixtureGroupId": 10115677,
+    "Participant1Id": 2161,
+    "Participant1": "Anchor Home",
+    "Participant2Id": 2530,
+    "Participant2": "Anchor Away",
+    "Participant1IsHome": true
+  },
+  {
+    "FixtureId": 19000001,
+    "StartTime": 1784016000000,
+    "Competition": "World Cup",
+    "CompetitionId": 1,
+    "FixtureGroupId": 20000001,
+    "Participant1Id": 3001,
+    "Participant1": "Team A",
+    "Participant2Id": 3002,
+    "Participant2": "Team B",
+    "Participant1IsHome": true
+  },
+  {
+    "FixtureId": 19000002,
+    "StartTime": 1784102400000,
+    "Competition": "World Cup",
+    "CompetitionId": 1,
+    "FixtureGroupId": 20000002,
+    "Participant1Id": 3003,
+    "Participant1": "Team C",
+    "Participant2Id": 3004,
+    "Participant2": "Team D",
+    "Participant1IsHome": false
+  }
+]
