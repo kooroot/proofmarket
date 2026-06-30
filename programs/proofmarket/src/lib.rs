@@ -6,6 +6,7 @@ pub mod constants;
 pub mod errors;
 pub mod events;
 pub mod state;
+pub mod math;
 
 #[program]
 pub mod proofmarket {}
