@@ -48,6 +48,14 @@ export async function makeMint(context: ProgramTestContext, payer: Keypair): Pro
 export async function fundUser(
   context: ProgramTestContext, payer: Keypair, mint: PublicKey, owner: Keypair, amount: bigint
 ): Promise<PublicKey> {
+  // Seed the owner's SOL balance so they can pay for transaction fees and
+  // rent-exempt account creation (e.g. init_if_needed for Position).
+  context.setAccount(owner.publicKey, {
+    lamports: 10_000_000,
+    data: Buffer.alloc(0),
+    owner: web3.SystemProgram.programId,
+    executable: false,
+  });
   const ata = await createAssociatedTokenAccount(context.banksClient, payer, mint, owner.publicKey);
   await mintTo(context.banksClient, payer, mint, ata, payer, amount);
   return ata;

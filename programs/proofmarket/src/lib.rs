@@ -20,4 +20,7 @@ pub mod proofmarket {
     ) -> Result<()> {
         instructions::create_market::handler(ctx, market_id, fixture_id, stat_a_key, stat_a_period, threshold, comparison, resolve_after_ts_ms, fee_bps)
     }
+    pub fn stake(ctx: Context<Stake>, side: bool, amount: u64) -> Result<()> {
+        instructions::stake::handler(ctx, side, amount)
+    }
 }
