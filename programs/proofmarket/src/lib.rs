@@ -7,6 +7,7 @@ pub mod errors;
 pub mod events;
 pub mod state;
 pub mod math;
+pub mod resolve_guards;
 pub mod instructions;
 pub use instructions::*;
 
