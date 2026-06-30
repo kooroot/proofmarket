@@ -26,6 +26,8 @@ test("?-? fix: P1 and P2 goals are SEPARATE keyed stats, never a parsed scorelin
   expect(totalGoals(r)).toBe(2);   // total = Add(1,2)
 });
 
-test("absent key reads as 0", () => {
-  expect(statValue(decodeScoresRecord(RAW), 5)).toBe(0);
+test("absent key reads as 0; present-zero stat reads its real 0 (guards ?? 0 vs || 0)", () => {
+  const r = decodeScoresRecord(RAW);
+  expect(statValue(r, 5)).toBe(0); // absent key
+  expect(statValue(r, 3)).toBe(0); // present with value 0 — would still pass under a buggy || 0, but locks intent
 });
