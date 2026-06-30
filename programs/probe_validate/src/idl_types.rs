@@ -52,13 +52,35 @@ pub struct StatTerm {
     pub stat_proof:      Vec<ProofNode>,
 }
 
+// ── Comparison enum ──────────────────────────────────────────────────────────
+/// Borsh discriminants: GreaterThan=0, LessThan=1, EqualTo=2.
+/// Matches txoracle IDL variant order exactly.
+/// Using an enum (not u8) so the probe program IDL exposes the proper type,
+/// allowing the TS client to pass `{lessThan:{}}` format.
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug, PartialEq)]
+pub enum Comparison {
+    GreaterThan,
+    LessThan,
+    EqualTo,
+}
+
+// ── BinaryExpression enum ─────────────────────────────────────────────────────
+/// Borsh discriminants: Add=0, Subtract=1.
+/// Matches txoracle IDL variant order exactly.
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug, PartialEq)]
+pub enum BinaryExpression {
+    Add,
+    Subtract,
+}
+
 // ── Predicate ─────────────────────────────────────────────────────────────────
-/// comparison: raw u8 discriminant of the Comparison enum
-///   GreaterThan = 0, LessThan = 1, EqualTo = 2
+/// comparison: typed Comparison enum (GreaterThan=0, LessThan=1, EqualTo=2).
+/// Byte-identical to the previous u8 approach — enum discriminants serialize
+/// as a single u8 in Borsh, same as the explicit u8 field.
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]
 pub struct TraderPredicate {
     pub threshold:  i32,
-    pub comparison: u8,
+    pub comparison: Comparison,
 }
 
 // ── Top-level validate_stat args ──────────────────────────────────────────────
@@ -71,7 +93,7 @@ pub struct ValidateStatArgs {
     pub predicate:       TraderPredicate,
     pub stat_a:          StatTerm,
     pub stat_b:          Option<StatTerm>,
-    pub op:              Option<u8>,
+    pub op:              Option<BinaryExpression>,
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -159,11 +181,11 @@ mod tests {
         v.try_into().unwrap()
     }
 
-    fn comparison_discriminant(s: &str) -> u8 {
+    fn comparison_from_str(s: &str) -> Comparison {
         match s {
-            "greaterThan" => 0,
-            "lessThan"    => 1,
-            "equalTo"     => 2,
+            "greaterThan" => Comparison::GreaterThan,
+            "lessThan"    => Comparison::LessThan,
+            "equalTo"     => Comparison::EqualTo,
             other => panic!("unknown comparison variant: {}", other),
         }
     }
@@ -201,7 +223,7 @@ mod tests {
             main_tree_proof: proof_nodes(&golden.main_tree_proof),
             predicate: TraderPredicate {
                 threshold:  golden.predicate.threshold,
-                comparison: comparison_discriminant(&golden.predicate.comparison),
+                comparison: comparison_from_str(&golden.predicate.comparison),
             },
             stat_a: StatTerm {
                 stat_to_prove: ScoreStat {
