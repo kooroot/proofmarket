@@ -23,3 +23,8 @@ test("tolerates missing price/pct arrays", () => {
   const d = decodeOdds({ FixtureId: 1, PriceNames: ["Yes"], Ts: 0 });
   expect(d.outcomes).toEqual([{ name: "Yes", rawPrice: null, pctDeVig: null }]);
 });
+
+test("preserves a legitimate rawPrice of 0 (guards ?? null vs || null)", () => {
+  const d = decodeOdds({ FixtureId: 1, PriceNames: ["Yes"], Prices: [0], Pct: [], Ts: 0 });
+  expect(d.outcomes).toEqual([{ name: "Yes", rawPrice: 0, pctDeVig: null }]);
+});
