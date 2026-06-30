@@ -4,6 +4,7 @@ declare_id!("6QNd5mHvV7czVkrRNdLPmuUybSwwdPWq9RYuwk5LZuEb");
 
 pub mod constants;
 pub mod errors;
+pub mod events;
 
 #[program]
 pub mod proofmarket {}
