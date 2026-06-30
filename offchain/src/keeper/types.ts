@@ -1,0 +1,40 @@
+import type { BN } from "@coral-xyz/anchor";
+
+export interface ProofNodeWire { hash: number[]; isRightSibling: boolean; }
+
+/** GET /api/scores/stat-validation 200 shape (single-stat; probe-proofs4.log:21-28). */
+export interface ProofBundle {
+  ts: number;
+  statToProve: { key: number; value: number; period: number };
+  eventStatRoot: number[];                 // [u8;32]
+  summary: {
+    fixtureId: number;
+    updateStats: { updateCount: number; minTimestamp: number; maxTimestamp: number };
+    eventStatsSubTreeRoot: number[];       // API name; IDL field is events_sub_tree_root (§3.1)
+  };
+  statProof: ProofNodeWire[];
+  subTreeProof: ProofNodeWire[];
+  mainTreeProof: ProofNodeWire[];
+}
+
+export interface ProofNodeArg { hash: number[]; isRightSibling: boolean; }
+
+export interface StatTermArg {
+  statToProve: { key: number; value: number; period: number };
+  eventStatRoot: number[];
+  statProof: ProofNodeArg[];
+}
+
+/** Positional mirror of P1 resolve(ts, fixtureSummary, fixtureProof, mainTreeProof, statA, statB). */
+export interface ResolveArgs {
+  ts: BN;
+  fixtureSummary: {
+    fixtureId: BN;
+    updateStats: { updateCount: number; minTimestamp: BN; maxTimestamp: BN };
+    eventsSubTreeRoot: number[];           // RENAMED from API eventStatsSubTreeRoot
+  };
+  fixtureProof: ProofNodeArg[];
+  mainTreeProof: ProofNodeArg[];
+  statA: StatTermArg;
+  statB: StatTermArg | null;               // v1 = null (single-stat)
+}
