@@ -1,0 +1,79 @@
+{
+  "_probe_date": "2026-07-01",
+  "_probe_script": "TxLINE/step1-spike/probe-finality.ts",
+  "_subscribe_tx": "csqi5TTpKkmXnMvu4S9mRunwFvmUHCU9ExHeCG1C3RN9U2rAjzHVDuYUtg7mabSKaJkwYtCJuhQGUNMpSbrkWvn",
+  "fixtureId": 18172280,
+  "seqs_retrieved": [1, 2, 3, 4, 5, 69, 72, 123, 509, 512, 513, 552, 1065, 1068, 1117, 1120],
+  "seqs_retrieved_note": "163+ distinct seqs confirmed live (200 responses across 4 groups): seqs 1-5, 69-126, 509-552, 1065-1120. Representative samples listed; all groups confirmed by script output.",
+  "leaves": [
+    {
+      "seq": 1, "statToProve": {"key": 1, "value": 0, "period": 0},
+      "minTimestamp": 1782482168946, "maxTimestamp": 1782482168962, "updateCount": 2,
+      "phase": "pre-match init (no game phase)"
+    },
+    {
+      "seq": 3, "statToProve": {"key": 1, "value": 0, "period": 1},
+      "minTimestamp": 1782777462035, "maxTimestamp": 1782777590346, "updateCount": 6,
+      "phase": "NS=1 (Not Started)"
+    },
+    {
+      "seq": 72, "statToProve": {"key": 1, "value": 0, "period": 2},
+      "minTimestamp": 1782781513010, "maxTimestamp": 1782781798097, "updateCount": 52,
+      "phase": "H1=2 (First Half)"
+    },
+    {
+      "seq": 512, "statToProve": {"key": 1, "value": 0, "period": 3},
+      "minTimestamp": 1782785212129, "maxTimestamp": 1782785398271, "updateCount": 38,
+      "phase": "HT=3 (Halftime)"
+    },
+    {
+      "seq": 513, "statToProve": {"key": 1, "value": 0, "period": 4},
+      "minTimestamp": 1782785212129, "maxTimestamp": 1782785398271, "updateCount": 38,
+      "phase": "H2=4 (Second Half) — same batch as seq=512; game phase changed within batch"
+    },
+    {
+      "seq": 1065, "statToProve": {"key": 1, "value": 1, "period": 7},
+      "minTimestamp": 1782788606133, "maxTimestamp": 1782788699836, "updateCount": 22,
+      "phase": "ET1=7 (Extra Time first half) — P1 goal, final score 1-1"
+    },
+    {
+      "seq": 1068, "statToProve": {"key": 1, "value": 1, "period": 7},
+      "minTimestamp": 1782788706633, "maxTimestamp": 1782788999466, "updateCount": 50,
+      "phase": "ET1=7 — later batch, same value"
+    },
+    {
+      "seq": 1120, "statToProve": {"key": 1, "value": 1, "period": 7},
+      "minTimestamp": 1782789024804, "maxTimestamp": 1782789299623, "updateCount": 45,
+      "phase": "ET1=7 — final observed batch"
+    }
+  ],
+  "multi_key_snapshot_at_ET1": {
+    "seq": 1068,
+    "key1_p1_goals": {"value": 1, "period": 7},
+    "key2_p2_goals": {"value": 1, "period": 7},
+    "key7_p1_corners": {"value": 5, "period": 7},
+    "key8_p2_corners": {"value": 7, "period": 7}
+  },
+  "period_progression_observed": [0, 1, 2, 3, 4, 7],
+  "period_5_ft_observed": false,
+  "period_5_ft_note": "Game ended 0-0 at 90 min, went to ET. Period sequence: pre(0)→NS(1)→H1(2)→HT(3)→H2(4)→[WET(6) skipped, not in intervals scanned]→ET1(7). No period=5 (F=Ended at 90 min) leaf published for this match.",
+  "value_monotone_across_seq": "true",
+  "value_monotone_evidence": "Confirmed by probe across 163+ seqs: key=1 (P1 Goals) 0→1 (never decreased); key=2 (P2 Goals) 0→1 (never decreased); key=7 (P1 Corners) 0→1→4→4→5 (never decreased); key=8 (P2 Corners) 0→2→2→7 (never decreased).",
+  "period_is_game_phase_id": true,
+  "period_is_game_phase_id_evidence": "Two separate encoding systems confirmed in soccer-feed.mdx: (1) Game Phase IDs: NS=1,H1=2,HT=3,H2=4,F=5,WET=6,ET1=7,... — these appear verbatim in the leaf's period field and match the StatusId field of the updates record (StatusId=7, period=7 in leaf). (2) Stat Period composite key formula: (multiplier*1000)+base_key where H1 uses +1000, H2 +2000, ET1 +3000 — this is for deriving composite stat keys (e.g. 3001=P1 ET1 Goals), NOT the leaf period field. The two systems use different numeric values for the same phases (ET1 phase ID=7 but ET1 composite key prefix=3000).",
+  "period_ft_value": 5,
+  "period_ft_value_source": "soccer-feed.mdx §Game Phase Encoding: F | 5 | Ended (finished)",
+  "terminal_semantics": "per_seq_no_terminal",
+  "terminal_semantics_evidence": "163+ distinct seqs all return valid 200 proofs via stat-validation endpoint. Many seqs within the same 5-min batch return identical leaves (same value/period/timestamps, e.g. seqs 513-552 all share the same batch window). No single terminal leaf exists — the structure is per-event proofs, not a singleton FT leaf. Additionally, period=5 (FT endpoint) was never published because this game went to ET.",
+  "post_ft_leaf_persists": "not_observable_conservative",
+  "post_ft_leaf_persists_note": "Game went to ET so no period=5 FT batch was published. Cannot observe post-FT persistence. Conservative assumption: not guaranteed. For non-ET games, the batch publishing after game end should carry the final period=5 leaf — structurally expected but not verified from this data.",
+  "monotone_cumulative_keys": [1, 2, 7, 8],
+  "monotone_cumulative_keys_evidence": "Keys 1,2,7,8 confirmed monotone across 4 game phases (H1→HT→H2→ET1). Cards keys (3,4,5,6) excluded from allowlist: cards can theoretically be rescinded (non-monotone risk); not probed for monotonicity in this run.",
+  "stat_a_period_for_ft_market": 5,
+  "stat_a_period_for_ft_market_note": "CONCERN: period=5 (F=Ended) is only published when game ends in 90 min. If game goes to ET, no period=5 leaf is published and the market CANNOT be settled via the standard CPI proof path — market would be stuck. v1 MUST restrict to non-ET competition formats (e.g., group stage fixtures) OR implement an ET-fallback (e.g., accept any period >= 5 if resolve_after_ts is well past FET/FPE). For the Phase-1 ProofMarket MVP, recommend documenting this as a known limitation.",
+  "g3_verdict": "GO_CONSERVATIVE",
+  "g3_verdict_reasoning": "POSITIVE evidence: (1) Monotone-cumulative confirmed across 163+ seqs and 4 game phases — keys 1,2,7,8 never decrease. (2) Auth and live API access fully succeeded. (3) period field IS the game phase ID (not a multiplier). (4) Values are consistent across seqs within the same batch window. NEGATIVE: (1) terminal_semantics=per_seq_no_terminal — no unique FT leaf. (2) period=5 (F=Ended) not published when game goes to ET. VERDICT: GO under the conservative branch — v1 GreaterThan + monotone-cumulative predicate class is safe when restricted to non-ET competition formats. resolve must additionally require max_timestamp >= resolve_after_ts (step-5 soundness bind). Full GO (without competition format restriction) requires ET-handling in ProofMarket resolve logic.",
+  "resolve_binding": "plus_canonical_final_leaf",
+  "resolve_binding_note": "Because terminal_semantics=per_seq_no_terminal, resolve step-5 (max_timestamp >= market.resolve_after_ts) is MANDATORY as the soundness bind. The settler must present a leaf from a post-resolve_after_ts batch. The combination of resolve_after_ts gate + monotone-cumulative stat keys ensures the proved value equals the final value without needing a unique terminal leaf.",
+  "notes": "LIVE run succeeded. subscribe tx: csqi5TTpKkmXnMvu4S9mRunwFvmUHCU9ExHeCG1C3RN9U2rAjzHVDuYUtg7mabSKaJkwYtCJuhQGUNMpSbrkWvn. Prior spike only retrieved seq=1068; this probe retrieved 163+ seqs across 3 populated intervals. Additional key findings: (a) Multiple seqs per batch all resolve to same batch proof, confirming per-batch not per-event leaf semantics. (b) Game final state in ET1 was 1-1 (both P1 and P2 scored). (c) Corners reached key7=5, key8=7 by ET1 — both monotone. (d) Card keys (3-6) not probed — excluded from allowlist. (e) Phase gap seqs 553-1064 not probed (no interval covered them) — likely contain WET(6) and early ET1 transitions."
+}
