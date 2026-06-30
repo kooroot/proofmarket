@@ -1,4 +1,5 @@
 use anchor_lang::prelude::*;
+use crate::txoracle_types::{ScoresBatchSummary, ProofNode, StatTerm};
 
 declare_id!("6QNd5mHvV7czVkrRNdLPmuUybSwwdPWq9RYuwk5LZuEb");
 
@@ -8,6 +9,7 @@ pub mod events;
 pub mod state;
 pub mod math;
 pub mod resolve_guards;
+pub mod txoracle_types;
 pub mod instructions;
 pub use instructions::*;
 
@@ -23,5 +25,12 @@ pub mod proofmarket {
     }
     pub fn stake(ctx: Context<Stake>, side: bool, amount: u64) -> Result<()> {
         instructions::stake::handler(ctx, side, amount)
+    }
+    pub fn resolve(
+        ctx: Context<Resolve>, ts: i64, fixture_summary: ScoresBatchSummary,
+        fixture_proof: Vec<ProofNode>, main_tree_proof: Vec<ProofNode>,
+        stat_a: StatTerm, stat_b: Option<StatTerm>,
+    ) -> Result<()> {
+        instructions::resolve::handler(ctx, ts, fixture_summary, fixture_proof, main_tree_proof, stat_a, stat_b)
     }
 }

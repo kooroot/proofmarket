@@ -24,16 +24,18 @@ pub enum ProofError {
     #[msg("market is not void")] NotVoid,                  // 6119
     #[msg("market is not settled")] MarketNotSettled,      // 6120
     #[msg("vault is not empty")] VaultNotEmpty,            // 6121
+    #[msg("failed to serialize CPI args")] SerializationFailed, // 6122
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     // The on-chain error code is produced by `From<ProofError> for u32` (= discriminant + offset).
-    // Verify the namespace base (6100) and the last code (6121) via that real conversion path.
+    // Verify the namespace base (6100), the last pre-P1.10 code (6121), and the new P1.10 code (6122).
     #[test]
-    fn codes_span_6100_to_6121() {
+    fn codes_span_6100_to_6122() {
         assert_eq!(u32::from(ProofError::MarketNotOpen), 6100);
         assert_eq!(u32::from(ProofError::VaultNotEmpty), 6121);
+        assert_eq!(u32::from(ProofError::SerializationFailed), 6122);
     }
 }
