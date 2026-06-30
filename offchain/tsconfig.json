@@ -11,5 +11,5 @@
     "types": ["node", "bun"],
     "lib": ["ES2022"]
   },
-  "include": ["src", "test"]
+  "include": ["src", "test", "scripts"]
 }
