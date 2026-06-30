@@ -33,4 +33,7 @@ pub mod proofmarket {
     ) -> Result<()> {
         instructions::resolve::handler(ctx, ts, fixture_summary, fixture_proof, main_tree_proof, stat_a, stat_b)
     }
+    pub fn claim(ctx: Context<Claim>) -> Result<()> {
+        instructions::claim::handler(ctx)
+    }
 }

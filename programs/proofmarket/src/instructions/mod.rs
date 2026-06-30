@@ -4,3 +4,5 @@ pub mod stake;
 pub use stake::*;
 pub mod resolve;
 pub use resolve::*;
+pub mod claim;
+pub use claim::*;
