@@ -1,0 +1,31 @@
+.anchor
+.DS_Store
+target
+**/*.rs.bk
+node_modules
+test-ledger
+.yarn
+
+# --- ProofMarket additions ---
+# Node / package managers (Cargo.lock IS committed for reproducible SBF builds)
+**/node_modules/
+.pnp.*
+# Next.js frontend (proofmarket/web)
+web/.next/
+web/out/
+web/build/
+web/next-env.d.ts
+# Off-chain build output
+offchain/dist/
+offchain/cache/
+**/*.tsbuildinfo
+# Env files (permission-blocked; never commit secrets — templates are *.example)
+.env
+.env.*
+!.env.example
+!.env.local.example
+# Logs / OS
+*.log
+# Program upgrade-authority keypair stays private (declared program id is public)
+**/target/deploy/*-keypair.json
+keys/

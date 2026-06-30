@@ -1,0 +1,25 @@
+[toolchain]
+anchor_version = "0.31.1"
+package_manager = "yarn"
+
+[features]
+resolution = true
+skip-lint = false
+
+[programs.localnet]
+proofmarket = "6QNd5mHvV7czVkrRNdLPmuUybSwwdPWq9RYuwk5LZuEb"
+
+[programs.devnet]
+proofmarket = "6QNd5mHvV7czVkrRNdLPmuUybSwwdPWq9RYuwk5LZuEb"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "devnet"
+# Repo-relative, gitignored (see keys/ in .gitignore). Drop a funded devnet keypair here:
+#   solana-keygen new -o keys/devnet-deployer.json   (or copy an existing funded one)
+wallet = "keys/devnet-deployer.json"
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
