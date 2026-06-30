@@ -1,0 +1,38 @@
+{
+  "seam_observed": false,
+  "epoch_day_source": "ts",
+  "epoch_day_source_confidence": "high_default_spike_verified",
+  "scan_coverage": {
+    "intervals_scanned": 41,
+    "intervals_with_data": 11,
+    "bundles_spot_checked": 109,
+    "fixtures_covered": [17926704, 17588391, 18175983, 18172280, 18175397],
+    "epoch_days_covered": [20632, 20633, 20634],
+    "near_midnight_intervals_scanned": [
+      "20632/22/1", "20632/23/1", "20632/0/1", "20632/1/1",
+      "20633/22/1", "20633/23/1", "20633/0/1", "20633/1/1",
+      "20634/22/1", "20634/23/1", "20634/0/1", "20634/1/1",
+      "20635/22/1", "20635/23/1", "20635/0/1", "20635/1/1",
+      "20636/22/1", "20636/23/1", "20636/0/1", "20636/1/1"
+    ],
+    "near_midnight_intervals_with_data": [
+      "20632/0/1 (95 records, fixture 17926704+17588391)",
+      "20632/1/1 (104 records, fixture 17588391)",
+      "20633/22/1 (54 records, fixture 18175983)",
+      "20633/23/1 (61 records, fixture 18175983)"
+    ]
+  },
+  "golden_bundle_check": {
+    "ts": 1782788706633,
+    "epochDay_ts": 20634,
+    "minTimestamp": 1782788706633,
+    "epochDay_min": 20634,
+    "pda": "BcLwqHJehs8ut8ycRo6NhCGsrtmRnkZbFMm273SdcPGe",
+    "pda_matches_ts_source": true
+  },
+  "straddle_candidates": [],
+  "discriminating_probe": null,
+  "resolve_rule": "epoch_day = u16::try_from(ts / 86_400_000).map_err(|_| WrongRootAccount)?  // checked cast, never `as u16`",
+  "g4_verdict": "GO",
+  "notes": "Live probe (probe-epochseam.ts) scanned 41 intervals across 5 epoch-days (20632-20636), covering 3 fixtures and 109 stat-validation bundles. Near-midnight coverage included hours 22, 23, 0, 1 for all 5 days. Populated near-midnight slots found on epoch-days 20632 (hours 0, 1) and 20633 (hours 22, 23): in all cases floor(ts/86_400_000) == floor(minTimestamp/86_400_000) — both land on the same epoch-day. The dev feed is sparse (daytime match data only; no game straddling UTC midnight was available), so a true straddle is not directly observable, but this is the expected outcome per spec. The epoch_day source is locked to ts (spike-verified: ts=1782788706633 → epochDay=20634 → PDA BcLwqHJehs8ut8ycRo6NhCGsrtmRnkZbFMm273SdcPGe → confirmed EXISTS on devnet with correct proof). The resolve rule uses u16::try_from (checked conversion) — never a silent `as u16` cast — per design §2.2. Step 2 (discriminating CPI probe) was skipped: no straddle found, so both PDAs do not exist and no discriminating test is meaningful."
+}
