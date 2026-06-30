@@ -1,0 +1,7 @@
+node_modules/
+cache/golden/
+*.log
+devnet-wallet.json
+# This IS the dedicated bun package — commit its lockfile for reproducible installs.
+# (Overrides the repo-root .gitignore, which ignores a stray bun.lock in the yarn-standardized root tree.)
+!bun.lock
