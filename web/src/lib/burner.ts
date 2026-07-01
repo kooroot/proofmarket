@@ -9,7 +9,20 @@ const makeMemStore = (): MiniStore => {
   const m = new Map<string, string>();
   return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => void m.set(k, v), removeItem: (k) => void m.delete(k) };
 };
-const store = (): MiniStore => (typeof window !== "undefined" ? window.localStorage : (memStore ??= makeMemStore()));
+const browserStore = (): MiniStore | undefined => {
+  if (typeof window === "undefined") return undefined;
+  try {
+    const s = window.localStorage;
+    return typeof s?.getItem === "function" &&
+      typeof s?.setItem === "function" &&
+      typeof s?.removeItem === "function"
+      ? s
+      : undefined;
+  } catch {
+    return undefined;
+  }
+};
+const store = (): MiniStore => browserStore() ?? (memStore ??= makeMemStore());
 export function getBurner(): Keypair | null {
   // bs58.decode() returns a Buffer; Keypair.fromSecretKey wants a Uint8Array. Re-wrap so
   // @noble/curves' isBytes (instanceof Uint8Array) passes in every realm (Buffer fails it under jsdom).

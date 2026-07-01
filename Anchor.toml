@@ -9,6 +9,7 @@ skip-lint = false
 [programs.localnet]
 proofmarket = "6QNd5mHvV7czVkrRNdLPmuUybSwwdPWq9RYuwk5LZuEb"
 probe_validate = "2aEdjbQjBAFE8wNyaF6JWuYWSfVaww4BsZotoGBNfa1b"
+txoracle = "6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS715wyP2J"
 
 [programs.devnet]
 proofmarket = "6QNd5mHvV7czVkrRNdLPmuUybSwwdPWq9RYuwk5LZuEb"

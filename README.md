@@ -15,13 +15,13 @@ The hero surface is a **"Proof Receipt"** that visualizes the full cryptographic
 ```bash
 git clone <repo> && cd proofmarket
 yarn install
-make build             # SBF .so + IDL + TS types — bankrun loads target/deploy/proofmarket.so
+make build             # SBF .so + IDL + TS types — bankrun loads proofmarket + local txoracle fixture
 yarn e2e-replay        # boots an in-process SVM and runs create → stake ×3 → resolve(validate_stat CPI) → claim
 ```
 
 `make build` needs the pinned anchor + Solana SBF toolchain (see **Pinned toolchain** below); it wraps `anchor build` with the two env vars that make IDL generation deterministic (`RUSTUP_TOOLCHAIN=stable` + `CARGO_ENCODED_RUSTFLAGS=-Awarnings` — the latter suppresses the `procmacro2_semver_exempt` cfg that `anchor-lang-idl` injects and that otherwise breaks `#[derive(Accounts)]` hygiene). Use `make build`, not a bare `anchor build`. It is still fully hermetic — no validator, no RPC, no devnet SOL.
 
-`yarn e2e-replay` then replays the frozen golden fixture entirely inside an **in-process Solana VM** (`solana-bankrun`): it loads the committed `txoracle` program and the frozen daily-root account (`BcLwqHJehs8ut8ycRo6NhCGsrtmRnkZbFMm273SdcPGe`, epochDay 20634) from `tests/fixtures/`, so the exact resolution reproduces forever — independent of devnet retention, with no local validator, no RPC, and no devnet SOL. It prints the full **Proof Receipt** (stat leaf → eventStatRoot → fixture sub-tree → daily-root PDA → `validate_stat` TRUE → escrow release), asserts the parimutuel settlement vector, and ends with:
+`yarn e2e-replay` then replays the frozen golden fixture entirely inside an **in-process Solana VM** (`solana-bankrun`): it loads the local ABI-compatible `txoracle` fixture program built by `make build` and the frozen daily-root account (`BcLwqHJehs8ut8ycRo6NhCGsrtmRnkZbFMm273SdcPGe`, epochDay 20634) from `tests/fixtures/`, so the exact settlement path reproduces forever — independent of devnet retention, with no local validator, no RPC, and no devnet SOL. The production CPI target is still the real devnet txoracle program id; the local fixture preserves the `validate_stat` discriminator, argument layout, and `bool` return-data contract for deterministic replay. It prints the full **Proof Receipt** (stat leaf → eventStatRoot → fixture sub-tree → daily-root PDA → `validate_stat` TRUE → escrow release), asserts the parimutuel settlement vector, and ends with:
 
 > _No vote. No dispute window. Just math._
 

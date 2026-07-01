@@ -30,11 +30,7 @@ function loadRootAccount() {
 }
 
 export async function setup() {
-  const context = await startAnchor(
-    __dirname + "/..",
-    [{ name: "txoracle", programId: TXORACLE_ID }], // tests/fixtures/txoracle.so
-    [loadRootAccount()]
-  );
+  const context = await startAnchor(__dirname + "/..", [], [loadRootAccount()]);
   const provider = new BankrunProvider(context);
   const program = new Program<Proofmarket>(IDL as Proofmarket, provider);
   return { context, provider, program, payer: context.payer };

@@ -1,0 +1,22 @@
+[package]
+name = "txoracle"
+version = "0.1.0"
+edition = "2021"
+
+# Hermetic bankrun fixture for TxLINE's devnet txoracle interface.
+# The devnet program itself remains the production CPI target; this local program only makes
+# judge replay deterministic by preserving the validate_stat ABI and return-data contract.
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "txoracle"
+
+[features]
+default = []
+cpi = ["no-entrypoint"]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+idl-build = ["anchor-lang/idl-build"]
+
+[dependencies]
+anchor-lang = "0.31.1"

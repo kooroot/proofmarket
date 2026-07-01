@@ -14,7 +14,7 @@ once deployed — they are intentionally NOT asserted by the hermetic gate so th
 | Proof Receipt renders from persisted state (byte-equality: on-chain roots == frontend bundle) | `cd web && npm test` (`ProofChain.integrity.test.tsx`) | ✅ hermetic |
 | "Verify it yourself" on the receipt (re-run `validate_stat` → `AQ==`) | `cd web && npm test` (`ProofChain.test.tsx` — `AQ==` step) | ✅ hermetic |
 | UMA/betmoar contrast panel + "N seconds, 0 disputes, 0 voters" | `cd web && npm test` | ✅ hermetic |
-| Hermetic E2E: create → stake ×3 → resolve (`validate_stat` CPI) → claim, on replayed data | `npm run e2e-replay` (bankrun) | ✅ hermetic |
+| Hermetic E2E: create → stake ×3 → resolve (`validate_stat` CPI into local ABI-compatible fixture) → claim, on replayed data | `npm run e2e-replay` (bankrun) | ✅ hermetic |
 | `close_market` rent-reclaim + fee-sweep (400_000 residual) | `tests/close_market.ts` (bankrun) | ✅ hermetic |
 | Server-side free SL1 data (judge needs no devnet SOL to SEE data) | `check-deploy.ts` | ⏳ PENDING P4.8 |
 | Test-USDC faucet mints 1000 to any pubkey | `check-deploy.ts` | ⏳ PENDING P4.8 |

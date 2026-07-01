@@ -14,9 +14,14 @@ pub struct CloseMarket<'info> {
         constraint = market.creator == creator.key() @ ProofError::Unauthorized
     )]
     pub market: Account<'info, Market>,
-    #[account(mut, seeds = [b"vault", market.key().as_ref()], bump = market.vault_bump)]
+    #[account(
+        mut,
+        seeds = [b"vault", market.key().as_ref()], bump = market.vault_bump,
+        token::mint = market.mint,
+        token::authority = market
+    )]
     pub vault: Account<'info, TokenAccount>,
-    #[account(mut, address = market.fee_destination)]
+    #[account(mut, address = market.fee_destination, token::mint = market.mint)]
     pub fee_destination: Account<'info, TokenAccount>,
     #[account(address = market.mint)]
     pub mint: Account<'info, Mint>,

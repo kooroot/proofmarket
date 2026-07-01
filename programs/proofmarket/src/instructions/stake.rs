@@ -16,7 +16,12 @@ pub struct Stake<'info> {
         seeds = [b"position", market.key().as_ref(), user.key().as_ref()], bump
     )]
     pub position: Account<'info, Position>,
-    #[account(mut, seeds = [b"vault", market.key().as_ref()], bump = market.vault_bump)]
+    #[account(
+        mut,
+        seeds = [b"vault", market.key().as_ref()], bump = market.vault_bump,
+        token::mint = market.mint,
+        token::authority = market
+    )]
     pub vault: Account<'info, TokenAccount>,
     #[account(mut, token::mint = market.mint, token::authority = user)]
     pub user_token_account: Account<'info, TokenAccount>,
