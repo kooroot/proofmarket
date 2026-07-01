@@ -110,9 +110,10 @@ The hermetic reproduction above needs **none** of these; they are required only 
 | `ANCHOR_PROVIDER_URL` | RPC for deploy (e.g. devnet `https://api.devnet.solana.com`) |
 | `ANCHOR_WALLET` | path to the deploy keypair (`keys/devnet-deployer.json`) |
 | `TXLINE_HOST` | TxLINE API host |
-| `TXLINE_JWT` | guest JWT from `POST /auth/guest/start` |
+| `TXLINE_JWT` | guest JWT from `POST /auth/guest/start` (frontend server routes + keeper) |
 | `TXLINE_API_TOKEN` | pre-activated free SL1 `apiToken` (server-side only) |
-| `KEEPER_KEYPAIR` | path to the resolver keypair that signs `resolve` |
+| `KEEPER_KEYPAIR` | path to the resolver keypair that signs `resolve` (**offchain keeper only** — not the frontend) |
+| `FAUCET_AUTHORITY_SECRET` | **bs58-encoded** secret key of the test-USDC **mint authority** — the frontend faucet route signs `mintTo` + SOL gas grants with it (server-side only) |
 | `NEXT_PUBLIC_RPC_URL` | devnet RPC for the frontend |
 | `NEXT_PUBLIC_PROOFMARKET_PROGRAM_ID` | deployed `proofmarket` program id |
 | `NEXT_PUBLIC_USDC_MINT` | the pinned 6-dp test-USDC mint (`2MYAvDHmZCnWUC4rMVYstLNniiXHuxo2Z7j7czaHA8LT`) |
