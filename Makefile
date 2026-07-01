@@ -10,6 +10,15 @@
 #      is unset, defaults it to `nightly`. On a machine whose nightly predates 1.85 this fails to
 #      parse edition2024. Pinning to stable (>= 1.85) makes it deterministic.
 export RUSTUP_TOOLCHAIN := stable
+#
+# Why CARGO_ENCODED_RUSTFLAGS=-Awarnings: anchor-lang-idl 0.1.4's IDL build injects
+# `--cfg procmacro2_semver_exempt` into RUSTFLAGS for its `cargo test --features idl-build`
+# subprocess. With that CFG, proc-macro2 uses source-accurate spans, which causes Anchor's
+# #[derive(Accounts)] macro to fail hygiene resolution for instruction-arg identifiers used
+# in `seeds` constraints (e.g., `market_id` from `#[instruction(market_id: u64)]`). Setting
+# CARGO_ENCODED_RUSTFLAGS here takes precedence over the RUSTFLAGS anchor-lang-idl injects,
+# suppressing the flag that breaks hygiene while keeping warning suppression.
+export CARGO_ENCODED_RUSTFLAGS := -Awarnings
 
 .PHONY: build test deploy clean lint
 

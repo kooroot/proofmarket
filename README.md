@@ -8,7 +8,22 @@ ProofMarket is a submission for the **TxODDS World Cup Hackathon — Track 1 (Pr
 
 The hero surface is a **"Proof Receipt"** that visualizes the full cryptographic resolution chain: stat leaf → eventStatRoot → fixture subtree → daily-root PDA → `validate_stat` TRUE → escrow release.
 
-> **Status: under active construction (devnet only, play-money).** This repository is being built phase-by-phase from the implementation plan in [`docs/`](docs/). On-chain settlement moves only devnet test-USDC — never mainnet, never real funds.
+> **Status: devnet only, play-money.** On-chain settlement moves only devnet test-USDC — never mainnet, never real funds. The hermetic reproduction below runs today with zero setup beyond `yarn install`; a live-devnet deployment is the final, funding-gated step.
+
+## One-command judge reproduction (hermetic — no validator, no network, no SOL)
+
+```bash
+git clone <repo> && cd proofmarket
+yarn install
+make build             # SBF .so + IDL + TS types — bankrun loads proofmarket + local txoracle fixture
+yarn e2e-replay        # boots an in-process SVM and runs create → stake ×3 → resolve(validate_stat CPI) → claim
+```
+
+`make build` needs the pinned anchor + Solana SBF toolchain (see **Pinned toolchain** below); it wraps `anchor build` with the two env vars that make IDL generation deterministic (`RUSTUP_TOOLCHAIN=stable` + `CARGO_ENCODED_RUSTFLAGS=-Awarnings` — the latter suppresses the `procmacro2_semver_exempt` cfg that `anchor-lang-idl` injects and that otherwise breaks `#[derive(Accounts)]` hygiene). Use `make build`, not a bare `anchor build`. It is still fully hermetic — no validator, no RPC, no devnet SOL.
+
+`yarn e2e-replay` then replays the frozen golden fixture entirely inside an **in-process Solana VM** (`solana-bankrun`): it loads the local ABI-compatible `txoracle` fixture program built by `make build` and the frozen daily-root account (`BcLwqHJehs8ut8ycRo6NhCGsrtmRnkZbFMm273SdcPGe`, epochDay 20634) from `tests/fixtures/`, so the exact settlement path reproduces forever — independent of devnet retention, with no local validator, no RPC, and no devnet SOL. The production CPI target is still the real devnet txoracle program id; the local fixture preserves the `validate_stat` discriminator, argument layout, and `bool` return-data contract for deterministic replay. It prints the full **Proof Receipt** (stat leaf → eventStatRoot → fixture sub-tree → daily-root PDA → `validate_stat` TRUE → escrow release), asserts the parimutuel settlement vector, and ends with:
+
+> _No vote. No dispute window. Just math._
 
 ## Architecture
 
@@ -51,6 +66,35 @@ Bare `anchor build` works too, but first `export RUSTUP_TOOLCHAIN=stable` (see t
 ```bash
 solana-keygen new -o keys/devnet-deployer.json   # then fund via https://faucet.solana.com
 ```
+
+## Test suite
+
+| Command | Covers |
+|---------|--------|
+| `cargo test` | payout math (uneven pools, fee-on-loser, epoch/root guards) — pure-Rust unit tests |
+| `anchor test --skip-local-validator` | hermetic in-process CPI E2E (create → stake → resolve → claim, TRUE + FALSE paths) |
+| `yarn e2e-replay` | the golden Proof-Receipt reproduction (a focused single scenario of the above) |
+| `cd web && npm install && npm test` | frontend — Proof-Receipt byte-equality render (Vitest) |
+
+All on-chain tests run against an **in-process SVM (`solana-bankrun`)** — they need no local validator, no network, and no devnet SOL.
+
+## Environment variables (documented here — `.env` files are not committed)
+
+The hermetic reproduction above needs **none** of these; they are required only to run against **live devnet** (deploy / keeper / frontend):
+
+| Var | Purpose |
+|-----|---------|
+| `ANCHOR_PROVIDER_URL` | RPC for deploy (e.g. devnet `https://api.devnet.solana.com`) |
+| `ANCHOR_WALLET` | path to the deploy keypair (`keys/devnet-deployer.json`) |
+| `TXLINE_HOST` | TxLINE API host |
+| `TXLINE_JWT` | guest JWT from `POST /auth/guest/start` |
+| `TXLINE_API_TOKEN` | pre-activated free SL1 `apiToken` (server-side only) |
+| `KEEPER_KEYPAIR` | path to the resolver keypair that signs `resolve` |
+| `NEXT_PUBLIC_RPC_URL` | devnet RPC for the frontend |
+| `NEXT_PUBLIC_PROOFMARKET_PROGRAM_ID` | deployed `proofmarket` program id |
+| `NEXT_PUBLIC_USDC_MINT` | the pinned 6-dp test-USDC mint (`2MYAvDHmZCnWUC4rMVYstLNniiXHuxo2Z7j7czaHA8LT`) |
+
+For a deployed devnet demo the frontend holds one pre-activated free SL1 `apiToken` server-side, so judges need **no purchase and no devnet SOL** to see data; a test-USDC **faucet** button funds a fresh wallet. Deployed addresses (program id, URL, market PDAs) are listed in `docs/DEPLOY.md` once deployed.
 
 ## License
 

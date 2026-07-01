@@ -1,0 +1,10 @@
+node_modules/
+# Ignore live-captured golden bundles, but commit the ONE pinned §3.7/G6 replay fixture
+# (deterministic offline snapshot the demo/dry-run replays against — see scripts/build-golden-cache.ts).
+cache/golden/*
+!cache/golden/18172280-1068-1.json
+*.log
+devnet-wallet.json
+# This IS the dedicated bun package — commit its lockfile for reproducible installs.
+# (Overrides the repo-root .gitignore, which ignores a stray bun.lock in the yarn-standardized root tree.)
+!bun.lock
