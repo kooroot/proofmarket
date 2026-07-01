@@ -8,7 +8,8 @@
 
 Everything below requires **real devnet SOL** and a couple of local keypairs, so it is
 the one part of the build that cannot be automated — it is your funded pass. Each step
-lists its own GO check.
+lists its own GO check. **This runbook was executed on 2026-07-01 — see the recorded run
+in [`DEPLOY-LOG.md`](./DEPLOY-LOG.md) and the filled-in address table at the bottom.**
 
 ## Prerequisites
 
@@ -36,7 +37,8 @@ GO: `target/deploy/proofmarket.so` and `target/idl/proofmarket.json` exist.
 ## Step 2 — (Re)create the pinned test-USDC mint
 
 ```bash
-spl-token create-token --decimals 6 keys/usdc-mint.json -u devnet
+spl-token create-token --decimals 6 keys/usdc-mint.json -u devnet \
+  --mint-authority 7jKowNzrDTttsVEVGJzDpvX19H2hpWsxYcZix5feKxSg   # the deploy wallet mints test-USDC
 ```
 GO: the printed token address == `USDC_MINT` (`2MYAvD…HA8LT`).
 **Alt (no pinned keypair):** `spl-token create-token --decimals 6 -u devnet` → record the new address and use it everywhere `NEXT_PUBLIC_USDC_MINT` appears below.
@@ -48,71 +50,38 @@ make deploy    # anchor deploy --provider.cluster devnet
 ```
 GO: `Program Id: 6QNd5mHvV7czVkrRNdLPmuUybSwwdPWq9RYuwk5LZuEb` (matches `declare_id!`), `Deploy success`.
 Back up `target/deploy/proofmarket-keypair.json` — redeploys must reuse it to avoid re-paying program rent.
+(`anchor deploy` also tries to deploy the other workspace programs; only `proofmarket` matters — an
+unrelated `probe_validate` OOM at the end is expected and does not affect the `proofmarket` deploy.)
 
-## Step 4 — Seed one demo market (create + a fixed 4-staker YES/NO split)
+## Step 4 — Seed one demo market (create + a fixed 3-staker YES/NO split)
 
-Create `scripts/seed.ts` with the following, then `yarn add -D ts-node` (already a devDep) and
-run it. This mirrors the hermetic `runEndToEnd` (scripts/lib/replay-run.ts) against **live**
-devnet. **Note:** the amounts below are in 6-dp base units and are all ≥ `MIN_STAKE` (1 000);
-do **not** use sub-1 000 stakes — the program rejects them with `StakeTooSmall` (6103). The
-split reproduces the golden 60 YES / 40 NO demo vector.
-
-```ts
-import * as anchor from "@coral-xyz/anchor";
-import { BN } from "@coral-xyz/anchor";
-import { Keypair, PublicKey } from "@solana/web3.js";
-import { createAssociatedTokenAccount, mintTo } from "@solana/spl-token";
-import { readFileSync } from "fs";
-
-const MINT = new PublicKey("2MYAvDHmZCnWUC4rMVYstLNniiXHuxo2Z7j7czaHA8LT"); // == constants::USDC_MINT
-const FIXTURE_ID = new BN(18172280);   // golden fixture (G6 bundle)
-const STAT_KEY = 1, STAT_PERIOD = 7;   // golden goals stat (monotone)
-const FEE_BPS = 100;                    // 1% (matches the golden Proof Receipt)
-
-(async () => {
-  const provider = anchor.AnchorProvider.env(); anchor.setProvider(provider);
-  const program = anchor.workspace.Proofmarket as anchor.Program<any>;
-  const payer = (provider.wallet as anchor.Wallet).payer;
-  const mintAuth = Keypair.fromSecretKey(Uint8Array.from(JSON.parse(readFileSync("./keys/usdc-mint.json", "utf8"))));
-
-  const id = new BN(Date.now());
-  const seed = (t: string, k: Buffer[]) => PublicKey.findProgramAddressSync([Buffer.from(t), ...k], program.programId)[0];
-  const market = seed("market", [id.toArrayLike(Buffer, "le", 8)]);
-  const vault = seed("vault", [market.toBuffer()]);
-  const feeDest = await createAssociatedTokenAccount(provider.connection, payer, MINT, payer.publicKey);
-
-  await program.methods
-    .createMarket(id, FIXTURE_ID, STAT_KEY, STAT_PERIOD, 0, 0, new BN(Date.now() + 3_600_000), FEE_BPS)
-    .accounts({ creator: payer.publicKey, market, vault, mint: MINT, feeDestination: feeDest }).rpc();
-
-  // YES 40 + 20 = 60 USDC, NO 30 + 10 = 40 USDC — all ≥ MIN_STAKE, both sides non-zero (never Void).
-  const split: [boolean, number][] = [[true, 40_000_000], [true, 20_000_000], [false, 30_000_000], [false, 10_000_000]];
-  for (const [side, amount] of split) {
-    const u = Keypair.generate();
-    // devnet airdrops throttle; if this rejects, fund from your deploy wallet:
-    //   solana transfer <u.pubkey> 0.05 --allow-unfunded-recipient
-    await provider.connection.requestAirdrop(u.publicKey, 5e7);
-    await new Promise((r) => setTimeout(r, 1500));
-    const ata = await createAssociatedTokenAccount(provider.connection, payer, MINT, u.publicKey);
-    await mintTo(provider.connection, payer, MINT, ata, mintAuth, amount);
-    const position = seed("position", [market.toBuffer(), u.publicKey.toBuffer()]);
-    await program.methods.stake(side, new BN(amount))
-      .accounts({ user: u.publicKey, market, position, vault, userTokenAccount: ata, mint: MINT }).signers([u]).rpc();
-    console.log(`staked ${side ? "YES" : "NO"} ${amount / 1e6} USDC from ${u.publicKey.toBase58()}`);
-  }
-  console.log("seeded market:", market.toBase58());
-})();
-```
+`scripts/seed.ts` (committed + tested) mirrors the hermetic `runEndToEnd` against **live** devnet:
+it creates one market (id 1) and stakes the golden **60 YES / 40 NO** vector — A 40 + C 20 YES,
+B 40 NO. All stakes are ≥ `MIN_STAKE` (1 000); sub-1 000 stakes are rejected `StakeTooSmall` (6103).
+Burners are funded from the **deploy wallet** via `SystemProgram.transfer` (devnet airdrops throttle),
+and test-USDC is minted with the deploy wallet as mint authority.
 
 ```bash
-yarn ts-node scripts/seed.ts        # or add "seed": "ts-node scripts/seed.ts" to package.json
+yarn seed        # ANCHOR_PROVIDER_URL + ANCHOR_WALLET exported (see Prerequisites)
 ```
-GO: four `staked …` lines + `seeded market: <pubkey>`; `program.account.market.fetch(<pubkey>)`
-shows `yesPool 60_000_000`, `noPool 40_000_000`, `totalPositions 4`.
+GO: `SEED OK ✓ (YES 60 / NO 40 / 3 positions / vault 100 USDC)`. If the **public** devnet RPC
+returns `429 Too Many Requests` mid-run (it rate-limits bursts), `yarn ts-node scripts/finish-seed.ts`
+resumes idempotently — it re-reads the market and adds only the still-missing NO stake.
 
-Resolution of a demo market is intentionally kept off live-devnet — run it against a
-**clock-controlled sandbox** that clones the daily-root, exactly as the hermetic
-`resolve` path does (never a real live-devnet resolve), so the finality-time gate is satisfiable.
+The market is left **OPEN** (`resolve_after_ts` = now + 30 d). A live resolve is intentionally NOT
+performed: the golden proof's `max_timestamp` is historical, so resolve's finality gate
+(`max_timestamp >= resolve_after_ts`) cannot hold against a future `resolve_after_ts` without a
+controllable clock. The resolved Proof Receipt is therefore produced hermetically (`yarn e2e-replay`)
+against a **clock-controlled sandbox** that clones the daily-root — never a live-devnet resolve.
+
+## Step 4b — Verify the live surface (read-only, no wallet)
+
+```bash
+yarn check-deploy                 # or: CHECK_DEPLOY=1 yarn judge-check  (folds it into the full gate)
+```
+GO: `CHECK-DEPLOY: GO ✓` — asserts the program is deployed at `declare_id`, the pinned mint exists
+(decimals 6, authority = deploy wallet), the canonical txoracle daily-root is present (settlement
+anchor), and the seeded market is OPEN with YES 60 / NO 40 / 3 positions / vault 100 USDC.
 
 ## Step 5 — Point the frontend at your deployment
 
@@ -123,6 +92,7 @@ Set these in the frontend host (Vercel project env, or `web/.env.local` for a lo
 | `NEXT_PUBLIC_RPC_URL` | `https://api.devnet.solana.com` |
 | `NEXT_PUBLIC_PROOFMARKET_PROGRAM_ID` | `6QNd5mHvV7czVkrRNdLPmuUybSwwdPWq9RYuwk5LZuEb` |
 | `NEXT_PUBLIC_USDC_MINT` | `2MYAvDHmZCnWUC4rMVYstLNniiXHuxo2Z7j7czaHA8LT` (or your Step-2-alt mint) |
+| `NEXT_PUBLIC_DEMO_MARKET` | `DP4Jkxgm3sNvMKHbjCT1PQF7gCvaGcBMfFMCMkk4pkEP` (the seeded OPEN market) |
 
 Server-only vars (never `NEXT_PUBLIC_`): `TXLINE_API_TOKEN` (a pre-activated free SL1 token so
 judges need no purchase), `KEEPER_KEYPAIR`. See the README env table.
@@ -131,14 +101,22 @@ judges need no purchase), `KEEPER_KEYPAIR`. See the README env table.
 cd web && npm install && npm run build && vercel --prod   # or your host of choice
 ```
 
-## Deployed addresses (fill in after your funded run)
+## Deployed addresses (recorded 2026-07-01 — full run log in DEPLOY-LOG.md)
 
 | Item | Value |
 |------|-------|
 | proofmarket program id | `6QNd5mHvV7czVkrRNdLPmuUybSwwdPWq9RYuwk5LZuEb` |
+| — program deploy tx | `594wuroznZVgWc9mRpKtcSvti3dSiqY7ioxAZ4zfwwRfYjKWpPvD4L1dxUU1fZCFo2nBqWU64oGwYWuJQEdxhFhA` |
+| — upgrade authority | `7jKowNzrDTttsVEVGJzDpvX19H2hpWsxYcZix5feKxSg` (deploy wallet) |
 | txoracle (settlement target, devnet) | `6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS715wyP2J` |
 | daily-scores-root PDA (epochDay 20634) | `BcLwqHJehs8ut8ycRo6NhCGsrtmRnkZbFMm273SdcPGe` |
 | test-USDC mint | `2MYAvDHmZCnWUC4rMVYstLNniiXHuxo2Z7j7czaHA8LT` |
-| seeded demo market PDA | _(from Step 4)_ |
-| deployed frontend URL | _(from Step 5)_ |
-| resolve tx (Explorer permalink) | _(after sandbox resolve)_ |
+| — mint create tx | `UhX8QkBgeS6G92eFq158CxQCfhtgvCjdWmvvejYQikVDyss7yibxPk4AhHyJ15xgMyNekpPoNoVgoiVG79EMVYV` |
+| seeded demo market PDA (id 1) | `DP4Jkxgm3sNvMKHbjCT1PQF7gCvaGcBMfFMCMkk4pkEP` |
+| — market vault PDA | `FriLxG49MbUouB1ixAona8ZNg4RJVzoVAmn9dULVzWzT` |
+| — createMarket tx | `hYXJHZL8BhtxqWUr7LBu7A5vejgwVodEoLufV4BCcBPParTgZvLSa2nMNew4E1bdWw1t6wxRPS17GQ4hpdUpRBP` |
+| deployed frontend URL | _(Vercel — run Step 5 with your account)_ |
+| resolve tx (Explorer permalink) | _hermetic only — `yarn e2e-replay` (live-devnet resolve is impossible against the historical golden proof; by design)_ |
+
+Explorer: append `?cluster=devnet` to any `https://explorer.solana.com/address/<pubkey>` or
+`https://explorer.solana.com/tx/<sig>` link above.
