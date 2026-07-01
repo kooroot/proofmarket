@@ -1,0 +1,39 @@
+# ProofMarket — ≤5:00 Demo Script & Shot-List
+
+> The video carries the product (matches may be over during judging). Total runtime budget: 5:00.
+
+> **Recording note — what runs today vs. what needs the devnet deploy.** The **hero** (the resolution + Proof Receipt) is reproducible *right now*, hermetically, with `yarn e2e-replay` (in-process SVM, no validator/SOL) and the local frontend (`cd web && npm run dev`) rendering the six-step Proof Receipt from the committed golden bundle. The beats that stake via Phantom, open Solana Explorer permalinks, and show the faucet on a live URL require the devnet deploy (P4.8, funding-gated). Record the hero from the hermetic path if the deploy is not yet live.
+
+## 0:00–0:30 — Hook (trust model)
+- On screen: "Polymarket/UMA resolves by people voting — reveal windows, disputes. Watch a market resolve by math."
+- Cut to the UMA/ProofMarket contrast card (amber vs green).
+
+## 0:30–1:30 — List + Detail
+- Scroll the Market List; pause on a priced market's twin bar ("crowd 61% vs TxLINE fair value 55% — the edge").
+- Open the flagship monotone-goals market; connect Phantom (devnet); stake 50 test-USDC; show tx confirm + Explorer link.
+
+## 1:30–2:00 — Funding once
+- Click "Get 1,000 test USDC" (faucet) — establish: free + reproducible on devnet.
+
+## 2:00–4:00 — THE HERO (~40% of runtime, by design)
+- Trigger settlement via Replay (the captured real `resolve` tx / `yarn e2e-replay`).
+- Reveal the six ProofStep cards in order:
+  1. leaf `{key:1, value:1, period:7}`
+  2. eventStatRoot
+  3. fixture subtree
+  4. daily-root PDA `BcLwqHJehs8ut8ycRo6NhCGsrtmRnkZbFMm273SdcPGe` (click -> Explorer, EXISTS)
+  5. escrow CPI -> `validate_stat` -> inner `Program return: 6pW64g…wyP2J AQ==` (0x01 = TRUE) (click -> Explorer inner instructions)
+  6. per-winner `claim`, USDC lands in the SAME burner (click -> Explorer transfer)
+- Narration foregrounds the nesting: "Our escrow called `validate_stat` as an inner instruction, read `true`, and that bool released the money. No vote. No dispute window. Just math."
+
+## 4:00–4:45 — Side-by-side payoff
+- Green chain + amber UMA card together. Surface "resolved in N seconds, 0 disputes, 0 voters, 1 proof verified" (from the Proof Receipt).
+- Restate the three hooks: it works = Core Functionality; this is the UX = UX & Use Case; the CPI = Code Quality & Logic.
+
+## 4:45–5:00 — Close
+- Deployed devnet URL on screen: "test it yourself, free." Repo link. (Hermetic fallback: `yarn e2e-replay` reproduces the resolution offline.)
+
+## Shot capture checklist
+- [ ] Explorer tab pre-opened on the permanent `resolve` tx (inner-instruction view) — OR the `yarn e2e-replay` terminal receipt if pre-deploy.
+- [ ] Burner wallet that staked == burner that receives the claim (same address visible in both Explorer links).
+- [ ] Faucet mints 1,000 test-USDC live (no purchase, no devnet SOL needed to view data).
