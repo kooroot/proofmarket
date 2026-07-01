@@ -10,9 +10,10 @@ test-ledger
 # Node / package managers (Cargo.lock IS committed for reproducible SBF builds)
 **/node_modules/
 .pnp.*
-# Project standardized on yarn (Anchor.toml package_manager); a stray bun.lock
-# from running `bun` in this tree is an incidental artifact — never commit it.
-bun.lock
+# Bun is a supported first-class runner (bun install / bun run …); its lockfiles
+# ARE committed for reproducible bun installs. Anchor.toml package_manager stays
+# "yarn" only because anchor-cli 0.31 doesn't accept bun there (affects `anchor
+# test` only, which this repo doesn't use — the Makefile drives builds).
 # Next.js frontend (proofmarket/web)
 web/.next/
 web/out/

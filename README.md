@@ -19,6 +19,9 @@ make build             # SBF .so + IDL + TS types — bankrun loads proofmarket 
 yarn e2e-replay        # boots an in-process SVM and runs create → stake ×3 → resolve(validate_stat CPI) → claim
 ```
 
+Prefer [Bun](https://bun.sh)? The whole repo is bun-first too: `bun install && make build && bun run e2e-replay`
+(see **Running with Bun** below).
+
 `make build` needs the pinned anchor + Solana SBF toolchain (see **Pinned toolchain** below); it wraps `anchor build` with the two env vars that make IDL generation deterministic (`RUSTUP_TOOLCHAIN=stable` + `CARGO_ENCODED_RUSTFLAGS=-Awarnings` — the latter suppresses the `procmacro2_semver_exempt` cfg that `anchor-lang-idl` injects and that otherwise breaks `#[derive(Accounts)]` hygiene). Use `make build`, not a bare `anchor build`. It is still fully hermetic — no validator, no RPC, no devnet SOL.
 
 `yarn e2e-replay` then replays the frozen golden fixture entirely inside an **in-process Solana VM** (`solana-bankrun`): it loads the local ABI-compatible `txoracle` fixture program built by `make build` and the frozen daily-root account (`BcLwqHJehs8ut8ycRo6NhCGsrtmRnkZbFMm273SdcPGe`, epochDay 20634) from `tests/fixtures/`, so the exact settlement path reproduces forever — independent of devnet retention, with no local validator, no RPC, and no devnet SOL. The production CPI target is still the real devnet txoracle program id; the local fixture preserves the `validate_stat` discriminator, argument layout, and `bool` return-data contract for deterministic replay. It prints the full **Proof Receipt** (stat leaf → eventStatRoot → fixture sub-tree → daily-root PDA → `validate_stat` TRUE → escrow release), asserts the parimutuel settlement vector, and ends with:
@@ -77,6 +80,26 @@ solana-keygen new -o keys/devnet-deployer.json   # then fund via https://faucet.
 | `cd web && npm install && npm test` | frontend — Proof-Receipt byte-equality render (Vitest) |
 
 All on-chain tests run against an **in-process SVM (`solana-bankrun`)** — they need no local validator, no network, and no devnet SOL.
+
+## Running with Bun
+
+Every `yarn`/`npm` command in this README has a [Bun](https://bun.sh) equivalent (verified on bun ≥ 1.2;
+`bun.lock` and `web/bun.lock` are committed for reproducible installs):
+
+| Task | Bun command |
+|------|-------------|
+| install (root) | `bun install` |
+| hermetic Proof-Receipt replay | `bun run e2e-replay` |
+| full judge gate | `bun run judge-check` (add `CHECK_DEPLOY=1` for the live devnet check) |
+| devnet deploy verification | `bun scripts/check-deploy.ts` — runs natively on the bun runtime, no ts-node |
+| seed a demo market (funded wallet) | `bun scripts/seed.ts` |
+| frontend | `cd web && bun install && bun run dev` (Next.js dev server; `bun run build` / `bun run test` likewise) |
+
+Two notes: `bun install` in `web/` blocks a few dependency postinstalls by default
+(`unrs-resolver`, `tiny-secp256k1`, …) — they are optional native helpers; typecheck, Vitest,
+`next build`, and the dev server all pass without them. And `Anchor.toml`'s
+`package_manager` stays `yarn` only because anchor-cli 0.31 doesn't accept bun there — it
+only affects `anchor test`, which this repo doesn't use (the `Makefile` drives builds).
 
 ## Environment variables (documented here — `.env` files are not committed)
 

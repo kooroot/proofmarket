@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Final judge-testability gate — aggregates every HERMETIC §5.5 gate into one GO/NO-GO.
 # Prereqs (run once): yarn install && make build && (cd web && npm install)
+#   — or with bun:    bun install  && make build && (cd web && bun install)
 # The devnet-deploy items (§5.5 live surface) are funding-gated (P4.8) and intentionally
 # NOT asserted here; see docs/JUDGE-CHECKLIST.md.
 set -uo pipefail
