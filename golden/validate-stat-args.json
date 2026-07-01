@@ -306,8 +306,8 @@
     }
   ],
   "predicate": {
-    "threshold": 2,
-    "comparison": "lessThan"
+    "threshold": 0,
+    "comparison": "greaterThan"
   },
   "statA": {
     "statToProve": {

@@ -77,9 +77,13 @@ function printReceipt(x: ReturnType<typeof buildReceipt>) {
 
 describe("e2e-replay — one-command Proof-Receipt reproduction", () => {
   let receipt: ReturnType<typeof buildReceipt>;
+  let goldenEventStatRoot: number[];
+  let goldenEventsSubTreeRoot: number[];
   before(async () => {
     const r = await runEndToEnd();
     receipt = buildReceipt(r);
+    goldenEventStatRoot = r.bundle.args.statA.eventStatRoot;
+    goldenEventsSubTreeRoot = r.bundle.args.fixtureSummary.eventsSubTreeRoot;
     printReceipt(receipt);
   });
 
@@ -95,8 +99,10 @@ describe("e2e-replay — one-command Proof-Receipt reproduction", () => {
   it("anchors the receipt to the golden daily root + epoch", () => {
     assert.equal(receipt.epochDay, 20634, "epochDay");
     assert.equal(receipt.dailyRoot, DAILY_ROOT, "daily root PDA");
-    assert.equal(receipt.eventStatRoot.length, 32, "eventStatRoot 32 bytes");
-    assert.equal(receipt.eventsSubTreeRoot.length, 32, "eventsSubTreeRoot 32 bytes");
+    // Value-equality vs the golden bundle (implies 32 bytes) — proves resolve recorded the RIGHT roots,
+    // not merely 32 arbitrary bytes.
+    assert.deepEqual(receipt.eventStatRoot, goldenEventStatRoot, "eventStatRoot == golden bundle");
+    assert.deepEqual(receipt.eventsSubTreeRoot, goldenEventsSubTreeRoot, "eventsSubTreeRoot == golden bundle");
   });
 
   it("carries the frozen parimutuel settlement vector", () => {

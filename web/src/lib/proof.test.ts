@@ -17,6 +17,15 @@ describe("adaptProofBundle (§4.6 JSON→Anchor renames)", () => {
   it("renames subTreeProof → fixtureProof", () => { expect(adaptProofBundle(json).fixtureProof).toEqual(json.subTreeProof); });
   it("renames eventStatsSubTreeRoot → eventsSubTreeRoot", () => { expect(adaptProofBundle(json).eventsSubTreeRoot).toEqual(json.summary.eventStatsSubTreeRoot); });
   it("keeps statProof and mainTreeProof identity + updateCount i32", () => {
-    const a = adaptProofBundle(json); expect(a.statProof).toEqual(json.statProof); expect(a.updateCount).toBe(50);
+    const a = adaptProofBundle(json);
+    expect(a.statProof).toEqual(json.statProof);
+    expect(a.mainTreeProof).toEqual(json.mainTreeProof);
+    expect(a.statToProve).toEqual(json.statToProve);
+    expect(a.eventStatRoot).toEqual(json.eventStatRoot);
+    expect(a.fixtureId).toBe(json.summary.fixtureId);
+    expect(a.updateCount).toBe(50);
+    expect(a.minTimestamp).toBe(json.summary.updateStats.minTimestamp);
+    expect(a.maxTimestamp).toBe(json.summary.updateStats.maxTimestamp);
+    expect(a.ts).toBe(json.ts);
   });
 });

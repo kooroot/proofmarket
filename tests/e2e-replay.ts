@@ -17,6 +17,10 @@ describe("e2e replay — golden fixture full lifecycle payout vector", () => {
     assert.equal(m.epochDay, 20634, "epochDay");
     assert.equal(m.dailyRoot.toBase58(), ROOT_PUBKEY.toBase58(), "dailyRoot PDA");
     assert.equal(m.dailyRoot.toBase58(), "BcLwqHJehs8ut8ycRo6NhCGsrtmRnkZbFMm273SdcPGe", "frozen daily root");
+    // Value-equality (not just length): resolve.rs copies these roots verbatim from the proof args,
+    // so the freshly-resolved market must carry the golden bundle's exact bytes.
+    assert.deepEqual(Array.from(m.eventStatRoot as number[]), r.bundle.args.statA.eventStatRoot, "eventStatRoot == golden");
+    assert.deepEqual(Array.from(m.eventsSubTreeRoot as number[]), r.bundle.args.fixtureSummary.eventsSubTreeRoot, "eventsSubTreeRoot == golden");
   });
 
   it("records the correct parimutuel pools + fee + payout pool", () => {
