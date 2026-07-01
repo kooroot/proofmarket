@@ -1,5 +1,6 @@
 "use client";
 import { ProofStep } from "./ProofStep";
+import { VerifyToggle } from "./VerifyToggle";
 import type { AnchorBundle } from "@/lib/proof";
 import type { ValidateResult } from "@/lib/validate-result";
 import { explorerAddr, explorerTx } from "@/lib/constants";
@@ -8,6 +9,7 @@ export function ProofChain({ bundle, dailyRoot, epochDay, rootExists, validate, 
   return (
     <div className="space-y-3">
       <ProofStep idx={0} title="Stat leaf" body={`{key:${bundle.statToProve.key}, value:${bundle.statToProve.value}} → P1 goals = ${bundle.statToProve.value}.`} source="/api/scores/stat-validation" />
+      <VerifyToggle bundle={bundle} enabled={process.env.NEXT_PUBLIC_FOLD_VERIFIED === "1"} />
       <ProofStep idx={1} title="leaf → eventStatRoot" body={`statProof[${bundle.statProof.length}] folds to eventStatRoot ${head(bundle.eventStatRoot)}`} source="/api/scores/stat-validation" />
       <ProofStep idx={2} title="eventStatRoot → fixture sub-tree" body={`fixtureProof[${bundle.fixtureProof.length}] → eventsSubTreeRoot ${head(bundle.eventsSubTreeRoot)} · fixtureId ${bundle.fixtureId} · updateCount ${bundle.updateCount}`} source="/api/scores/stat-validation" />
       <ProofStep idx={3} title="fixture sub-tree → daily root (on-chain PDA)" body={`mainTreeProof[${bundle.mainTreeProof.length}] · epochDay ${epochDay}`} link={explorerAddr(dailyRoot)} linkLabel={`Explorer → daily-root PDA ${rootExists ? "(EXISTS)" : "(checking…)"}`} green={rootExists} source={`PDA ["daily_scores_roots", ${epochDay} u16 LE]`} />
