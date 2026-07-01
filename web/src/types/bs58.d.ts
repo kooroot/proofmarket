@@ -4,6 +4,9 @@
 declare module "bs58" {
   const bs58: {
     encode(source: Uint8Array | number[]): string;
+    // Runtime returns a Node Buffer (Buffer extends Uint8Array, so tsc won't flag it). Callers MUST
+    // Uint8Array.from() the result before handing it to @noble/curves APIs (e.g. Keypair.fromSecretKey):
+    // a cross-realm Buffer fails @noble's `instanceof Uint8Array` check under jsdom. See lib/burner.ts.
     decode(str: string): Uint8Array;
   };
   export default bs58;
