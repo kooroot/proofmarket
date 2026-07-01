@@ -3,6 +3,7 @@ import { renderTitle } from "./title.ts";
 import { deriveMarketId } from "./marketId.ts";
 import { marketPda, vaultPda } from "./pda.ts";
 import { V1_TEMPLATES, templateToPredicate } from "./templates.ts";
+import { resolveAfterTsMs } from "./resolveWindow.ts";
 import type { Fixture, MarketDefinition, MarketDefinitionBase } from "./types.ts";
 
 export { V1_TEMPLATES };
@@ -27,6 +28,7 @@ export function buildCatalogForFixture(fx: Fixture): MarketDefinition[] {
       marketPda: market.toBase58(),
       vaultPda: vaultPda(market).toBase58(),
       lockTs: fx.StartTime,
+      resolveAfterTs: resolveAfterTsMs(fx.StartTime), // kickoff + 150 min (A.1)
     };
   });
 }

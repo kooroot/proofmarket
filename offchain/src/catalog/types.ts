@@ -23,6 +23,7 @@ export interface MarketDefinition extends MarketDefinitionBase {
   marketPda: string;   // base58
   vaultPda: string;    // base58
   lockTs: number;      // = fixture StartTime (ms) — Market lock boundary
+  resolveAfterTs: number; // = resolveAfterTsMs(StartTime); on-chain resolve_after_ts_ms (spec §2.8)
 }
 
 /** v1 template: single-stat GreaterThan over a monotone key. */
