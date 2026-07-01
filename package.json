@@ -3,7 +3,8 @@
   "scripts": {
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
     "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
-    "e2e-replay": "ts-mocha -p ./tsconfig.json -t 1000000 tests/e2e-replay-receipt.ts"
+    "e2e-replay": "ts-mocha -p ./tsconfig.json -t 1000000 tests/e2e-replay-receipt.ts",
+    "judge-check": "bash scripts/judge-check.sh"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.31.1"
