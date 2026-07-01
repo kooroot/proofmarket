@@ -39,4 +39,7 @@ pub mod proofmarket {
     pub fn refund(ctx: Context<Refund>) -> Result<()> {
         instructions::refund::handler(ctx)
     }
+    pub fn close_market(ctx: Context<CloseMarket>) -> Result<()> {
+        instructions::close_market::handler(ctx)
+    }
 }
