@@ -69,6 +69,12 @@ export const vaultPda = (market: PublicKey) =>
 export const positionPda = (market: PublicKey, owner: PublicKey) =>
   PublicKey.findProgramAddressSync([Buffer.from("position"), market.toBuffer(), owner.toBuffer()], PID)[0];
 
+export const dailyRootPda = (epochDay: number): PublicKey => {
+  const seed = Buffer.alloc(2);
+  seed.writeUInt16LE(epochDay, 0);
+  return PublicKey.findProgramAddressSync([Buffer.from("daily_scores_roots"), seed], TXORACLE_ID)[0];
+};
+
 export async function warpToUnix(context: ProgramTestContext, unixSecs: number) {
   const c = await context.banksClient.getClock();
   context.setClock(new Clock(c.slot, c.epochStartTimestamp, c.epoch, c.leaderScheduleEpoch, BigInt(unixSecs)));
