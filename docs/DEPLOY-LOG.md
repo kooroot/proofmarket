@@ -6,14 +6,14 @@
 
 This is the recorded, click-through-verifiable log of the funded devnet pass described in
 [`DEPLOY.md`](./DEPLOY.md). Everything here is on-chain and permalinked — open any link to confirm.
-The runbook itself is reproducible via the committed scripts: `yarn seed`, `yarn check-deploy`.
+The runbook itself is reproducible via the committed scripts: `npm run seed`, `npm run check-deploy`.
 
 ---
 
 ## TL;DR — verify in one command
 
 ```bash
-yarn check-deploy      # read-only, no wallet needed
+npm run check-deploy   # read-only, no wallet needed
 # → CHECK-DEPLOY: GO ✓ — live devnet surface verified
 ```
 
@@ -113,7 +113,7 @@ whose `resolve_after_ts` is in the future. A live-devnet resolve is therefore im
 proof by design — the resolved **Proof Receipt** is produced hermetically via `yarn e2e-replay`
 against a clock-controlled sandbox that clones the same daily-root.
 
-## Step 5 — Verify the live surface (`yarn check-deploy`)
+## Step 5 — Verify the live surface (`npm run check-deploy`)
 
 Read-only, no wallet. Exit 0 = GO.
 
@@ -130,7 +130,7 @@ Read-only, no wallet. Exit 0 = GO.
 CHECK-DEPLOY: GO ✓ — live devnet surface verified
 ```
 
-## Full gate — hermetic + live in one command (`CHECK_DEPLOY=1 yarn judge-check`)
+## Full gate — hermetic + live in one command (`CHECK_DEPLOY=1 npm run judge-check`)
 
 ```
 == repo hygiene ==                       ✓ PASS

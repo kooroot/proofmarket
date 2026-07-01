@@ -26,7 +26,7 @@ gate "demo script"                     demo.log      "$R/scripts/check-demo-scri
 gate "tech endpoints"                  tech.log      "$R/scripts/check-tech-endpoints.sh"
 gate "api feedback"                    api.log       "$R/scripts/check-api-feedback.sh"
 gate "frontend Proof-Receipt (vitest)" web.log       bash -c "cd '$R/web' && npm test"
-gate "hermetic E2E replay (bankrun)"   e2e.log       bash -c "cd '$R' && yarn e2e-replay"
+gate "hermetic E2E replay (bankrun)"   e2e.log       bash -c "cd '$R' && npm run e2e-replay"
 
 printf '\n== devnet deploy GO ==\n'
 if [ "${CHECK_DEPLOY:-0}" = "1" ]; then
@@ -42,7 +42,11 @@ fi
 
 printf '\n'
 if [ "$fail" -eq 0 ]; then
-  echo "JUDGE-CHECK: ALL GATES GREEN (devnet deploy is LIVE — run with CHECK_DEPLOY=1 to include it) — submission gate PASS"
+  if [ "${CHECK_DEPLOY:-0}" = "1" ]; then
+    echo "JUDGE-CHECK: ALL GATES GREEN (devnet deploy is LIVE) — submission gate PASS"
+  else
+    echo "JUDGE-CHECK: ALL GATES GREEN (hermetic only; set CHECK_DEPLOY=1 to include live devnet) — submission gate PASS"
+  fi
   exit 0
 else
   echo "JUDGE-CHECK: NO-GO — one or more hermetic gates FAILED (see ✗ above)"

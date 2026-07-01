@@ -77,7 +77,7 @@ against a **clock-controlled sandbox** that clones the daily-root — never a li
 ## Step 4b — Verify the live surface (read-only, no wallet)
 
 ```bash
-yarn check-deploy                 # or: CHECK_DEPLOY=1 yarn judge-check  (folds it into the full gate)
+npm run check-deploy              # or: CHECK_DEPLOY=1 npm run judge-check  (folds it into the full gate)
 ```
 GO: `CHECK-DEPLOY: GO ✓` — asserts the program is deployed at `declare_id`, the pinned mint exists
 (decimals 6, authority = deploy wallet), the canonical txoracle daily-root is present (settlement
