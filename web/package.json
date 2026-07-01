@@ -9,7 +9,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "postinstall": "rm -rf node_modules/@solana/wallet-adapter-react/node_modules/@types/react node_modules/@solana-mobile/wallet-standard-mobile/node_modules/@types/react node_modules/@solana-mobile/mobile-wallet-adapter-protocol-web3js/node_modules/@types/react"
+    "postinstall": "find node_modules -path '*/node_modules/@types/react' -type d -prune -exec rm -rf {} +"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
