@@ -80,6 +80,18 @@ export async function warpToUnix(context: ProgramTestContext, unixSecs: number) 
   context.setClock(new Clock(c.slot, c.epochStartTimestamp, c.epoch, c.leaderScheduleEpoch, BigInt(unixSecs)));
 }
 
+// Advance the bank one slot to mint a fresh blockhash WITHOUT moving wall-clock time (re-pins the
+// current unix timestamp so any pending time-gate stays satisfied). bankrun dedups by transaction
+// signature, so a test that resubmits a byte-identical message — e.g. closeMarket first expecting a
+// revert, then expecting success — is otherwise rejected with "already been processed" because both
+// share the context's single blockhash. Call this between such resubmissions.
+export async function bumpBlockhash(context: ProgramTestContext) {
+  const c = await context.banksClient.getClock();
+  const nextSlot = c.slot + 1n;
+  context.warpToSlot(nextSlot);
+  context.setClock(new Clock(nextSlot, c.epochStartTimestamp, c.epoch, c.leaderScheduleEpoch, c.unixTimestamp));
+}
+
 export function loadGolden() {
   const g = JSON.parse(readFileSync(__dirname + "/../golden/validate-stat-args.json", "utf8"));
   const node = (n: any) => ({ hash: n.hash, isRightSibling: n.isRightSibling });

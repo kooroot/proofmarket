@@ -3,7 +3,7 @@ import { BN } from "@coral-xyz/anchor";
 import { Keypair, ComputeBudgetProgram } from "@solana/web3.js";
 import { getAccount } from "spl-token-bankrun";
 import {
-  setup, makeMint, fundUser, marketPda, vaultPda, positionPda, warpToUnix,
+  setup, makeMint, fundUser, marketPda, vaultPda, positionPda, warpToUnix, bumpBlockhash,
   loadGolden, ROOT_PUBKEY, TXORACLE_ID,
 } from "./helpers";
 
@@ -64,6 +64,7 @@ describe("close_market (fee+dust sweep + rent reclaim)", () => {
 
     // warp past resolved_at + CLOSE_GRACE_MS, capture creator rent baseline, then close.
     await warpToUnix(context, Math.ceil(g.maxTsMs / 1000) + 1 + CLOSE_GRACE_SECS + 1);
+    await bumpBlockhash(context); // this closeMarket is byte-identical to the reverted one above — needs a fresh blockhash
     const creatorBefore = await context.banksClient.getBalance(payer.publicKey);
     await program.methods.closeMarket()
       .accounts({ creator: payer.publicKey, market, vault: vaultPda(market), feeDestination: feeDest, mint }).rpc();
@@ -134,6 +135,7 @@ describe("close_market (fee+dust sweep + rent reclaim)", () => {
       .signers([A]).rpc();
 
     // close now SUCCEEDS: only the 400_000 fee residual remains, swept to fee_destination.
+    await bumpBlockhash(context); // this closeMarket is byte-identical to the reverted one above — needs a fresh blockhash
     await program.methods.closeMarket()
       .accounts({ creator: payer.publicKey, market, vault: vaultPda(market), feeDestination: feeDest, mint }).rpc();
 
