@@ -168,9 +168,26 @@ remaining balance covers many redeploys. No real funds involved — devnet + tes
   - funding tx (0.2 SOL): [`5JMHuPj4…`](https://explorer.solana.com/tx/5JMHuPj47ZXigTYURZqBavtdxBvKrM5ThjsjCPfuEbKHR2fY9C9w9juUJnfPamx2MazxV5dUwX3LHp15EgBGtgr4?cluster=devnet)
   - `scripts/check-deploy.ts` now asserts the mint authority == the faucet key.
 
-## What remains (needs your accounts, not automatable here)
+## Update 2026-07-02 — Vercel production deploy (frontend LIVE)
 
-- **Frontend deploy (Vercel):** run `DEPLOY.md` Step 5 with your Vercel account. Env vars the code
-  reads: 4× `NEXT_PUBLIC_*` + server-only `TXLINE_JWT` / `TXLINE_API_TOKEN` /
-  `FAUCET_AUTHORITY_SECRET` (bs58 of `keys/faucet-authority.json`). This produces the
-  click-through demo URL for judges.
+- Project `kooroots-projects/proofmarket` (root = `web/`), CLI deploy, all 7 env vars
+  (`DEPLOY.md` Step 5 table) set for production+preview, server secrets marked Sensitive.
+- **Public production URL: https://proofmarket-tan.vercel.app** — the bare `proofmarket.vercel.app`
+  subdomain belongs to an unrelated project, and the team-scoped alias
+  `proofmarket-kooroots-projects.vercel.app` 302s to Vercel SSO. Judges get the `-tan` URL.
+- One production bug found & fixed on the spot: `vercel env add < file` keeps the trailing
+  newline in the stored value and `bs58.decode` throws on it → faucet 500. Fixed at the env
+  boundary (`.trim()` in the faucet route, commit `3cee01d`) and re-verified locally with a
+  deliberately newline-polluted secret before redeploying.
+- **End-to-end verification on the production URL (2026-07-02):**
+  - `GET /` → 200, title "ProofMarket — No vote. No dispute window. Just math."
+  - `POST /api/faucet/usdc` (fresh wallet `7Bft1MJN…`) → 200, mint sig
+    [`33747afM…`](https://explorer.solana.com/tx/33747afMzDs5daKiVCdtsFjZKHC655X6H1bjpCwLoB6acu4AFD1VBvSyGhYw8aSoFfPbxF19P3guM1iHRVnHoi9f?cluster=devnet),
+    1 000 USDC minted + `solGranted: true` (0.01 SOL)
+  - `GET /api/txline/proof/18172280?seq=1068&statKey=1` → 200; scores + odds snapshots → 200
+
+## What remains (user-side only)
+
+- Demo video (script ready) and the hackathon submission form (deadline 2026-07-19 23:59 UTC).
+- `TXLINE_JWT` is a ~30-day guest token (fetched 2026-07-02) — refresh it in Vercel env
+  (`POST /auth/guest/start`, then redeploy) if judging happens after ~2026-07-28.

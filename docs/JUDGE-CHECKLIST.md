@@ -22,14 +22,13 @@ now all in place; they are intentionally NOT asserted by the offline hermetic ga
 | Program + pinned test-USDC mint deployed on devnet at `declare_id` | `check-deploy.ts` (`CHECK_DEPLOY=1`) | ✅ **LIVE** |
 | Pre-seeded demo market on devnet (golden 60 YES / 40 NO, 3 positions, 100 USDC escrow) | `check-deploy.ts` (`CHECK_DEPLOY=1`) | ✅ **LIVE** (OPEN) |
 | Pre-seeded **Resolved** market + permanent resolve tx | — | ⚪ by-design hermetic — live resolve impossible against the historical golden proof; receipt via `e2e-replay` |
-| Test-USDC faucet mints 1000 to any pubkey | mint LIVE (`check-deploy.ts`); faucet endpoint in `web/` | 🟡 mint LIVE; faucet UI needs frontend deploy |
-| Server-side free SL1 data (judge needs no devnet SOL to SEE data) | `web/` server route + `TXLINE_API_TOKEN` | 🟡 needs frontend deploy |
-| Deployed devnet URL: faucet → stake → Proof Receipt + Explorer permalinks | Vercel deploy (`DEPLOY.md` Step 5) | 🟡 on-chain surface LIVE; needs frontend deploy |
+| Test-USDC faucet mints 1000 to any pubkey | `POST https://proofmarket-tan.vercel.app/api/faucet/usdc` | ✅ **LIVE** (verified 2026-07-02: mint sig `33747afM…`, 1000 USDC + 0.01 SOL grant to a fresh wallet) |
+| Server-side free SL1 data (judge needs no devnet SOL to SEE data) | `/api/txline/{proof,scores,odds}/…` on the deployed URL | ✅ **LIVE** (all three proxies 200 against golden fixture 18172280; SL1 apiToken activated on-chain 2026-07-02) |
+| Deployed devnet URL: faucet → stake → Proof Receipt + Explorer permalinks | **https://proofmarket-tan.vercel.app** (Vercel production; team-scoped alias is SSO-walled — use this URL) | ✅ **LIVE** |
 
 **Bottom line:** every hermetic claim is reproducible offline today (`bash scripts/judge-check.sh` = submission GO),
-and the **live devnet surface is deployed + verified** (`CHECK_DEPLOY=1 npm run judge-check`; full record in
-`DEPLOY-LOG.md`). The remaining 🟡 items are the hosted-frontend surface only — their on-chain prerequisites
-(program, pinned mint, seeded market) are all live; standing up the Vercel URL (`DEPLOY.md` Step 5, needs your
-Vercel account + server-only `TXLINE_API_TOKEN`/`KEEPER_KEYPAIR`) turns them green. A live **Resolved** market
-(⚪) is not achievable with the historical golden proof by design — the Resolved Proof Receipt is produced by the
-hermetic sandbox resolve.
+the **live devnet surface is deployed + verified** (`CHECK_DEPLOY=1 npm run judge-check`; full record in
+`DEPLOY-LOG.md`), and the **hosted frontend is live at https://proofmarket-tan.vercel.app** (faucet mint,
+SL1 data proxies, and the market UI all verified end-to-end on 2026-07-02 — see the DEPLOY-LOG update section).
+The only non-green row, a live **Resolved** market (⚪), is not achievable with the historical golden proof by
+design — the Resolved Proof Receipt is produced by the hermetic sandbox resolve.
