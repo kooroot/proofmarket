@@ -154,8 +154,23 @@ JUDGE-CHECK: ALL GATES GREEN (devnet deploy is LIVE) — submission gate PASS
 Program rent (~2.83 SOL) is held by the ProgramData account and is recoverable on close; the
 remaining balance covers many redeploys. No real funds involved — devnet + test-USDC only.
 
+## Update 2026-07-02 — TxLINE access + faucet-key hardening (pre-frontend-deploy)
+
+- **SL1 access bootstrapped** with the deploy wallet: guest JWT (`POST /auth/guest/start`, ~30d) +
+  on-chain `subscribe(serviceLevelId=1, weeks=4)` (weeks **must be a multiple of 4** — the deployed
+  program rejects the examples' `weeks=1` with `InvalidWeeks` 6041) + `POST /api/token/activate` →
+  live `apiToken`. Smoke-tested `GET /api/scores/historical/18172280` → **200**.
+- **Mint authority moved off the deploy wallet** to a dedicated low-privilege faucet key, so the
+  frontend host only ever holds a key that can mint test-USDC and spend its own gas SOL — never the
+  program upgrade authority:
+  - faucet key: `H6S9JH7GaHoKph193EMYPMXajdUqsY6Jp3hm6BKt2fUC` (`keys/faucet-authority.json`, gitignored)
+  - authorize tx: [`3bVNkLZx…`](https://explorer.solana.com/tx/3bVNkLZxTPNQSGrUBir6rFihZCtsMqd7adp93Rq7AK2PosQ1Jbj8V1Y7nRC9VgmG1Whr4o9EKbXiZjwXDZhWFqdd?cluster=devnet)
+  - funding tx (0.2 SOL): [`5JMHuPj4…`](https://explorer.solana.com/tx/5JMHuPj47ZXigTYURZqBavtdxBvKrM5ThjsjCPfuEbKHR2fY9C9w9juUJnfPamx2MazxV5dUwX3LHp15EgBGtgr4?cluster=devnet)
+  - `scripts/check-deploy.ts` now asserts the mint authority == the faucet key.
+
 ## What remains (needs your accounts, not automatable here)
 
-- **Frontend deploy (Vercel):** run `DEPLOY.md` Step 5 with your Vercel account + server-only
-  `TXLINE_API_TOKEN` / `KEEPER_KEYPAIR`. Point it at the addresses above
-  (`NEXT_PUBLIC_DEMO_MARKET=DP4Jkxgm…`). This produces the click-through demo URL for judges.
+- **Frontend deploy (Vercel):** run `DEPLOY.md` Step 5 with your Vercel account. Env vars the code
+  reads: 4× `NEXT_PUBLIC_*` + server-only `TXLINE_JWT` / `TXLINE_API_TOKEN` /
+  `FAUCET_AUTHORITY_SECRET` (bs58 of `keys/faucet-authority.json`). This produces the
+  click-through demo URL for judges.

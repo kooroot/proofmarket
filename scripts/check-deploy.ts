@@ -16,7 +16,9 @@ const PROGRAM = new PublicKey("6QNd5mHvV7czVkrRNdLPmuUybSwwdPWq9RYuwk5LZuEb");
 const MINT = new PublicKey("2MYAvDHmZCnWUC4rMVYstLNniiXHuxo2Z7j7czaHA8LT");
 const TXORACLE = new PublicKey("6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS715wyP2J");
 const DAILY_ROOT = new PublicKey("BcLwqHJehs8ut8ycRo6NhCGsrtmRnkZbFMm273SdcPGe");
-const DEPLOYER = new PublicKey("7jKowNzrDTttsVEVGJzDpvX19H2hpWsxYcZix5feKxSg");
+// Dedicated low-privilege faucet signer — holds ONLY the test-USDC mint authority (moved off the
+// deploy wallet on 2026-07-02 so the program upgrade authority never ships to the frontend host).
+const FAUCET_AUTHORITY = new PublicKey("H6S9JH7GaHoKph193EMYPMXajdUqsY6Jp3hm6BKt2fUC");
 const MARKET_ID = new BN(1);
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -52,8 +54,8 @@ const check = (label: string, ok: boolean, detail = "") => {
 
   try {
     const mint = await withRetry(() => getMint(connection, MINT));
-    check("pinned test-USDC mint", mint.decimals === 6 && !!mint.mintAuthority?.equals(DEPLOYER),
-      `decimals ${mint.decimals}, authority ${mint.mintAuthority?.toBase58().slice(0, 8)}…`);
+    check("pinned test-USDC mint", mint.decimals === 6 && !!mint.mintAuthority?.equals(FAUCET_AUTHORITY),
+      `decimals ${mint.decimals}, authority ${mint.mintAuthority?.toBase58().slice(0, 8)}… (dedicated faucet key)`);
   } catch { check("pinned test-USDC mint", false, "not found"); }
 
   const root = await withRetry(() => connection.getAccountInfo(DAILY_ROOT));

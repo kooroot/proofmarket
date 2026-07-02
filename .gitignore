@@ -33,3 +33,6 @@ offchain/cache/
 # Program upgrade-authority keypair stays private (declared program id is public)
 **/target/deploy/*-keypair.json
 keys/
+# TxODDS txoracle IDL is fetched, not shipped (offchain/src/ingestion/subscribe.ts):
+#   anchor idl fetch 6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS715wyP2J --provider.cluster devnet -o offchain/src/idl/txoracle.json
+offchain/src/idl/

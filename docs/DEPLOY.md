@@ -41,6 +41,10 @@ spl-token create-token --decimals 6 keys/usdc-mint.json -u devnet \
   --mint-authority 7jKowNzrDTttsVEVGJzDpvX19H2hpWsxYcZix5feKxSg   # the deploy wallet mints test-USDC
 ```
 GO: the printed token address == `USDC_MINT` (`2MYAvD…HA8LT`).
+**Post-deploy hardening (done 2026-07-02):** the mint authority was then moved to a dedicated
+low-privilege faucet key so the frontend faucet never holds the program upgrade authority:
+`solana-keygen new -o keys/faucet-authority.json && spl-token authorize <mint> mint <faucet-pubkey>`
+(current authority: `H6S9JH7GaHoKph193EMYPMXajdUqsY6Jp3hm6BKt2fUC`, funded ~0.2 SOL for ATA rent + gas grants).
 **Alt (no pinned keypair):** `spl-token create-token --decimals 6 -u devnet` → record the new address and use it everywhere `NEXT_PUBLIC_USDC_MINT` appears below.
 
 ## Step 3 — Deploy the program (reuse the same program keypair forever)
@@ -96,7 +100,7 @@ table is the authoritative list; anything else is ignored):
 | `NEXT_PUBLIC_FOLD_VERIFIED` | client, optional | `1` to enable the receipt "verify" fold |
 | `TXLINE_JWT` | **server-only** | guest JWT from `POST /auth/guest/start` (expires — refresh before judging) |
 | `TXLINE_API_TOKEN` | **server-only** | pre-activated free SL1 `apiToken` (judges need no purchase) |
-| `FAUCET_AUTHORITY_SECRET` | **server-only** | **bs58-encoded** secret key of the **mint authority** (the deploy wallet — `mintTo` fails with any other signer). Convert the JSON keypair: `cd web && bun -e 'console.log(require("bs58").encode(Uint8Array.from(require("../keys/devnet-deployer.json"))))'` |
+| `FAUCET_AUTHORITY_SECRET` | **server-only** | **bs58-encoded** secret key of the **mint authority** — the dedicated `keys/faucet-authority.json` (`H6S9JH7GaHoKph193EMYPMXajdUqsY6Jp3hm6BKt2fUC`), NOT the deploy wallet: mint authority was moved to this low-privilege key on 2026-07-02 so the program upgrade authority never ships to the frontend host. Convert: `cd web && bun -e 'console.log(require("bs58").encode(Uint8Array.from(require("../keys/faucet-authority.json"))))'` |
 
 The faucet route is already throttled (1 mint/pubkey/hour + a global 2 SOL/hour gas-grant budget),
 and mark the three server-only values "Sensitive" in Vercel. `KEEPER_KEYPAIR` from the README env
@@ -131,7 +135,7 @@ preview URLs sit behind a Vercel login wall.
 | seeded demo market PDA (id 1) | `DP4Jkxgm3sNvMKHbjCT1PQF7gCvaGcBMfFMCMkk4pkEP` |
 | — market vault PDA | `FriLxG49MbUouB1ixAona8ZNg4RJVzoVAmn9dULVzWzT` |
 | — createMarket tx | `hYXJHZL8BhtxqWUr7LBu7A5vejgwVodEoLufV4BCcBPParTgZvLSa2nMNew4E1bdWw1t6wxRPS17GQ4hpdUpRBP` |
-| deployed frontend URL | _(Vercel — run Step 5 with your account)_ |
+| deployed frontend URL | **https://proofmarket-tan.vercel.app** (Vercel production, deployed 2026-07-02 — use this URL, not the team-scoped alias: `proofmarket-kooroots-projects.vercel.app` sits behind Vercel SSO) |
 | resolve tx (Explorer permalink) | _hermetic only — `yarn e2e-replay` (live-devnet resolve is impossible against the historical golden proof; by design)_ |
 
 Explorer: append `?cluster=devnet` to any `https://explorer.solana.com/address/<pubkey>` or

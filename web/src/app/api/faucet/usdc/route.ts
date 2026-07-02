@@ -14,7 +14,9 @@ export async function POST(req: NextRequest) {
   if (!isValidPubkey(pubkey)) return NextResponse.json({ error: "invalid pubkey" }, { status: 400 });
   if (!allow(pubkey, seen, Date.now())) return NextResponse.json({ error: "throttled" }, { status: 429 });
   const conn = getConnection();
-  const authority = Keypair.fromSecretKey(Uint8Array.from(bs58.decode(process.env.FAUCET_AUTHORITY_SECRET!)));
+  // trim(): env managers that read values from stdin (e.g. `vercel env add < file`) keep a
+  // trailing newline, and bs58.decode throws "Non-base58 character" on any whitespace.
+  const authority = Keypair.fromSecretKey(Uint8Array.from(bs58.decode(process.env.FAUCET_AUTHORITY_SECRET!.trim())));
   const owner = new PublicKey(pubkey);
   const ata = await getOrCreateAssociatedTokenAccount(conn, authority, USDC_MINT, owner);
   const sig = await mintTo(conn, authority, USDC_MINT, ata.address, authority, Number(AMOUNT));
