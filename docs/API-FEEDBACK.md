@@ -17,7 +17,10 @@ as a gist/PR.
    fit — there is no chunking escape (all proofs must ride in one `validate_stat` call). So a consumer MUST pin to
    low-event fixtures (`statProof + subTree + mainTree ≤ 23 nodes`) or the settlement tx is unsendable. CU is not
    the bottleneck: inner `validate_stat` ≈ **205,264** (wrapper ≈ 210,769), well under the 1.4M budget. The API
-   would benefit from documenting this node-count ceiling explicitly.
+   would benefit from documenting this node-count ceiling explicitly. One CU footgun confirmed **on devnet**
+   (standalone tx `3PwENbNm…`, 2026-07-02, **205,300 CU**): that figure exceeds the **200k default
+   per-instruction budget**, so without an explicit `ComputeBudgetProgram.setComputeUnitLimit` the call dies at
+   the CU meter even for this SMALL golden proof — docs should tell callers to request compute units.
 4. **Two IDLs disagree (a silent-failure trap):** the shipped standalone `idl/txoracle.json` is **v1.4.7** and
    MISSES `"returns": "bool"` on `validate_stat`; only the **v1.5.2** IDL (referenced in `documentation/…/devnet.mdx`)
    declares it. A client generated from the stale v1.4.7 IDL silently fails to decode the return value — the call

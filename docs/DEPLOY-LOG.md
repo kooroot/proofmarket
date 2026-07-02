@@ -186,8 +186,30 @@ remaining balance covers many redeploys. No real funds involved — devnet + tes
     1 000 USDC minted + `solGranted: true` (0.01 SOL)
   - `GET /api/txline/proof/18172280?seq=1068&statKey=1` → 200; scores + odds snapshots → 200
 
+## Update 2026-07-02 (later) — standalone `validate_stat` LANDED on devnet + judge-path fixes
+
+- **Permanent on-devnet CPI artifact:** a standalone top-level `validate_stat` call against the
+  REAL devnet txoracle, carrying the frozen golden proof, landed and returned TRUE:
+  [`3PwENbNm…`](https://explorer.solana.com/tx/3PwENbNmQBESsnzYWrrcEwGvqfug4ZWmHZeMr7PBRJxtoGUNbyoPPiG6VeDjxGGCA2ZQmNNpUysx2mLiYUMypTMy?cluster=devnet)
+  — log shows `Program return: 6pW64g… AQ==`, consumed 205,300 CU (needs an explicit
+  ComputeBudget ix; the 200k default is NOT enough — see `scripts/land-validate-stat.ts`).
+  This is the on-chain twin of the hermetic bankrun CPI: same proof, same discriminator, same
+  bool contract, now clickable on Explorer.
+- **Judge-path fixes after a clean-clone audit** (commits `83ea892`, `d97c515`, `8ddaba3`):
+  all five gate scripts derived their repo root from a hardcoded dev path (dead on any other
+  machine); `yarn e2e-replay` required the gitignored `keys/usdc-mint.json` (ENOENT on clean
+  clones — now falls back to a throwaway keypair); `check-deploy.ts` asserted the frozen seed
+  snapshot and reported NO-GO after a real user stake (now asserts invariants: OPEN, pools ≥
+  60/40 baseline, positions ≥ 3, vault == yesPool+noPool). Re-verified from a fresh
+  `git clone` off GitHub: `yarn install && make build && yarn e2e-replay` (4 passing) and
+  `CHECK_DEPLOY=1 bash scripts/judge-check.sh` → ALL GATES GREEN.
+- **Faucet runway:** topped the faucet key up 0.3 SOL from the deployer
+  ([`C4dHxP9c…`](https://explorer.solana.com/tx/C4dHxP9cgzbCu1WeUKE3cmdriGEkaxrKWJ6EcszkSCY7AKJZt85kfTQDauhEM7db61FDhjNq3UuneiXuWBXPo8c?cluster=devnet))
+  → 0.4497 SOL ≈ 36 fresh-wallet grants.
+
 ## What remains (user-side only)
 
 - Demo video (script ready) and the hackathon submission form (deadline 2026-07-19 23:59 UTC).
-- `TXLINE_JWT` is a ~30-day guest token (fetched 2026-07-02) — refresh it in Vercel env
-  (`POST /auth/guest/start`, then redeploy) if judging happens after ~2026-07-28.
+- `TXLINE_JWT` expires **2026-08-01 01:29 UTC** (decoded from the token). Refresh it on
+  ~2026-07-18 so a fresh 30-day token covers the whole judging window:
+  `POST /auth/guest/start` → update `TXLINE_JWT` in Vercel env → redeploy.

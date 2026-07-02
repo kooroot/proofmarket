@@ -34,6 +34,7 @@
 - Deployed devnet URL on screen — **https://proofmarket-tan.vercel.app** — "test it yourself, free." Repo link `github.com/kooroot/proofmarket`. (Hermetic fallback: `yarn e2e-replay` reproduces the resolution offline.)
 
 ## Shot capture checklist
+- [ ] Explorer tab pre-opened on the **standalone devnet `validate_stat` tx** [`3PwENbNm…`](https://explorer.solana.com/tx/3PwENbNmQBESsnzYWrrcEwGvqfug4ZWmHZeMr7PBRJxtoGUNbyoPPiG6VeDjxGGCA2ZQmNNpUysx2mLiYUMypTMy?cluster=devnet) — the golden proof validated by the REAL txoracle, `Program return: … AQ==` visible in the log.
 - [ ] The `yarn e2e-replay` terminal receipt for the resolve/claim close-up (the live demo market is OPEN by design — no on-devnet resolve tx exists to permalink; the replay prints the real CPI receipt deterministically).
 - [ ] Burner wallet that staked == burner that receives the claim (same address visible in both Explorer links).
 - [ ] Faucet mints 1,000 test-USDC live (no purchase, no devnet SOL needed to view data).
