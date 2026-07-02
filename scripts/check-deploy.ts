@@ -1,6 +1,8 @@
 // Devnet deploy verification (read-only — no wallet needed). Confirms the live surface a judge
 // would see: proofmarket deployed at declare_id, the pinned test-USDC mint, the canonical txoracle
-// daily-scores root (the settlement anchor), and the seeded OPEN demo market (golden 60/40 vector).
+// daily-scores root (the settlement anchor), and the seeded OPEN demo market. Market checks are
+// INVARIANTS, not a frozen snapshot — the market is live and anyone (including judges) can stake,
+// which only grows the pools past the seeded 60/40 baseline.
 //
 //   ANCHOR_PROVIDER_URL=https://api.devnet.solana.com npx ts-node --transpile-only scripts/check-deploy.ts
 //
@@ -66,10 +68,12 @@ const check = (label: string, ok: boolean, detail = "") => {
     const m: any = await withRetry(() => program.account.market.fetch(market));
     const vaultBal = Number((await withRetry(() => connection.getTokenAccountBalance(vault))).value.amount);
     check("demo market seeded + OPEN", m.state === 0, `state ${m.state}`);
-    check("golden pools (YES 60 / NO 40 USDC)", m.yesPool.toNumber() === 60_000_000 && m.noPool.toNumber() === 40_000_000,
+    check("pools at/above seeded baseline (YES >= 60 / NO >= 40 USDC)",
+      m.yesPool.toNumber() >= 60_000_000 && m.noPool.toNumber() >= 40_000_000,
       `YES ${m.yesPool.toNumber() / 1e6} / NO ${m.noPool.toNumber() / 1e6}`);
-    check("3 staked positions", m.totalPositions === 3, `pos ${m.totalPositions}`);
-    check("vault holds 100 USDC escrow", vaultBal === 100_000_000, `${vaultBal / 1e6} USDC`);
+    check("seeded positions present (>= 3)", m.totalPositions >= 3, `pos ${m.totalPositions}`);
+    check("vault escrow equals yesPool + noPool", vaultBal === m.yesPool.toNumber() + m.noPool.toNumber(),
+      `vault ${vaultBal / 1e6} USDC vs pools ${(m.yesPool.toNumber() + m.noPool.toNumber()) / 1e6}`);
     console.log(`\n  market PDA: ${market.toBase58()}`);
   } catch (e) { check("demo market seeded", false, "fetch failed: " + String(e).slice(0, 60)); }
 

@@ -1,5 +1,6 @@
 {
   "license": "MIT",
+  "packageManager": "yarn@3.2.3",
   "scripts": {
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
     "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",

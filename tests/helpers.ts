@@ -11,8 +11,15 @@ export const TXORACLE_ID = new PublicKey("6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS71
 export const ROOT_PUBKEY = new PublicKey("BcLwqHJehs8ut8ycRo6NhCGsrtmRnkZbFMm273SdcPGe");
 
 export function pinnedMint(): Keypair {
-  const raw = JSON.parse(readFileSync(__dirname + "/../keys/usdc-mint.json", "utf8"));
-  return Keypair.fromSecretKey(Uint8Array.from(raw));
+  // keys/ is gitignored, so a clean clone has no keypair file. The pin only matters when the
+  // hermetic run should mirror the devnet mint address; no test asserts the concrete address,
+  // so fall back to a throwaway keypair.
+  try {
+    const raw = JSON.parse(readFileSync(__dirname + "/../keys/usdc-mint.json", "utf8"));
+    return Keypair.fromSecretKey(Uint8Array.from(raw));
+  } catch {
+    return Keypair.generate();
+  }
 }
 
 function loadRootAccount() {
