@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-R="/Users/kooroot/Desktop/dev/prediction-bot/proofmarket"
+R="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 grep -qF "MIT" "$R/LICENSE" || { echo "LICENSE missing/empty"; exit 1; }
 need=( "yarn e2e-replay" "0.31.1" "0.30.1" "Environment variables" \
        "TXLINE_API_TOKEN" "NEXT_PUBLIC_PROOFMARKET_PROGRAM_ID" "NEXT_PUBLIC_USDC_MINT" \

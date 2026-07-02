@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-R="/Users/kooroot/Desktop/dev/prediction-bot/proofmarket"
+R="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 F="$R/docs/DEMO-SCRIPT.md"
 need=( "0:00–0:30" "0:30–1:30" "1:30–2:00" "2:00–4:00" "4:00–4:45" "4:45–5:00" \
        "validate_stat" "AQ==" "BcLwqHJehs8ut8ycRo6NhCGsrtmRnkZbFMm273SdcPGe" \

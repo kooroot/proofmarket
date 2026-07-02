@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-F="/Users/kooroot/Desktop/dev/prediction-bot/proofmarket/docs/TECH-ENDPOINTS.md"
+F="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/docs/TECH-ENDPOINTS.md"
 need=( "/auth/guest/start" "subscribe(serviceLevelId=1" "/api/token/activate" \
        "/api/fixtures/snapshot" "/api/scores/stream" "/api/scores/stat-validation" \
        "daily_scores_roots" "6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS715wyP2J" \

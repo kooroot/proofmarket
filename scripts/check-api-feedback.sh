@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-R="/Users/kooroot/Desktop/dev/prediction-bot/proofmarket"
+R="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 F="$R/docs/API-FEEDBACK.md"
 need=( "bool-oracle" "AQ==" "AA==" "get_return_data" "1232" "v1.4.7" "v1.5.2" \
        "epochDay" "midnight" "last-seq" "FT" )

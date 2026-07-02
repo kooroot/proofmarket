@@ -5,7 +5,7 @@
 # The devnet-deploy items (§5.5 live surface) are funding-gated (P4.8) and intentionally
 # NOT asserted here; see docs/JUDGE-CHECKLIST.md.
 set -uo pipefail
-R="/Users/kooroot/Desktop/dev/prediction-bot/proofmarket"
+R="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOGD="${TMPDIR:-/tmp}/proofmarket-judge-check"
 mkdir -p "$LOGD"
 fail=0
