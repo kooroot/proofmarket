@@ -84,8 +84,10 @@ against a **clock-controlled sandbox** that clones the daily-root — never a li
 npm run check-deploy              # or: CHECK_DEPLOY=1 npm run judge-check  (folds it into the full gate)
 ```
 GO: `CHECK-DEPLOY: GO ✓` — asserts the program is deployed at `declare_id`, the pinned mint exists
-(decimals 6, authority = deploy wallet), the canonical txoracle daily-root is present (settlement
-anchor), and the seeded market is OPEN with YES 60 / NO 40 / 3 positions / vault 100 USDC.
+(decimals 6, authority = the dedicated faucet key), the canonical txoracle daily-root is present
+(settlement anchor), and the seeded market satisfies its live invariants: OPEN, pools at/above the
+seeded 60/40 baseline (the market is public — stakes only grow them), ≥ 3 positions, and
+vault == yesPool + noPool.
 
 ## Step 5 — Point the frontend at your deployment (Vercel)
 

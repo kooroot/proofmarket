@@ -20,7 +20,7 @@ now all in place; they are intentionally NOT asserted by the offline hermetic ga
 | `close_market` rent-reclaim + fee-sweep (400_000 residual) | `tests/close_market.ts` (bankrun) | ✅ hermetic |
 | Separate sandbox market resolves against copied root (never live-devnet resolve) | `npm run e2e-replay` (bankrun sandbox clones the daily-root) | ✅ hermetic |
 | Program + pinned test-USDC mint deployed on devnet at `declare_id` | `check-deploy.ts` (`CHECK_DEPLOY=1`) | ✅ **LIVE** |
-| Pre-seeded demo market on devnet (golden 60 YES / 40 NO, 3 positions, 100 USDC escrow) | `check-deploy.ts` (`CHECK_DEPLOY=1`) | ✅ **LIVE** (OPEN) |
+| Pre-seeded demo market on devnet (seeded 60 YES / 40 NO baseline — pools grow as anyone stakes; checker asserts OPEN + pools ≥ baseline + vault == YES+NO) | `check-deploy.ts` (`CHECK_DEPLOY=1`) | ✅ **LIVE** (OPEN) |
 | Pre-seeded **Resolved** market + permanent resolve tx | — | ⚪ by-design hermetic — live resolve impossible against the historical golden proof; receipt via `e2e-replay` |
 | Test-USDC faucet mints 1000 to any pubkey | `POST https://proofmarket-tan.vercel.app/api/faucet/usdc` | ✅ **LIVE** (verified 2026-07-02: mint sig `33747afM…`, 1000 USDC + 0.01 SOL grant to a fresh wallet) |
 | Server-side free SL1 data (judge needs no devnet SOL to SEE data) | `/api/txline/{proof,scores,odds}/…` on the deployed URL | ✅ **LIVE** (all three proxies 200 against golden fixture 18172280; SL1 apiToken activated on-chain 2026-07-02) |

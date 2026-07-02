@@ -8,7 +8,15 @@ ProofMarket is a submission for the **TxODDS World Cup Hackathon — Track 1 (Pr
 
 The hero surface is a **"Proof Receipt"** that visualizes the full cryptographic resolution chain: stat leaf → eventStatRoot → fixture subtree → daily-root PDA → `validate_stat` TRUE → escrow release.
 
-> **Status: devnet only, play-money.** On-chain settlement moves only devnet test-USDC — never mainnet, never real funds. The hermetic reproduction below runs today with zero setup beyond `yarn install`; a live-devnet deployment is the final, funding-gated step.
+## 🔴 Live demo (devnet)
+
+**https://proofmarket-tan.vercel.app** — one-click faucet mints 1,000 test-USDC (plus a small SOL gas grant, so judges need **no devnet SOL**), stake YES/NO on the open demo market, and watch the animated resolution walk at [/replay/18172280](https://proofmarket-tan.vercel.app/replay/18172280). Program [`6QNd5mHvV7czVkrRNdLPmuUybSwwdPWq9RYuwk5LZuEb`](https://explorer.solana.com/address/6QNd5mHvV7czVkrRNdLPmuUybSwwdPWq9RYuwk5LZuEb?cluster=devnet) on devnet; the full deployed-address table with Explorer permalinks is in [docs/DEPLOY-LOG.md](docs/DEPLOY-LOG.md).
+
+> **Status: devnet only, play-money.** On-chain settlement moves only devnet test-USDC — never mainnet, never real funds. The hermetic reproduction below runs today with zero setup beyond `yarn install`.
+
+### Why the live market is OPEN, not Resolved — by design
+
+`create_market` rejects any resolve time that isn't in the future (`resolve_after_ts_ms > now_ms`), and `resolve` requires the proof's `maxTimestamp >= resolve_after_ts` — the finality guard that stops a market from settling on a stale mid-match snapshot. The frozen golden proof is historical, so **no market creatable on the deployed program can ever be resolved by it**; staging a "live" resolve would mean weakening the exact check that makes settlement trustless. The complete resolve → claim leg instead reproduces deterministically in the hermetic replay below, and its cryptographic chain is what the live [/replay](https://proofmarket-tan.vercel.app/replay/18172280) page visualizes.
 
 ## One-command judge reproduction (hermetic — no validator, no network, no SOL)
 
@@ -109,16 +117,16 @@ The hermetic reproduction above needs **none** of these; they are required only 
 |-----|---------|
 | `ANCHOR_PROVIDER_URL` | RPC for deploy (e.g. devnet `https://api.devnet.solana.com`) |
 | `ANCHOR_WALLET` | path to the deploy keypair (`keys/devnet-deployer.json`) |
-| `TXLINE_HOST` | TxLINE API host |
-| `TXLINE_JWT` | guest JWT from `POST /auth/guest/start` (frontend server routes + keeper) |
+| `TXLINE_JWT` | guest JWT from `POST /auth/guest/start` (frontend server routes; the API host is pinned in `web/src/lib/txline-fetch.ts`) |
 | `TXLINE_API_TOKEN` | pre-activated free SL1 `apiToken` (server-side only) |
-| `KEEPER_KEYPAIR` | path to the resolver keypair that signs `resolve` (**offchain keeper only** — not the frontend) |
 | `FAUCET_AUTHORITY_SECRET` | **bs58-encoded** secret key of the test-USDC **mint authority** — the frontend faucet route signs `mintTo` + SOL gas grants with it (server-side only) |
+| `PROOFMARKET_PROGRAM_ID` | program id for the offchain catalog helpers (optional; placeholder default when unset) |
 | `NEXT_PUBLIC_RPC_URL` | devnet RPC for the frontend |
 | `NEXT_PUBLIC_PROOFMARKET_PROGRAM_ID` | deployed `proofmarket` program id |
 | `NEXT_PUBLIC_USDC_MINT` | the pinned 6-dp test-USDC mint (`2MYAvDHmZCnWUC4rMVYstLNniiXHuxo2Z7j7czaHA8LT`) |
+| `NEXT_PUBLIC_FOLD_VERIFIED` | optional; `1` enables the in-browser "Verify in your browser" Merkle-fold toggle |
 
-For a deployed devnet demo the frontend holds one pre-activated free SL1 `apiToken` server-side, so judges need **no purchase and no devnet SOL** to see data; a test-USDC **faucet** button funds a fresh wallet. Deployed addresses (program id, URL, market PDAs) are listed in `docs/DEPLOY.md` once deployed.
+The deployed frontend at https://proofmarket-tan.vercel.app holds one pre-activated free SL1 `apiToken` server-side, so judges need **no purchase and no devnet SOL** to see data; a test-USDC **faucet** button funds a fresh wallet. Deployed addresses (program id, URL, market PDAs) are listed in `docs/DEPLOY.md` and `docs/DEPLOY-LOG.md`.
 
 ## License
 

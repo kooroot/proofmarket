@@ -2,7 +2,7 @@
 
 > The video carries the product (matches may be over during judging). Total runtime budget: 5:00.
 
-> **Recording note — what runs today vs. what needs the devnet deploy.** The **hero** (the resolution + Proof Receipt) is reproducible *right now*, hermetically, with `yarn e2e-replay` (in-process SVM, no validator/SOL) and the local frontend (`cd web && npm run dev`) rendering the six-step Proof Receipt from the committed golden bundle. The beats that stake via Phantom, open Solana Explorer permalinks, and show the faucet on a live URL require the devnet deploy (P4.8, funding-gated). Record the hero from the hermetic path if the deploy is not yet live.
+> **Recording note — the deploy is LIVE.** Record every beat on the production URL **https://proofmarket-tan.vercel.app** (devnet): Phantom stake, faucet, Explorer permalinks, and the animated resolution walk at `/replay/18172280` all work there today. The **hero** (resolution + Proof Receipt) additionally reproduces hermetically with `yarn e2e-replay` (in-process SVM, no validator/SOL) — use that terminal receipt as the beat-5 close-up, since the live demo market stays OPEN by design (see README "Why the live market is OPEN, not Resolved").
 
 ## 0:00–0:30 — Hook (trust model)
 - On screen: "Polymarket/UMA resolves by people voting — reveal windows, disputes. Watch a market resolve by math."
@@ -31,9 +31,9 @@
 - Restate the three hooks: it works = Core Functionality; this is the UX = UX & Use Case; the CPI = Code Quality & Logic.
 
 ## 4:45–5:00 — Close
-- Deployed devnet URL on screen: "test it yourself, free." Repo link. (Hermetic fallback: `yarn e2e-replay` reproduces the resolution offline.)
+- Deployed devnet URL on screen — **https://proofmarket-tan.vercel.app** — "test it yourself, free." Repo link `github.com/kooroot/proofmarket`. (Hermetic fallback: `yarn e2e-replay` reproduces the resolution offline.)
 
 ## Shot capture checklist
-- [ ] Explorer tab pre-opened on the permanent `resolve` tx (inner-instruction view) — OR the `yarn e2e-replay` terminal receipt if pre-deploy.
+- [ ] The `yarn e2e-replay` terminal receipt for the resolve/claim close-up (the live demo market is OPEN by design — no on-devnet resolve tx exists to permalink; the replay prints the real CPI receipt deterministically).
 - [ ] Burner wallet that staked == burner that receives the claim (same address visible in both Explorer links).
 - [ ] Faucet mints 1,000 test-USDC live (no purchase, no devnet SOL needed to view data).
