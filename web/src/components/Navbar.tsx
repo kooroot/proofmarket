@@ -12,12 +12,12 @@ export function Navbar() {
   return (
     <header className="border-b border-zinc-800">
       {wrongNet && <div className="bg-amber-600 text-black text-center text-sm py-1">Switch to Devnet</div>}
-      <nav className="flex items-center justify-between p-3 max-w-5xl mx-auto">
+      <nav className="flex flex-wrap items-center justify-between gap-y-2 p-3 max-w-5xl mx-auto">
         <Link href="/" className="font-bold">ProofMarket</Link>
-        <div className="flex items-center gap-3 text-sm">
-          <Link className="text-emerald-400" href="/replay/18172280">Replay demo</Link>
-          <Link href="/portfolio">Portfolio</Link>
-          {pk && <span className="text-zinc-400 tabular-nums">{bal.data?.sol ?? "—"} SOL · ${bal.data?.usdc ?? "—"}</span>}
+        <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-2 text-sm">
+          <Link className="text-emerald-400 whitespace-nowrap" href="/replay/18172280">Replay demo</Link>
+          <Link className="whitespace-nowrap" href="/portfolio">Portfolio</Link>
+          {pk && <span className="hidden sm:inline text-zinc-400 tabular-nums whitespace-nowrap">{bal.data?.sol ?? "—"} SOL · ${bal.data?.usdc ?? "—"}</span>}
           <FaucetButton pubkey={pk} /><PlayAsGuestButton /><WalletMultiButton />
         </div>
       </nav>

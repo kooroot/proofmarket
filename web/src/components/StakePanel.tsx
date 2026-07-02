@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useConnection, useAnchorWallet } from "@solana/wallet-adapter-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { AnchorProvider } from "@coral-xyz/anchor";
 import { PublicKey, Transaction } from "@solana/web3.js";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import { payoutForStake, formatUsdc } from "@/lib/parimutuel";
 import type { UiMarket } from "@/lib/market";
 export function StakePanel({ m }: { m: UiMarket }) {
   const { connection } = useConnection(); const wallet = useAnchorWallet();
+  const queryClient = useQueryClient();
   const [side, setSide] = useState(true); const [usdc, setUsdc] = useState("50"); const [sig, setSig] = useState<string | null>(null);
   const [txErr, setTxErr] = useState<string | null>(null); const [busy, setBusy] = useState(false);
   const amountBase = BigInt(Math.round((parseFloat(usdc || "0")) * 1e6));
@@ -30,6 +32,8 @@ export function StakePanel({ m }: { m: UiMarket }) {
           const provider = new AnchorProvider(connection, wallet!, {}); const program = getProgram(provider);
           const ix = await buildStakeIx(program, { market: new PublicKey(m.pda), side, amountBase, owner: wallet!.publicKey });
           const tx = new Transaction().add(ix); setSig(await provider.sendAndConfirm(tx));
+          // pools/position/balance all changed on-chain — refetch so the UI doesn't show pre-stake numbers
+          await Promise.all([["markets"], ["position"], ["balances"]].map((k) => queryClient.invalidateQueries({ queryKey: k })));
         } catch (e) {
           setTxErr(e instanceof Error ? e.message : "Transaction failed");
         } finally {

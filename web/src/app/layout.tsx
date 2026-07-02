@@ -27,10 +27,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    // Font variables live on <html>: Tailwind preflight sets `html { font-family: var(--font-geist-sans), sans-serif }`,
+    // and a custom property defined only on <body> is invisible there — the declaration then fails at
+    // computed-value time and the browser falls back to its default serif (seen on the deployed site).
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className="font-sans antialiased">
         <Providers>
           <Navbar />
           {children}
