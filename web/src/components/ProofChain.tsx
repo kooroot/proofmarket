@@ -1,20 +1,53 @@
 "use client";
-import { ProofStep } from "./ProofStep";
+import { ProofStep, FoldConnector, HashChip } from "./ProofStep";
 import { VerifyToggle } from "./VerifyToggle";
 import type { AnchorBundle } from "@/lib/proof";
 import type { ValidateResult } from "@/lib/validate-result";
 import { explorerAddr, explorerTx } from "@/lib/constants";
-const head = (a: number[]) => `[${a.slice(0, 6).join(",")}…]`;
+
+const byteHex = (n: number) => n.toString(16).padStart(2, "0");
+
+/** The resolution walk as a connected diagram: each fold's output hash is visibly the next
+ *  node's input, ending at the on-chain daily root that gates the escrow. */
 export function ProofChain({ bundle, dailyRoot, epochDay, rootExists, validate, resolveTx, claimTxs }: { bundle: AnchorBundle; dailyRoot: string; epochDay: number; rootExists: boolean; validate: ValidateResult; resolveTx: string | undefined; claimTxs: string[] }) {
+  const leafBytes = [bundle.statToProve.key, bundle.statToProve.value, bundle.statToProve.period].map(byteHex).join(" ");
+  const verdict = validate.predicateTrue === true ? "TRUE" : validate.predicateTrue === false ? "FALSE" : "pending";
   return (
-    <div className="space-y-3">
-      <ProofStep idx={0} title="Stat leaf" body={`{key:${bundle.statToProve.key}, value:${bundle.statToProve.value}} → P1 goals = ${bundle.statToProve.value}.`} source="/api/scores/stat-validation" />
-      <VerifyToggle bundle={bundle} enabled={process.env.NEXT_PUBLIC_FOLD_VERIFIED === "1"} />
-      <ProofStep idx={1} title="leaf → eventStatRoot" body={`statProof[${bundle.statProof.length}] folds to eventStatRoot ${head(bundle.eventStatRoot)}`} source="/api/scores/stat-validation" />
-      <ProofStep idx={2} title="eventStatRoot → fixture sub-tree" body={`fixtureProof[${bundle.fixtureProof.length}] → eventsSubTreeRoot ${head(bundle.eventsSubTreeRoot)} · fixtureId ${bundle.fixtureId} · updateCount ${bundle.updateCount}`} source="/api/scores/stat-validation" />
-      <ProofStep idx={3} title="fixture sub-tree → daily root (on-chain PDA)" body={`mainTreeProof[${bundle.mainTreeProof.length}] · epochDay ${epochDay}`} link={explorerAddr(dailyRoot)} linkLabel={`Explorer → daily-root PDA ${rootExists ? "(EXISTS)" : "(checking…)"}`} green={rootExists} source={`PDA ["daily_scores_roots", ${epochDay} u16 LE]`} />
-      <ProofStep idx={4} title="escrow → CPI → validate_stat → bool" body={`ProofMarket escrow (outer) → inner CPI → validate_stat → ${validate.predicateTrue === true ? "true" : validate.predicateTrue === false ? "false" : "pending"} → gate release. inner return ${validate.returnBase64 ?? "—"}`} link={resolveTx ? explorerTx(resolveTx) : undefined} linkLabel="Explorer → settle tx inner instructions" green={validate.returnBool === true} source="program 6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS715wyP2J" />
-      <ProofStep idx={5} title="→ escrow release (per-winner claim)" body={resolveTx ? `each winner pulls stake_i · payout_pool / winning_pool from the vault PDA` : "pending — settles once the escrow program deploys"} link={claimTxs[0] ? explorerTx(claimTxs[0]) : undefined} linkLabel="Explorer → claim transfer" green={claimTxs.length > 0} source="escrow vault PDA" />
+    <div className="grid grid-cols-[2.25rem_1fr] gap-x-2 sm:gap-x-3">
+      <ProofStep idx={0} title="Stat leaf — the fact being proven" subtitle="Straight from TxLINE's signed match feed: the one stat this market bets on."
+        body={<><div className="text-sm font-semibold text-zinc-100">P1 goals = {bundle.statToProve.value}</div>
+          <span className="text-zinc-500">leaf bytes </span><HashChip bytes={[bundle.statToProve.key, bundle.statToProve.value, bundle.statToProve.period]} tone="sky" /> <span className="text-zinc-500">= {leafBytes}</span></>}
+        source="/api/scores/stat-validation" />
+      <div className="flex justify-center"><span className="w-px self-stretch bg-zinc-800" /></div>
+      <div className="pt-1.5"><VerifyToggle bundle={bundle} enabled={process.env.NEXT_PUBLIC_FOLD_VERIFIED === "1"} /></div>
+
+      <FoldConnector idx={0} label={<>keccak256 fold ⊕ statProof[{bundle.statProof.length}] = <HashChip bytes={bundle.eventStatRoot} tone="violet" /></>} />
+      <ProofStep idx={1} title="Event-stat root" subtitle="Sibling hashes fold the leaf upward — change a single digit anywhere and this root no longer matches."
+        body={<HashChip bytes={bundle.eventStatRoot} tone="violet" prefix="eventStatRoot" />}
+        source="/api/scores/stat-validation" />
+
+      <FoldConnector idx={1} label={<>fold ⊕ fixtureProof[{bundle.fixtureProof.length}] = <HashChip bytes={bundle.eventsSubTreeRoot} tone="fuchsia" /></>} />
+      <ProofStep idx={2} title={`Fixture sub-tree root — match ${bundle.fixtureId}`} subtitle={`The event root folds again into this fixture's sub-tree (update #${bundle.updateCount}) — one branch of the whole matchday.`}
+        body={<HashChip bytes={bundle.eventsSubTreeRoot} tone="fuchsia" prefix="subTreeRoot" />}
+        source="/api/scores/stat-validation" />
+
+      <FoldConnector idx={2} label={<>fold ⊕ mainTreeProof[{bundle.mainTreeProof.length}] → must equal the published on-chain root</>} />
+      <ProofStep idx={3} title={`Daily root — the on-chain anchor (epochDay ${epochDay})`} subtitle="TxODDS publishes one Merkle root per day to this account. The walk must land exactly on it — this PDA is the only thing anyone has to trust."
+        body={<span className="text-zinc-300">{dailyRoot.slice(0, 8)}…{dailyRoot.slice(-6)}{rootExists && <span className="ml-1.5 rounded bg-emerald-500/20 border border-emerald-500/40 px-1 py-0.5 text-[10px] text-emerald-300">EXISTS ✓</span>}</span>}
+        link={explorerAddr(dailyRoot)} linkLabel={`Explorer → daily-root PDA${rootExists ? "" : " (checking…)"}`} green={rootExists}
+        source={`PDA ["daily_scores_roots", ${epochDay} u16 LE]`} />
+
+      <FoldConnector idx={3} label="CPI — the escrow hands the whole proof to TxLINE's program" />
+      <ProofStep idx={4} title="validate_stat re-walks the proof on-chain → one bool" subtitle="TxLINE's own program recomputes every fold inside the transaction. A forged proof doesn't get out-voted — it simply reverts."
+        body={`inner return ${validate.returnBase64 ?? "—"} → ${verdict}`}
+        link={resolveTx ? explorerTx(resolveTx) : undefined} linkLabel="Explorer → settle tx inner instructions" green={validate.returnBool === true}
+        source="program 6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS715wyP2J" />
+
+      <FoldConnector idx={4} label="the bool gates the vault — nothing else can move funds" />
+      <ProofStep idx={5} last title="Escrow release — winners claim" subtitle="No vote. No dispute window. Each winner pulls their share by math alone."
+        body={resolveTx || validate.predicateTrue !== null ? "payout_i = stake_i · payout_pool / winning_pool" : "pending — settles once the proof lands"}
+        link={claimTxs[0] ? explorerTx(claimTxs[0]) : undefined} linkLabel="Explorer → claim transfer" green={claimTxs.length > 0}
+        source="escrow vault PDA" />
     </div>
   );
 }
