@@ -77,6 +77,13 @@ function isWorldCupFixture(fixture: MainnetFixturePreviewItem): boolean {
   return fixture.competition.trim().toLowerCase() === "world cup";
 }
 
+function isUpcomingFixture(
+  fixture: MainnetFixturePreviewItem,
+  nowMs: number
+): boolean {
+  return fixture.startTimeMs >= nowMs;
+}
+
 export function buildMainnetFixturePreview(
   fixtures: TxlineFixtureLike[],
   limit = 8,
@@ -86,9 +93,9 @@ export function buildMainnetFixturePreview(
     .map(normalizeFixture)
     .filter((fixture): fixture is MainnetFixturePreviewItem => fixture !== null)
     .filter(isWorldCupFixture)
+    .filter((fixture) => isUpcomingFixture(fixture, nowMs))
     .sort((a, b) => {
-      const distance = Math.abs(a.startTimeMs - nowMs) - Math.abs(b.startTimeMs - nowMs);
-      return distance === 0 ? a.startTimeMs - b.startTimeMs : distance;
+      return a.startTimeMs - b.startTimeMs;
     });
 
   const previewFixtures = normalized

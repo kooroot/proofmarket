@@ -37,19 +37,19 @@ export function MainnetFixturePreviewPanel({
             TxLINE mainnet data preview
           </p>
           <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            World Cup-only football markets from real TxLINE fixture data
+            Upcoming World Cup markets from real TxLINE fixture data
           </h1>
           <p className="max-w-2xl text-sm leading-6 text-zinc-500">
-            Mainnet data is filtered to World Cup fixtures and ordered around
-            the closest kickoff. The executable escrow, staking, receipt, and
-            validate_stat settlement demo stays on devnet.
+            Mainnet preview data shows only upcoming World Cup fixtures ordered
+            by kickoff. Historical matches are reserved for deterministic replay
+            receipts, while executable escrow and staking stay on devnet.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Badge variant="outline">mainnet feed</Badge>
           <Badge variant="outline">SL1 / SL12 free tiers</Badge>
           <Badge className="bg-emerald-600">
-            {preview?.count ?? 0} World Cup fixtures
+            {preview?.count ?? 0} upcoming fixtures
           </Badge>
         </div>
       </div>

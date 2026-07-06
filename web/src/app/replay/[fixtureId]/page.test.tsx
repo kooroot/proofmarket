@@ -32,6 +32,7 @@ describe("Replay demo", () => {
     expect(screen.getByText("YES: Argentina wins")).toBeInTheDocument();
     expect(screen.getByText("NO: Argentina does not win")).toBeInTheDocument();
     expect(screen.getByText(/Mainnet historical fixture 18175918/i)).toBeInTheDocument();
+    expect(screen.getByText(/90-second compressed replay/i)).toBeInTheDocument();
     expect(screen.getByText(/devnet escrow pattern/i)).toBeInTheDocument();
     expect(screen.getByText("Raw stat leaf")).toBeInTheDocument();
     expect(screen.getByText("Argentina goals = 3")).toBeInTheDocument();

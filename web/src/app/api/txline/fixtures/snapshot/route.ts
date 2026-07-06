@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const startEpochDay = Math.floor(Date.now() / 86_400_000) - 18;
+    const startEpochDay = Math.floor(Date.now() / 86_400_000);
     const fixtures = await txlineFetch(
       `/api/fixtures/snapshot?startEpochDay=${startEpochDay}&competitionId=72`,
       "mainnet"

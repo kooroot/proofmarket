@@ -14,13 +14,14 @@ describe("GET /api/txline/fixtures/snapshot", () => {
   });
 
   it("returns a mainnet fixture preview without exposing credentials", async () => {
+    const futureStartTime = Date.now() + 86_400_000;
     txlineFetchMock.mockResolvedValue([
       {
         FixtureId: 18192996,
         Participant1: "Mexico",
         Participant2: "England",
         Competition: "World Cup",
-        StartTime: 1783299600000,
+        StartTime: futureStartTime,
       },
     ]);
     const { GET } = await import("./route");

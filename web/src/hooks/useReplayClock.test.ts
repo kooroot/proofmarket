@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { frameAt } from "./useReplayClock";
+import {
+  DEFAULT_REPLAY_DURATION_MS,
+  REPLAY_TICK_MS,
+  frameAt,
+  replayStepMs,
+} from "./useReplayClock";
 import type { Frame } from "./useReplayClock";
 const timeline: Frame[] = [
   { ts: 0, stats: { "1": 0 } },
@@ -13,5 +18,15 @@ describe("frameAt", () => {
   });
   it("clamps before the first frame", () => {
     expect(frameAt(timeline, -10).ts).toBe(0);
+  });
+  it("compresses a full match replay into about 90 seconds", () => {
+    const fullMatchMs = 9_304_971;
+    const step = replayStepMs(fullMatchMs);
+    const ticks = Math.ceil(fullMatchMs / step);
+
+    expect(ticks * REPLAY_TICK_MS).toBeGreaterThanOrEqual(DEFAULT_REPLAY_DURATION_MS);
+    expect(ticks * REPLAY_TICK_MS).toBeLessThanOrEqual(
+      DEFAULT_REPLAY_DURATION_MS + REPLAY_TICK_MS
+    );
   });
 });
