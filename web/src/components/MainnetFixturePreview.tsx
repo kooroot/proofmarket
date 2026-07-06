@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMainnetFixturePreview } from "@/hooks/useMainnetFixturePreview";
 import type { MainnetFixturePreview as MainnetFixturePreviewData } from "@/lib/mainnet-preview";
+import { fixtureTitleWithFlags } from "@/lib/team-flags";
 
 function formatKickoff(ms: number): string {
   return new Intl.DateTimeFormat("en", {
@@ -80,7 +81,7 @@ export function MainnetFixturePreviewPanel({
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="break-words font-medium leading-snug">
-                    {fixture.participant1} vs {fixture.participant2}
+                    {fixtureTitleWithFlags(fixture)}
                   </div>
                   <div className="mt-1 text-xs text-zinc-500">
                     {fixture.competition} / TxLINE fixtureId{" "}

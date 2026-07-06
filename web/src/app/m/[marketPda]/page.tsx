@@ -41,13 +41,14 @@ export default function MarketDetail({ params }: { params: { marketPda: string }
   const mYes = multiplierIfWin(true, m.yesPool, m.noPool, m.feeBps); const mNo = multiplierIfWin(false, m.yesPool, m.noPool, m.feeBps);
   const predicate = predicateToText({ label: "", statAKey: m.statAKey, statBKey: m.statBKey, op: m.op, comparison: m.comparison, threshold: m.threshold });
   const demo = demoMarketCopy(m, demoFixtureForMarket(m, mainnetPreview.data?.fixtures));
+  const marketBadge = `${demo.marketIcon} ${demo.marketType}`;
   const statKeys = m.statBKey ? `${m.statAKey} ${opSymbol(m.op)} ${m.statBKey}` : `${m.statAKey}`;
   return (
     <div className="mx-auto max-w-2xl space-y-4 px-3 py-4 sm:p-6">
       <div className="space-y-2">
         <div className="flex flex-wrap items-center gap-2 text-xs">
           <span className="rounded-full bg-emerald-500/10 px-2 py-1 font-medium text-emerald-600 dark:text-emerald-300">
-            {demo.marketType}
+            {marketBadge}
           </span>
           <span className="text-zinc-500">{demo.fixtureTitle}</span>
         </div>

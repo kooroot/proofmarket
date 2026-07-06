@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   demoFixtureForMarket,
   demoMarketCopy,
+  isFeaturedDemoMarket,
   WORLD_CUP_DEMO_FIXTURES,
 } from "./demo-market";
 import type { UiMarket } from "./market";
@@ -47,21 +48,33 @@ describe("demo market copy", () => {
     const fixture = WORLD_CUP_DEMO_FIXTURES[0];
     const copy = demoMarketCopy(market({ statAKey: 1 }), fixture);
 
-    expect(copy.fixtureTitle).toBe("USA vs Belgium");
+    expect(copy.fixtureTitle).toBe("🇺🇸 USA vs 🇧🇪 Belgium");
+    expect(copy.marketIcon).toBe("⚽");
     expect(copy.marketType).toBe("Team Goals");
     expect(copy.question).toBe("Will USA score at least once?");
     expect(copy.yesLabel).toBe("YES: USA scores");
     expect(copy.noLabel).toBe("NO: USA does not score");
     expect(copy.resolvePredicate).toBe("P1 goals > 0");
+    expect(copy.featured).toBe(true);
   });
 
-  it("uses corner micro-market copy for football stat keys", () => {
+  it("treats single-team corner predicates as stat proof demos instead of featured betting lines", () => {
     const fixture = WORLD_CUP_DEMO_FIXTURES[2];
     const copy = demoMarketCopy(market({ statAKey: 8 }), fixture);
 
-    expect(copy.marketType).toBe("Corners Micro Market");
-    expect(copy.question).toBe("Will Egypt record a corner?");
-    expect(copy.yesLabel).toBe("YES: Egypt corner recorded");
-    expect(copy.noLabel).toBe("NO: no Egypt corner");
+    expect(copy.fixtureTitle).toBe("🇦🇷 Argentina vs 🇪🇬 Egypt");
+    expect(copy.marketIcon).toBe("🔎");
+    expect(copy.marketType).toBe("Stat Proof Demo");
+    expect(copy.question).toBe("Can TxLINE prove Egypt's corner stat?");
+    expect(copy.yesLabel).toBe("YES: stat proof available");
+    expect(copy.noLabel).toBe("NO: predicate false");
+    expect(copy.featured).toBe(false);
+  });
+
+  it("only promotes reasonable video betting lines as featured demo markets", () => {
+    expect(isFeaturedDemoMarket(market({ statAKey: 1 }))).toBe(true);
+    expect(isFeaturedDemoMarket(market({ statAKey: 2 }))).toBe(true);
+    expect(isFeaturedDemoMarket(market({ statAKey: 7 }))).toBe(false);
+    expect(isFeaturedDemoMarket(market({ statAKey: 8 }))).toBe(false);
   });
 });

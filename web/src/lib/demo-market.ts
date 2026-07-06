@@ -1,6 +1,7 @@
 import type { MainnetFixturePreviewItem } from "./mainnet-preview";
 import { predicateToText } from "./predicate";
 import type { UiMarket } from "./market";
+import { fixtureTitleWithFlags } from "./team-flags";
 
 export const WORLD_CUP_DEMO_FIXTURES: MainnetFixturePreviewItem[] = [
   {
@@ -59,12 +60,14 @@ export const WORLD_CUP_DEMO_FIXTURES: MainnetFixturePreviewItem[] = [
 
 export interface DemoMarketCopy {
   fixtureTitle: string;
+  marketIcon: string;
   marketType: string;
   question: string;
   yesLabel: string;
   noLabel: string;
   resolvePredicate: string;
   mainnetFixtureId: number;
+  featured: boolean;
 }
 
 const MARKET_ID_FIXTURE_INDEX: Record<string, number> = {
@@ -82,6 +85,12 @@ function hasSecondStat(market: UiMarket): boolean {
   return market.statBKey !== null && market.statBKey !== 0;
 }
 
+export function isFeaturedDemoMarket(market: UiMarket): boolean {
+  if (market.statAKey === 7 || market.statAKey === 8) return false;
+  if (hasSecondStat(market) && market.statAKey === 7 && market.statBKey === 8) return false;
+  return market.statAKey === 1 || market.statAKey === 2;
+}
+
 export function demoFixtureForMarket(
   market: UiMarket,
   fixtures: MainnetFixturePreviewItem[] | null | undefined = WORLD_CUP_DEMO_FIXTURES
@@ -96,7 +105,7 @@ export function demoMarketCopy(
   market: UiMarket,
   fixture = demoFixtureForMarket(market)
 ): DemoMarketCopy {
-  const fixtureTitle = `${fixture.participant1} vs ${fixture.participant2}`;
+  const fixtureTitle = fixtureTitleWithFlags(fixture);
   const resolvePredicate = predicateToText({
     label: "",
     statAKey: market.statAKey,
@@ -115,12 +124,14 @@ export function demoMarketCopy(
   ) {
     return {
       fixtureTitle,
+      marketIcon: "🏁",
       marketType: "Match Winner",
       question: `Will ${fixture.participant1} beat ${fixture.participant2}?`,
       yesLabel: `YES: ${fixture.participant1} wins`,
       noLabel: `NO: ${fixture.participant1} does not win`,
       resolvePredicate,
       mainnetFixtureId: fixture.fixtureId,
+      featured: true,
     };
   }
 
@@ -132,12 +143,14 @@ export function demoMarketCopy(
   ) {
     return {
       fixtureTitle,
-      marketType: "Corners Micro Market",
-      question: `Will ${fixture.participant1} win the corner count?`,
-      yesLabel: `YES: ${fixture.participant1} more corners`,
-      noLabel: `NO: ${fixture.participant1} does not lead corners`,
+      marketIcon: "🔎",
+      marketType: "Stat Proof Demo",
+      question: `Can TxLINE prove ${fixture.participant1}'s corner count?`,
+      yesLabel: "YES: stat proof available",
+      noLabel: "NO: predicate false",
       resolvePredicate,
       mainnetFixtureId: fixture.fixtureId,
+      featured: false,
     };
   }
 
@@ -145,12 +158,14 @@ export function demoMarketCopy(
     const team = participantForStatKey(market, fixture);
     return {
       fixtureTitle,
-      marketType: "Corners Micro Market",
-      question: `Will ${team} record a corner?`,
-      yesLabel: `YES: ${team} corner recorded`,
-      noLabel: `NO: no ${team} corner`,
+      marketIcon: "🔎",
+      marketType: "Stat Proof Demo",
+      question: `Can TxLINE prove ${team}'s corner stat?`,
+      yesLabel: "YES: stat proof available",
+      noLabel: "NO: predicate false",
       resolvePredicate,
       mainnetFixtureId: fixture.fixtureId,
+      featured: false,
     };
   }
 
@@ -158,22 +173,26 @@ export function demoMarketCopy(
     const team = participantForStatKey(market, fixture);
     return {
       fixtureTitle,
+      marketIcon: "⚽",
       marketType: "Team Goals",
       question: `Will ${team} score at least once?`,
       yesLabel: `YES: ${team} scores`,
       noLabel: `NO: ${team} does not score`,
       resolvePredicate,
       mainnetFixtureId: fixture.fixtureId,
+      featured: true,
     };
   }
 
   return {
     fixtureTitle,
+    marketIcon: "🔎",
     marketType: "Football Stat Market",
     question: `${fixtureTitle}: will the predicate resolve YES?`,
     yesLabel: "YES: predicate true",
     noLabel: "NO: predicate false",
     resolvePredicate,
     mainnetFixtureId: fixture.fixtureId,
+    featured: false,
   };
 }

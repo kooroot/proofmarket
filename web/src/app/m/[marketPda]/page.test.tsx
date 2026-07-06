@@ -80,8 +80,8 @@ describe("Market detail hero", () => {
     render(<MarketDetail params={{ marketPda: "Market1111111111111111111111111111111111" }} />);
 
     expect(screen.getByRole("heading", { name: /Will Switzerland beat Colombia\?/i })).toBeInTheDocument();
-    expect(screen.getByText("Switzerland vs Colombia")).toBeInTheDocument();
-    expect(screen.getByText("Match Winner")).toBeInTheDocument();
+    expect(screen.getByText("🇨🇭 Switzerland vs 🇨🇴 Colombia")).toBeInTheDocument();
+    expect(screen.getByText("🏁 Match Winner")).toBeInTheDocument();
     expect(screen.getByText("YES: Switzerland wins")).toBeInTheDocument();
     expect(screen.getByText("NO: Switzerland does not win")).toBeInTheDocument();
     expect(screen.getByText(/YES pool/i)).toBeInTheDocument();

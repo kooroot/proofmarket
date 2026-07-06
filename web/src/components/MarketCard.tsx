@@ -20,6 +20,7 @@ export function MarketCard({ m, label, pFair, progress, demoFixture }: { m: UiMa
   const lockIn = Math.max(0, Number(m.lockTs) - Date.now());
   const predicate = predicateToText({ label, statAKey: m.statAKey, statBKey: m.statBKey, op: m.op, comparison: m.comparison, threshold: m.threshold });
   const demo = demoFixture ? demoMarketCopy(m, demoFixture) : null;
+  const marketBadge = demo ? `${demo.marketIcon} ${demo.marketType}` : "";
   return (
     <Link href={m.state === STATE.Resolved ? `/m/${m.pda}/receipt` : `/m/${m.pda}`}>
       <Card className="space-y-3 p-3 transition hover:border-emerald-500/50 sm:p-4">
@@ -28,7 +29,7 @@ export function MarketCard({ m, label, pFair, progress, demoFixture }: { m: UiMa
             {demo ? (
               <>
                 <div className="flex flex-wrap items-center gap-2">
-                  <Badge variant="secondary">{demo.marketType}</Badge>
+                  <Badge variant={demo.featured ? "secondary" : "outline"}>{marketBadge}</Badge>
                   <span className="text-xs text-zinc-500">{demo.fixtureTitle}</span>
                 </div>
                 <span className="block min-w-0 break-words font-medium leading-snug">{demo.question}</span>
