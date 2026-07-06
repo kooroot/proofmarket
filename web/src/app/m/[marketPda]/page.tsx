@@ -17,6 +17,20 @@ function proofStatus(state: number): string {
   return "Proof pending";
 }
 
+function formatResolveAfterUtc(ms: bigint): string {
+  const date = new Date(Number(ms));
+  const formatted = new Intl.DateTimeFormat("en-US", {
+    timeZone: "UTC",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(date);
+  return `${formatted} UTC`;
+}
+
 export default function MarketDetail({ params }: { params: { marketPda: string } }) {
   const { data } = useMarkets(); const m = data?.find((x) => x.pda === params.marketPda);
   const pos = usePosition(params.marketPda);
@@ -34,7 +48,15 @@ export default function MarketDetail({ params }: { params: { marketPda: string }
         <div className="min-w-0"><span className="text-zinc-500">Resolve predicate</span><div className="break-words font-mono text-xs text-zinc-200">{predicate}</div></div>
         <div className="min-w-0"><span className="text-zinc-500">TxLINE fixtureId</span><div className="break-all font-mono text-xs text-zinc-200">{m.fixtureId.toString()}</div></div>
         <div className="min-w-0"><span className="text-zinc-500">statKey</span><div className="break-words font-mono text-xs text-zinc-200">{statKeys}</div></div>
-        <div className="min-w-0"><span className="text-zinc-500">resolveAfter</span><div className="break-all font-mono text-xs text-zinc-200">{new Date(Number(m.lockTs)).toISOString()}</div></div>
+        <div className="min-w-0">
+          <span className="text-zinc-500">resolveAfter</span>
+          <time
+            className="block font-medium text-zinc-100"
+            dateTime={new Date(Number(m.lockTs)).toISOString()}
+          >
+            {formatResolveAfterUtc(m.lockTs)}
+          </time>
+        </div>
         <div className="min-w-0"><span className="text-zinc-500">Proof status</span><div className="font-medium text-emerald-300">{proofStatus(m.state)}</div></div>
       </div>
       {pos.data && <div className="break-words text-sm text-emerald-400">Your position: YES ${formatUsdc(pos.data.yesAmount)} · NO ${formatUsdc(pos.data.noAmount)}</div>}

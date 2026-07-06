@@ -47,6 +47,9 @@ describe("Market detail hero", () => {
     expect(screen.getByText(/statKey/i)).toBeInTheDocument();
     expect(screen.getByText(/1 - 2/)).toBeInTheDocument();
     expect(screen.getByText(/resolveAfter/i)).toBeInTheDocument();
+    expect(screen.queryByText(/T\d{2}:\d{2}:\d{2}\.\d{3}Z/)).not.toBeInTheDocument();
+    expect(screen.getByText(/Jun 30, 2026/i)).toBeInTheDocument();
+    expect(screen.getByText(/\bUTC\b/)).toBeInTheDocument();
     expect(screen.getByText(/Proof status/i)).toBeInTheDocument();
   });
 });
