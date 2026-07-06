@@ -73,20 +73,32 @@ function normalizeFixture(
   };
 }
 
+function isWorldCupFixture(fixture: MainnetFixturePreviewItem): boolean {
+  return fixture.competition.trim().toLowerCase() === "world cup";
+}
+
 export function buildMainnetFixturePreview(
   fixtures: TxlineFixtureLike[],
-  limit = 8
+  limit = 8,
+  nowMs = Date.now()
 ): MainnetFixturePreview {
   const normalized = fixtures
     .map(normalizeFixture)
     .filter((fixture): fixture is MainnetFixturePreviewItem => fixture !== null)
+    .filter(isWorldCupFixture)
+    .sort((a, b) => {
+      const distance = Math.abs(a.startTimeMs - nowMs) - Math.abs(b.startTimeMs - nowMs);
+      return distance === 0 ? a.startTimeMs - b.startTimeMs : distance;
+    });
+
+  const previewFixtures = normalized
     .slice(0, limit);
 
   return {
     network: "mainnet",
     source: "TxLINE World Cup Free Tier",
-    count: fixtures.length,
-    fixtures: normalized,
+    count: normalized.length,
+    fixtures: previewFixtures,
     freeTiers: FREE_TIERS,
   };
 }

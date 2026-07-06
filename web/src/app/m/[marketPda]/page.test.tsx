@@ -30,6 +30,47 @@ vi.mock("@/hooks/usePosition", () => ({
   usePosition: () => ({ data: null }),
 }));
 
+vi.mock("@/hooks/useMainnetFixturePreview", () => ({
+  useMainnetFixturePreview: () => ({
+    data: {
+      fixtures: [
+        {
+          fixtureId: 18193785,
+          participant1: "USA",
+          participant2: "Belgium",
+          competition: "World Cup",
+          startTimeMs: 1783382400000,
+          markets: [],
+        },
+        {
+          fixtureId: 18198205,
+          participant1: "Portugal",
+          participant2: "Spain",
+          competition: "World Cup",
+          startTimeMs: 1783364400000,
+          markets: [],
+        },
+        {
+          fixtureId: 18202701,
+          participant1: "Argentina",
+          participant2: "Egypt",
+          competition: "World Cup",
+          startTimeMs: 1783440000000,
+          markets: [],
+        },
+        {
+          fixtureId: 18202783,
+          participant1: "Switzerland",
+          participant2: "Colombia",
+          competition: "World Cup",
+          startTimeMs: 1783454400000,
+          markets: [],
+        },
+      ],
+    },
+  }),
+}));
+
 vi.mock("@/components/StakePanel", () => ({
   StakePanel: () => <div data-testid="stake-panel" />,
 }));
@@ -38,7 +79,11 @@ describe("Market detail hero", () => {
   it("surfaces the settlement metadata judges need on the hero screen", () => {
     render(<MarketDetail params={{ marketPda: "Market1111111111111111111111111111111111" }} />);
 
-    expect(screen.getByRole("heading", { name: /P1 goals - P2 goals > 0/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Will Switzerland beat Colombia\?/i })).toBeInTheDocument();
+    expect(screen.getByText("Switzerland vs Colombia")).toBeInTheDocument();
+    expect(screen.getByText("Match Winner")).toBeInTheDocument();
+    expect(screen.getByText("YES: Switzerland wins")).toBeInTheDocument();
+    expect(screen.getByText("NO: Switzerland does not win")).toBeInTheDocument();
     expect(screen.getByText(/YES pool/i)).toBeInTheDocument();
     expect(screen.getByText(/NO pool/i)).toBeInTheDocument();
     expect(screen.getByText(/Resolve predicate/i)).toBeInTheDocument();

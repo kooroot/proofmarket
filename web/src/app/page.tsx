@@ -1,14 +1,21 @@
 "use client";
 import { useMarkets } from "@/hooks/useMarkets";
 import { MarketCard } from "@/components/MarketCard";
-import { MainnetFixturePreview } from "@/components/MainnetFixturePreview";
+import { MainnetFixturePreviewPanel } from "@/components/MainnetFixturePreview";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useMainnetFixturePreview } from "@/hooks/useMainnetFixturePreview";
+import { demoFixtureForMarket } from "@/lib/demo-market";
 import Link from "next/link";
 export default function MarketList() {
   const { data, isLoading } = useMarkets();
+  const mainnetPreview = useMainnetFixturePreview();
   return (
     <main className="mx-auto grid max-w-6xl gap-8 px-3 py-4 sm:p-6">
-      <MainnetFixturePreview />
+      <MainnetFixturePreviewPanel
+        preview={mainnetPreview.data}
+        isLoading={mainnetPreview.isLoading}
+        isError={mainnetPreview.isError}
+      />
 
       <section className="space-y-3">
         <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
@@ -41,7 +48,13 @@ export default function MarketList() {
         ) : (
           <div className="grid gap-3 lg:grid-cols-2">
             {data.map((m) => (
-              <MarketCard key={m.pda} m={m} label="" pFair={null} />
+              <MarketCard
+                key={m.pda}
+                m={m}
+                label=""
+                pFair={null}
+                demoFixture={demoFixtureForMarket(m, mainnetPreview.data?.fixtures)}
+              />
             ))}
           </div>
         )}

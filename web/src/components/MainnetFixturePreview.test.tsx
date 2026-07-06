@@ -42,7 +42,7 @@ describe("MainnetFixturePreviewPanel", () => {
     render(<MainnetFixturePreviewPanel preview={preview} />);
 
     expect(screen.getByText("TxLINE mainnet data preview")).toBeInTheDocument();
-    expect(screen.getByText("10 fixtures detected")).toBeInTheDocument();
+    expect(screen.getByText("10 World Cup fixtures")).toBeInTheDocument();
     expect(screen.getByText("Executable settlement stays on devnet")).toBeInTheDocument();
     expect(screen.getByText("Mexico vs England")).toBeInTheDocument();
     expect(screen.getByText("USA vs Belgium")).toBeInTheDocument();
