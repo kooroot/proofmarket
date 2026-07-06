@@ -18,6 +18,31 @@ vi.mock("@/hooks/usePortfolioPositions", () => ({
   usePortfolioPositions: (markets: UiMarket[]) => mockUsePortfolioPositions(markets),
 }));
 
+vi.mock("@/hooks/useMainnetFixturePreview", () => ({
+  useMainnetFixturePreview: () => ({
+    data: {
+      fixtures: [
+        {
+          fixtureId: 18193785,
+          participant1: "USA",
+          participant2: "Belgium",
+          competition: "World Cup",
+          startTimeMs: 1783382400000,
+          markets: [],
+        },
+        {
+          fixtureId: 18198205,
+          participant1: "Portugal",
+          participant2: "Spain",
+          competition: "World Cup",
+          startTimeMs: 1783364400000,
+          markets: [],
+        },
+      ],
+    },
+  }),
+}));
+
 vi.mock("@solana/wallet-adapter-react", () => ({
   useWallet: () => ({ publicKey: walletState.publicKey }),
   useAnchorWallet: () => (walletState.publicKey ? { publicKey: walletState.publicKey } : null),
@@ -74,6 +99,9 @@ describe("Portfolio", () => {
     expect(screen.getByRole("tab", { name: "Settled (1)" })).toBeInTheDocument();
     const openPanel = screen.getByText(/Open positions/i).closest("[data-state]");
     expect(openPanel).not.toBeNull();
+    expect(within(openPanel as HTMLElement).getByText("🇺🇸 USA vs 🇧🇪 Belgium")).toBeInTheDocument();
+    expect(within(openPanel as HTMLElement).getByText("⚽ Team Goals")).toBeInTheDocument();
+    expect(within(openPanel as HTMLElement).getByText("Will USA score at least once?")).toBeInTheDocument();
     expect(within(openPanel as HTMLElement).getByText(/YES \$50/)).toBeInTheDocument();
     expect(within(openPanel as HTMLElement).getByRole("link", { name: /View market/i })).toHaveAttribute(
       "href",
@@ -96,6 +124,9 @@ describe("Portfolio", () => {
     render(<Portfolio />);
 
     fireEvent.click(screen.getByRole("tab", { name: "Settled (1)" }));
+    expect(screen.getByText("🇺🇸 USA vs 🇧🇪 Belgium")).toBeInTheDocument();
+    expect(screen.getByText("⚽ Team Goals")).toBeInTheDocument();
+    expect(screen.getByText("Will USA score at least once?")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /View Proof Receipt/i })).toHaveAttribute(
       "href",
       `/m/${settledMarket.pda}/receipt`,

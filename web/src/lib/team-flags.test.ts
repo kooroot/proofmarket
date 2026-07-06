@@ -5,7 +5,9 @@ import type { MainnetFixturePreviewItem } from "./mainnet-preview";
 describe("team flags", () => {
   it("returns flag icons for World Cup teams used in the demo", () => {
     expect(teamFlag("USA")).toBe("🇺🇸");
-    expect(teamFlag("England")).toBe("🏴");
+    expect(teamFlag("England")).toBe("🇬🇧");
+    expect(teamFlag("France")).toBe("🇫🇷");
+    expect(teamFlag("Norway")).toBe("🇳🇴");
     expect(teamFlag("Switzerland")).toBe("🇨🇭");
   });
 

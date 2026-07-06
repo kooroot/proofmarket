@@ -10,12 +10,16 @@ import { buildClaimIx, claimable } from "@/lib/tx-claim";
 import { payoutForStake, formatUsdc } from "@/lib/parimutuel";
 import { OUTCOME, type UiMarket } from "@/lib/market";
 import { explorerTx } from "@/lib/constants";
+import { demoMarketCopy } from "@/lib/demo-market";
+import type { MainnetFixturePreviewItem } from "@/lib/mainnet-preview";
 export function PositionRow({
   m,
   pos,
+  demoFixture,
 }: {
   m: UiMarket;
   pos: { yesAmount: bigint; noAmount: bigint; claimed: boolean };
+  demoFixture?: MainnetFixturePreviewItem | null;
 }) {
   const { connection } = useConnection();
   const wallet = useAnchorWallet();
@@ -38,12 +42,26 @@ export function PositionRow({
           m.feeBps
         )
       : 0n;
+  const demo = demoFixture ? demoMarketCopy(m, demoFixture) : null;
   return (
     <div className="flex flex-col gap-2 border-b border-zinc-800 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
-      <span className="min-w-0 break-words">
-        YES ${formatUsdc(pos.yesAmount)} / NO ${formatUsdc(pos.noAmount)} —
-        claim ≈ ${formatUsdc(payout ?? 0n)}
-      </span>
+      <div className="min-w-0 break-words">
+        {demo ? (
+          <>
+            <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-500">
+              <span className="rounded-full bg-zinc-900 px-2 py-0.5 text-zinc-200">
+                {demo.marketIcon} {demo.marketType}
+              </span>
+              <span>{demo.fixtureTitle}</span>
+            </div>
+            <div className="font-medium text-zinc-100">{demo.question}</div>
+          </>
+        ) : null}
+        <div className="text-zinc-400">
+          YES ${formatUsdc(pos.yesAmount)} / NO ${formatUsdc(pos.noAmount)} —
+          claim ≈ ${formatUsdc(payout ?? 0n)}
+        </div>
+      </div>
       <div className="flex flex-wrap items-center gap-2">
         <Link className="text-emerald-400" href={`/m/${m.pda}/receipt`}>
           View Proof Receipt →
