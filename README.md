@@ -9,6 +9,7 @@ ProofMarket is a submission for the **TxODDS World Cup Hackathon — Track 1 (Pr
 The hero surface is a **"Proof Receipt"** that visualizes the full cryptographic resolution chain: stat leaf → eventStatRoot → fixture subtree → daily-root PDA → `validate_stat` TRUE → escrow release.
 
 Current submission checklist and market taxonomy are in [docs/SUBMISSION-CHECKLIST.md](docs/SUBMISSION-CHECKLIST.md).
+The fact-based post-hackathon roadmap is in [docs/FUTURE-DEVELOPMENT.md](docs/FUTURE-DEVELOPMENT.md).
 
 ## 🔴 Live demo (devnet)
 
