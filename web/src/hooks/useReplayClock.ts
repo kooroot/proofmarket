@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useUiStore } from "@/store/ui";
 export interface Frame { ts: number; stats: Record<string, number>; }
 export const REPLAY_TICK_MS = 200;
-export const DEFAULT_REPLAY_DURATION_MS = 90_000;
+export const DEFAULT_REPLAY_DURATION_MS = 45_000;
 export function frameAt(timeline: Frame[], clockMs: number): Frame {
   let f = timeline[0];
   for (const x of timeline) { if (x.ts <= clockMs) f = x; else break; }

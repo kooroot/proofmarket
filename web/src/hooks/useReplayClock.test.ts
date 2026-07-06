@@ -19,14 +19,17 @@ describe("frameAt", () => {
   it("clamps before the first frame", () => {
     expect(frameAt(timeline, -10).ts).toBe(0);
   });
-  it("compresses a full match replay into about 90 seconds", () => {
+  it("compresses a full match replay into a 30 to 60 second demo window", () => {
     const fullMatchMs = 9_304_971;
     const step = replayStepMs(fullMatchMs);
     const ticks = Math.ceil(fullMatchMs / step);
 
+    expect(DEFAULT_REPLAY_DURATION_MS).toBe(45_000);
     expect(ticks * REPLAY_TICK_MS).toBeGreaterThanOrEqual(DEFAULT_REPLAY_DURATION_MS);
     expect(ticks * REPLAY_TICK_MS).toBeLessThanOrEqual(
       DEFAULT_REPLAY_DURATION_MS + REPLAY_TICK_MS
     );
+    expect(ticks * REPLAY_TICK_MS).toBeGreaterThanOrEqual(30_000);
+    expect(ticks * REPLAY_TICK_MS).toBeLessThanOrEqual(60_000);
   });
 });
