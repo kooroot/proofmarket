@@ -10,10 +10,37 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-geist-sans)", "sans-serif"],
-        mono: ["var(--font-geist-mono)", "monospace"],
+        sans: ['"Helvetica Neue"', "Helvetica", "Arial", "sans-serif"],
+        display: ['"Helvetica Neue"', "Helvetica", "Arial", "sans-serif"],
+        mono: ["var(--font-space-mono)", "ui-monospace", "monospace"],
       },
       colors: {
+        // Settlement Ledger palette (raw vars; `proof`=--true, `revert`=--false
+        // because `true`/`false` are awkward Tailwind color names)
+        paper: "var(--paper)",
+        panel: {
+          DEFAULT: "var(--panel)",
+          2: "var(--panel2)",
+        },
+        ink: {
+          DEFAULT: "var(--ink)",
+          2: "var(--ink2)",
+        },
+        rule: {
+          DEFAULT: "var(--rule)",
+          2: "var(--rule2)",
+        },
+        proof: {
+          DEFAULT: "var(--true)",
+          soft: "var(--trueSoft)",
+        },
+        revert: {
+          DEFAULT: "var(--false)",
+          soft: "var(--falseSoft)",
+        },
+        sky: "var(--sky)",
+        violet: "var(--violet)",
+        fuchsia: "var(--fuchsia)",
         background: "var(--background)",
         foreground: "var(--foreground)",
         card: {

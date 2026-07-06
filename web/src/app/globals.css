@@ -12,84 +12,176 @@
 
 @layer base {
   .theme {
-    --font-heading: var(--font-sans);
-    --font-sans: var(--font-sans);
+    --font-heading: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
   }
+
+  /* ===== Settlement Ledger design tokens =====
+     Raw palette drives everything; the shadcn token names below are remapped
+     to these vars so the ui/* primitives blend into the ledger look. Because
+     the shadcn names reference the raw vars, one remap serves both themes —
+     switching [data-theme] re-points the raw vars and the primitives follow. */
   :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+    /* paper (default) */
+    --paper: #efebe1;
+    --panel: #f7f4ec;
+    --panel2: #e7e2d5;
+    --ink: #1a1712;
+    --ink2: #6b6558;
+    --rule: rgba(26, 23, 18, 0.16);
+    --rule2: rgba(26, 23, 18, 0.34);
+    --true: #0e6b3f;
+    --trueSoft: rgba(14, 107, 63, 0.1);
+    --false: #b23a17;
+    --falseSoft: rgba(178, 58, 23, 0.08);
+    --sky: #20618f;
+    --violet: #6b46c1;
+    --fuchsia: #a21caf;
+    --font-display: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-body: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-mono: var(--font-space-mono), ui-monospace, monospace;
+
+    /* shadcn remap → ledger */
+    --background: var(--paper);
+    --foreground: var(--ink);
+    --card: var(--panel);
+    --card-foreground: var(--ink);
+    --popover: var(--panel);
+    --popover-foreground: var(--ink);
+    --primary: var(--ink);
+    --primary-foreground: var(--paper);
+    --secondary: var(--panel2);
+    --secondary-foreground: var(--ink);
+    --muted: var(--panel2);
+    --muted-foreground: var(--ink2);
+    --accent: var(--panel);
+    --accent-foreground: var(--ink);
+    --destructive: var(--false);
+    --border: var(--rule2);
+    --input: var(--rule2);
+    --ring: var(--true);
+    --chart-1: var(--true);
+    --chart-2: var(--sky);
+    --chart-3: var(--violet);
+    --chart-4: var(--fuchsia);
+    --chart-5: var(--ink2);
+    --radius: 4px;
+    --sidebar: var(--panel);
+    --sidebar-foreground: var(--ink);
+    --sidebar-primary: var(--ink);
+    --sidebar-primary-foreground: var(--paper);
+    --sidebar-accent: var(--panel2);
+    --sidebar-accent-foreground: var(--ink);
+    --sidebar-border: var(--rule2);
+    --sidebar-ring: var(--true);
   }
-  .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+
+  [data-theme="terminal"] {
+    --paper: #0b0c0a;
+    --panel: #131412;
+    --panel2: #1b1c19;
+    --ink: #ece8de;
+    --ink2: #8c8676;
+    --rule: rgba(236, 232, 222, 0.15);
+    --rule2: rgba(236, 232, 222, 0.32);
+    --true: #46d98c;
+    --trueSoft: rgba(70, 217, 140, 0.12);
+    --false: #e8703a;
+    --falseSoft: rgba(232, 112, 58, 0.12);
+    --sky: #7cc0ff;
+    --violet: #b79cff;
+    --fuchsia: #f0a6ec;
   }
+
   * {
-    border-color: var(--border);
-    outline-color: color-mix(in oklch, var(--ring) 50%, transparent);
-  }
-  body {
-    @apply bg-background text-foreground;
+    border-color: var(--rule);
   }
   html {
     @apply font-sans;
+  }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  ::selection {
+    background: var(--true);
+    color: var(--paper);
+  }
+}
+
+/* ===== Ledger link + interaction helpers (used across ledger components) ===== */
+.lk {
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule2);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.lk:hover {
+  color: var(--true);
+  border-color: var(--true);
+}
+
+/* ===== Design keyframes (verbatim from ProofMarket Ledger.dc.html) ===== */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes stampIn {
+  0% {
+    opacity: 0;
+    transform: rotate(-8deg) scale(1.5);
+  }
+  60% {
+    opacity: 1;
+    transform: rotate(-8deg) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(-8deg) scale(1);
+  }
+}
+@keyframes tick {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes barGrow {
+  from {
+    width: 0;
+  }
+}
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+/* Test/reduced-motion escape hatch — jsdom + prefers-reduced-motion suppress animation */
+[data-anim="off"] * {
+  animation: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
   }
 }

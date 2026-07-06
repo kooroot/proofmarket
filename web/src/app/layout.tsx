@@ -1,18 +1,17 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Space_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Navbar } from "@/components/Navbar";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+// Settlement Ledger typography: Space Mono for hashes/labels, Helvetica system
+// stack for display/body (defined in tailwind fontFamily.sans/display — no web font).
+const spaceMono = Space_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-space-mono",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -21,16 +20,22 @@ export const metadata: Metadata = {
     "World Cup football prediction markets on Solana devnet, settled trustlessly by a single on-chain validate_stat proof — no human vote, no dispute window.",
 };
 
+// Applies the persisted theme before first paint so there is no flash. Default
+// SSR theme is "paper"; this only re-points when localStorage says "terminal".
+const noFlashTheme = `try{var t=localStorage.getItem('pm-theme');if(t==='terminal'||t==='paper'){document.documentElement.dataset.theme=t}}catch(e){}`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    // Font variables live on <html>: Tailwind preflight sets `html { font-family: var(--font-geist-sans), sans-serif }`,
-    // and a custom property defined only on <body> is invisible there — the declaration then fails at
-    // computed-value time and the browser falls back to its default serif (seen on the deployed site).
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    // Font var lives on <html> so Tailwind preflight's `html { font-family }` resolves it.
+    // suppressHydrationWarning: the no-flash script may set data-theme before hydration.
+    <html lang="en" data-theme="paper" className={spaceMono.variable} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: noFlashTheme }} />
+      </head>
       <body className="font-sans antialiased">
         <Providers>
           <Navbar />
