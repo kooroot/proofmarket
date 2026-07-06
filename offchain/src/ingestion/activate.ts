@@ -14,7 +14,7 @@
 import nacl from "tweetnacl";
 
 /**
- * @param base   API base, e.g. https://oracle-dev.txodds.com
+ * @param base   API host root, e.g. https://txline-dev.txodds.com or https://txline.txodds.com
  * @param txSig  confirmed on-chain subscribe() signature
  * @param jwt    guest JWT from getGuestJwt()
  * @param leagues league IDs — MUST be the exact same array used in the on-chain intent

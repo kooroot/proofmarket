@@ -8,7 +8,7 @@
  *   | system_program | associated_token_program
  *
  * The ONE thing this file cannot ship: the IDL JSON itself. Fetch it with
- *   anchor idl fetch <TXORACLE_PROGRAM_ID> --provider.cluster devnet -o ./idl/txoracle.json
+ *   anchor idl fetch <TXORACLE_PROGRAM_ID> --provider.cluster <devnet|mainnet-beta> -o ./idl/txoracle.json
  * (see README). Generated TS types are optional but recommended.
  */
 import { readFileSync } from "node:fs";
@@ -20,6 +20,7 @@ import {
   getOrCreateAssociatedTokenAccount,
   getAssociatedTokenAddressSync,
 } from "@solana/spl-token";
+import { findTxlineNetworkByProgramId, txlineExplorerTx } from "./network.ts";
 
 // CONFIRMED PDA seeds (idl/txoracle.json + subscribe.ts example, findings §e).
 const PRICING_MATRIX_SEED = "pricing_matrix";
@@ -47,9 +48,10 @@ function loadProgram(cfg: SubscribeConfig, connection: Connection, wallet: Keypa
   try {
     idl = JSON.parse(readFileSync(idlPath, "utf8"));
   } catch {
+    const cluster = findTxlineNetworkByProgramId(cfg.programId) === "mainnet" ? "mainnet-beta" : "devnet";
     throw new Error(
       `IDL not found at ${idlPath}. Run:\n` +
-        `  anchor idl fetch ${cfg.programId} --provider.cluster devnet -o ./idl/txoracle.json`,
+        `  anchor idl fetch ${cfg.programId} --provider.cluster ${cluster} -o ./idl/txoracle.json`,
     );
   }
   // IDL ships the mainnet address; point it at the configured (devnet) program.
@@ -168,7 +170,8 @@ export async function subscribe(cfg: SubscribeConfig, wallet: Keypair): Promise<
     })
     .rpc();
 
+  const network = findTxlineNetworkByProgramId(cfg.programId) ?? "devnet";
   console.log(`subscribe confirmed: ${txSig}`);
-  console.log(`Explorer: https://explorer.solana.com/tx/${txSig}?cluster=devnet`);
+  console.log(`Explorer: ${txlineExplorerTx(txSig, network)}`);
   return txSig;
 }

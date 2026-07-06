@@ -97,9 +97,11 @@ table is the authoritative list; anything else is ignored):
 | Var | Scope | Value |
 |-----|-------|-------|
 | `NEXT_PUBLIC_RPC_URL` | client+server | `https://api.devnet.solana.com` |
+| `NEXT_PUBLIC_SETTLEMENT_TXLINE_NETWORK` | client+server | `devnet` (keep this unless ProofMarket is redeployed against TxLINE mainnet) |
 | `NEXT_PUBLIC_PROOFMARKET_PROGRAM_ID` | client+server | `6QNd5mHvV7czVkrRNdLPmuUybSwwdPWq9RYuwk5LZuEb` |
 | `NEXT_PUBLIC_USDC_MINT` | client+server | `2MYAvDHmZCnWUC4rMVYstLNniiXHuxo2Z7j7czaHA8LT` (or your Step-2-alt mint) |
 | `NEXT_PUBLIC_FOLD_VERIFIED` | client, optional | `1` to enable the receipt "verify" fold |
+| `TXLINE_NETWORK` | **server-only** | `devnet` for submitted settlement demo data; `mainnet` to fetch official World Cup mainnet API data with a matching token |
 | `TXLINE_JWT` | **server-only** | guest JWT from `POST /auth/guest/start` (expires — refresh before judging) |
 | `TXLINE_API_TOKEN` | **server-only** | pre-activated free SL1 `apiToken` (judges need no purchase) |
 | `FAUCET_AUTHORITY_SECRET` | **server-only** | **bs58-encoded** secret key of the **mint authority** — the dedicated `keys/faucet-authority.json` (`H6S9JH7GaHoKph193EMYPMXajdUqsY6Jp3hm6BKt2fUC`), NOT the deploy wallet: mint authority was moved to this low-privilege key on 2026-07-02 so the program upgrade authority never ships to the frontend host. Convert: `cd web && bun -e 'console.log(require("bs58").encode(Uint8Array.from(require("../keys/faucet-authority.json"))))'` |

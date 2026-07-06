@@ -7,6 +7,10 @@
     "e2e-replay": "ts-mocha -p ./tsconfig.json -t 1000000 tests/e2e-replay-receipt.ts",
     "seed": "ts-node --transpile-only scripts/seed.ts",
     "check-deploy": "ts-node --transpile-only scripts/check-deploy.ts",
+    "check-txline": "ts-node --transpile-only scripts/check-txline-network.ts",
+    "check-txline:devnet": "ts-node --transpile-only scripts/check-txline-network.ts --network devnet",
+    "check-txline:mainnet": "ts-node --transpile-only scripts/check-txline-network.ts --network mainnet",
+    "check-txline:mainnet:live": "ts-node --transpile-only scripts/check-txline-network.ts --network mainnet --live",
     "judge-check": "bash scripts/judge-check.sh"
   },
   "dependencies": {

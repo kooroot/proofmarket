@@ -12,7 +12,10 @@ The hero surface is a **"Proof Receipt"** that visualizes the full cryptographic
 
 **https://proofmarket-tan.vercel.app** — one-click faucet mints 1,000 test-USDC (plus a small SOL gas grant, so judges need **no devnet SOL**), stake YES/NO on the open demo market, and watch the animated resolution walk at [/replay/18172280](https://proofmarket-tan.vercel.app/replay/18172280). Program [`6QNd5mHvV7czVkrRNdLPmuUybSwwdPWq9RYuwk5LZuEb`](https://explorer.solana.com/address/6QNd5mHvV7czVkrRNdLPmuUybSwwdPWq9RYuwk5LZuEb?cluster=devnet) on devnet; the full deployed-address table with Explorer permalinks is in [docs/DEPLOY-LOG.md](docs/DEPLOY-LOG.md).
 
-> **Status: devnet only, play-money.** On-chain settlement moves only devnet test-USDC — never mainnet, never real funds. The hermetic reproduction below runs today with zero setup beyond `yarn install`.
+> **Status: devnet settlement, play-money.** On-chain settlement moves only devnet test-USDC — never
+> mainnet, never real funds. TxLINE data fetching can be pointed at mainnet World Cup tiers for
+> event/proof discovery, but mainnet fund settlement would require a separate ProofMarket mainnet
+> deployment compiled against the mainnet TxLINE oracle.
 
 ### Why the live market is OPEN, not Resolved — by design
 
@@ -43,6 +46,21 @@ Three layers, with a single fund-moving trust surface:
 1. **Ingestion Core** — TxLINE access (guest JWT → on-chain `subscribe` → activate → snapshot/SSE scores+odds decode → proof-bundle fetch).
 2. **On-chain program** (`programs/proofmarket/`) — the _only_ trust surface that moves funds: an Anchor program holding USDC parimutuel pools that CPIs `txoracle::validate_stat` and reads its `bool` via `sol_get_return_data`.
 3. **Off-chain** (`offchain/`) + **Frontend** (`web/`) — untrusted by construction: proofs are self-authenticating, so a malicious keeper cannot mis-settle.
+
+## TxLINE mainnet data readiness
+
+The submitted escrow is devnet, but the data path is network-aware:
+
+```bash
+npm run check-txline:mainnet
+npm run check-txline:mainnet:live
+```
+
+The mainnet config follows the official World Cup docs: API host `https://txline.txodds.com`,
+program `9ExbZjAapQww1vfcisDmrngPinHTEfpjYRWMunJgcKaA`, TxL mint
+`Zhw9TVKp68a1QrftncMSd6ELXKDtpVMNuMGr1jNwdeL`, and free World Cup service levels SL1
+(60-second delay) and SL12 (real-time). Set `TXLINE_NETWORK=mainnet` plus a mainnet-activated
+`TXLINE_JWT`/`TXLINE_API_TOKEN` to point the server-side `/api/txline/*` proxy at mainnet.
 
 ## Pinned toolchain (exact)
 
@@ -111,17 +129,20 @@ only affects `anchor test`, which this repo doesn't use (the `Makefile` drives b
 
 ## Environment variables (documented here — `.env` files are not committed)
 
-The hermetic reproduction above needs **none** of these; they are required only to run against **live devnet** (deploy / keeper / frontend):
+The hermetic reproduction above needs **none** of these; they are required only to run against live
+TxLINE/Solana networks (deploy / keeper / frontend):
 
 | Var | Purpose |
 |-----|---------|
 | `ANCHOR_PROVIDER_URL` | RPC for deploy (e.g. devnet `https://api.devnet.solana.com`) |
 | `ANCHOR_WALLET` | path to the deploy keypair (`keys/devnet-deployer.json`) |
-| `TXLINE_JWT` | guest JWT from `POST /auth/guest/start` (frontend server routes; the API host is pinned in `web/src/lib/txline-fetch.ts`) |
+| `TXLINE_NETWORK` | TxLINE data API network for frontend server routes and offchain checks: `devnet` or `mainnet` |
+| `TXLINE_JWT` | guest JWT from `POST /auth/guest/start` on the matching TxLINE host |
 | `TXLINE_API_TOKEN` | pre-activated free SL1 `apiToken` (server-side only) |
 | `FAUCET_AUTHORITY_SECRET` | **bs58-encoded** secret key of the test-USDC **mint authority** — the frontend faucet route signs `mintTo` + SOL gas grants with it (server-side only) |
 | `PROOFMARKET_PROGRAM_ID` | program id for the offchain catalog helpers (optional; placeholder default when unset) |
 | `NEXT_PUBLIC_RPC_URL` | devnet RPC for the frontend |
+| `NEXT_PUBLIC_SETTLEMENT_TXLINE_NETWORK` | settlement oracle network for the deployed ProofMarket program; default `devnet` |
 | `NEXT_PUBLIC_PROOFMARKET_PROGRAM_ID` | deployed `proofmarket` program id |
 | `NEXT_PUBLIC_USDC_MINT` | the pinned 6-dp test-USDC mint (`2MYAvDHmZCnWUC4rMVYstLNniiXHuxo2Z7j7czaHA8LT`) |
 | `NEXT_PUBLIC_FOLD_VERIFIED` | optional; `1` enables the in-browser "Verify in your browser" Merkle-fold toggle |

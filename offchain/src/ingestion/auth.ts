@@ -7,7 +7,7 @@ interface TokenResponse {
   token: string;
 }
 
-/** Fetch a guest JWT. `base` is e.g. https://oracle-dev.txodds.com */
+/** Fetch a guest JWT. `base` is e.g. https://txline-dev.txodds.com or https://txline.txodds.com */
 export async function getGuestJwt(base: string): Promise<string> {
   const res = await fetch(`${base}/auth/guest/start`, { method: "POST" });
   if (!res.ok) {

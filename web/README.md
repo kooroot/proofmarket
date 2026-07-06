@@ -7,8 +7,9 @@ ProofMarket is a parimutuel prediction market for FIFA World Cup fixtures that s
 resolver, no committee vote, and no challenge/dispute window — the escrow releases funds only when a
 cryptographic proof over a TxODDS-signed match statistic evaluates to `true`.
 
-> **Devnet only.** Every artifact below is on Solana **devnet** and uses **test USDC** (a faucet
-> mint). No real funds are ever at risk.
+> **Settlement demo: devnet only.** Every fund-moving artifact below is on Solana **devnet** and uses
+> **test USDC** (a faucet mint). No real funds are ever at risk. TxLINE data fetching is now
+> network-configurable, so `/api/txline/*` can be pointed at mainnet World Cup data separately.
 
 ## The resolution chain (what a judge can verify)
 
@@ -39,9 +40,28 @@ links to every on-chain artifact.
 
 Daily-root PDA derivation: `["daily_scores_roots", 20634u16 (LE)]` under the TxLINE oracle program.
 
+## TxLINE Network Modes
+
+ProofMarket separates the data network from the settlement network:
+
+| Purpose | Env | Default | Notes |
+| --- | --- | --- | --- |
+| TxLINE data proxy | `TXLINE_NETWORK` | `devnet` | Set to `mainnet` to fetch from `https://txline.txodds.com/api`. |
+| ProofMarket settlement oracle | `NEXT_PUBLIC_SETTLEMENT_TXLINE_NETWORK` | `devnet` | Keep devnet unless ProofMarket is redeployed against the mainnet TxLINE program. |
+
+Official World Cup mainnet config used by the code:
+
+| Network | API | TxLINE program | Free World Cup tiers |
+| --- | --- | --- | --- |
+| devnet | `https://txline-dev.txodds.com/api` | `6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS715wyP2J` | SL1, 60-second delay |
+| mainnet | `https://txline.txodds.com/api` | `9ExbZjAapQww1vfcisDmrngPinHTEfpjYRWMunJgcKaA` | SL1, 60-second delay; SL12, real-time |
+
+Mainnet event/proof fetching is testable now. Mainnet escrow settlement is a separate redeploy:
+ProofMarket's current Anchor program is compiled and deployed against the devnet TxLINE oracle.
+
 ## Judge / API endpoints
 
-The frontend proxies the TxLINE dev API server-side (auth headers never reach the browser; every id
+The frontend proxies the selected TxLINE API server-side (auth headers never reach the browser; every id
 is validated as a non-negative integer before it touches the upstream path):
 
 | Route | Purpose |
@@ -73,6 +93,7 @@ The client config (`RPC_URL`, program id, USDC mint) ships with committed devnet
 
 | Var | Used by |
 | --- | --- |
+| `TXLINE_NETWORK` | `/api/txline/*` proxy host selector (`devnet` or `mainnet`) |
 | `TXLINE_JWT` | `/api/txline/*` proxy |
 | `TXLINE_API_TOKEN` | `/api/txline/*` proxy |
 | `FAUCET_AUTHORITY_SECRET` | `/api/faucet/usdc` |
