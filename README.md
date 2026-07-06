@@ -8,6 +8,8 @@ ProofMarket is a submission for the **TxODDS World Cup Hackathon — Track 1 (Pr
 
 The hero surface is a **"Proof Receipt"** that visualizes the full cryptographic resolution chain: stat leaf → eventStatRoot → fixture subtree → daily-root PDA → `validate_stat` TRUE → escrow release.
 
+Current submission checklist and market taxonomy are in [docs/SUBMISSION-CHECKLIST.md](docs/SUBMISSION-CHECKLIST.md).
+
 ## 🔴 Live demo (devnet)
 
 **https://proofmarket-tan.vercel.app** — one-click faucet mints 1,000 test-USDC (plus a small SOL gas grant, so judges need **no devnet SOL**), stake YES/NO on the open demo market, and watch the animated resolution walk at [/replay/18172280](https://proofmarket-tan.vercel.app/replay/18172280). Program [`6QNd5mHvV7czVkrRNdLPmuUybSwwdPWq9RYuwk5LZuEb`](https://explorer.solana.com/address/6QNd5mHvV7czVkrRNdLPmuUybSwwdPWq9RYuwk5LZuEb?cluster=devnet) on devnet; the full deployed-address table with Explorer permalinks is in [docs/DEPLOY-LOG.md](docs/DEPLOY-LOG.md).
