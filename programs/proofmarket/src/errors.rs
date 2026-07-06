@@ -7,7 +7,7 @@ pub enum ProofError {
     #[msg("amount is zero")] ZeroAmount,                   // 6102
     #[msg("stake below minimum")] StakeTooSmall,           // 6103
     #[msg("fee_bps exceeds maximum")] FeeTooHigh,          // 6104
-    #[msg("predicate not supported in v1")] UnsupportedPredicate, // 6105
+    #[msg("predicate not supported")] UnsupportedPredicate, // 6105
     #[msg("resolve before resolve_after_ts")] ResolveTooEarly,    // 6106
     #[msg("invalid market state")] InvalidState,           // 6107
     #[msg("wrong daily-scores root account")] WrongRootAccount,   // 6108
@@ -27,6 +27,8 @@ pub enum ProofError {
     #[msg("failed to serialize CPI args")] SerializationFailed, // 6122
     #[msg("signer is not the market creator")] Unauthorized,   // 6123
     #[msg("close before grace period elapsed")] CloseTooEarly, // 6124
+    #[msg("missing second stat")] MissingSecondStat,           // 6125
+    #[msg("invalid binary op")] InvalidBinaryOp,               // 6126
 }
 
 #[cfg(test)]
@@ -35,11 +37,13 @@ mod tests {
     // The on-chain error code is produced by `From<ProofError> for u32` (= discriminant + offset).
     // Verify the namespace base (6100), the last pre-P1.10 code (6121), and the new P1.10 code (6122).
     #[test]
-    fn codes_span_6100_to_6124() {
+    fn codes_span_6100_to_6126() {
         assert_eq!(u32::from(ProofError::MarketNotOpen), 6100);
         assert_eq!(u32::from(ProofError::VaultNotEmpty), 6121);
         assert_eq!(u32::from(ProofError::SerializationFailed), 6122);
         assert_eq!(u32::from(ProofError::Unauthorized), 6123);
         assert_eq!(u32::from(ProofError::CloseTooEarly), 6124);
+        assert_eq!(u32::from(ProofError::MissingSecondStat), 6125);
+        assert_eq!(u32::from(ProofError::InvalidBinaryOp), 6126);
     }
 }

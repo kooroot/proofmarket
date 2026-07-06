@@ -15,6 +15,9 @@ pub const CMP_GT: u8 = 0;
 pub const CMP_LT: u8 = 1;
 pub const CMP_EQ: u8 = 2;
 
+pub const OP_ADD: u8 = 0;
+pub const OP_SUBTRACT: u8 = 1;
+
 pub const ST_OPEN: u8 = 0;
 pub const ST_LOCKED: u8 = 1;
 pub const ST_RESOLVED: u8 = 2;

@@ -20,6 +20,62 @@ fn oracle_comparison(c: u8) -> Result<Comparison> {
     })
 }
 
+fn oracle_binary_op(op: u8) -> Result<BinaryExpression> {
+    Ok(match op {
+        OP_ADD => BinaryExpression::Add,
+        OP_SUBTRACT => BinaryExpression::Subtract,
+        _ => return err!(ProofError::InvalidBinaryOp),
+    })
+}
+
+fn bind_second_stat(
+    stat_b_key: Option<u32>,
+    stat_b_period: Option<i32>,
+    op: Option<u8>,
+    stat_b: &Option<StatTerm>,
+) -> Result<Option<BinaryExpression>> {
+    match (stat_b_key, stat_b_period, op, stat_b.as_ref()) {
+        (None, None, None, None) => Ok(None),
+        (None, None, None, Some(_)) => err!(ProofError::UnexpectedSecondStat),
+        (Some(expected_key), Some(expected_period), Some(op_code), Some(term)) => {
+            require!(
+                term.stat_to_prove.key == expected_key && term.stat_to_prove.period == expected_period,
+                ProofError::PredicateMismatch
+            );
+            Ok(Some(oracle_binary_op(op_code)?))
+        }
+        (Some(_), Some(_), Some(_), None) => err!(ProofError::MissingSecondStat),
+        _ => err!(ProofError::PredicateMismatch),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn term(key: u32, value: i32, period: i32) -> StatTerm {
+        StatTerm {
+            stat_to_prove: ScoreStat { key, value, period },
+            event_stat_root: [0; 32],
+            stat_proof: vec![],
+        }
+    }
+
+    #[test]
+    fn second_stat_binding_rejects_unexpected_stat_for_single_stat_market() {
+        assert!(bind_second_stat(None, None, None, &Some(term(2, 0, 7))).is_err());
+    }
+
+    #[test]
+    fn second_stat_binding_requires_expected_stat_and_valid_op() {
+        assert!(bind_second_stat(Some(2), Some(7), Some(OP_SUBTRACT), &None).is_err());
+        assert!(bind_second_stat(Some(2), Some(7), Some(OP_SUBTRACT), &Some(term(7, 1, 7))).is_err());
+        assert!(bind_second_stat(Some(2), Some(7), Some(9), &Some(term(2, 0, 7))).is_err());
+        assert_eq!(bind_second_stat(Some(2), Some(7), Some(OP_SUBTRACT), &Some(term(2, 0, 7))).unwrap(), Some(BinaryExpression::Subtract));
+        assert_eq!(bind_second_stat(Some(2), Some(7), Some(OP_ADD), &Some(term(2, 0, 7))).unwrap(), Some(BinaryExpression::Add));
+    }
+}
+
 #[derive(Accounts)]
 pub struct Resolve<'info> {
     #[account(mut)]
@@ -74,7 +130,12 @@ pub fn handler(
             && stat_a.stat_to_prove.period == ctx.accounts.market.stat_a_period,
         ProofError::PredicateMismatch
     );
-    require!(stat_b.is_none(), ProofError::UnexpectedSecondStat);
+    let op = bind_second_stat(
+        ctx.accounts.market.stat_b_key,
+        ctx.accounts.market.stat_b_period,
+        ctx.accounts.market.op,
+        &stat_b,
+    )?;
 
     // 5. Finality binding (G3 boundary): the proven batch must be at/after the lock time.
     require!(
@@ -87,10 +148,10 @@ pub fn handler(
         threshold: ctx.accounts.market.threshold,
         comparison: oracle_comparison(ctx.accounts.market.comparison)?,
     };
-    let op: Option<BinaryExpression> = None;
 
     // Capture Copy receipt values BEFORE moving stat_a/fixture_summary into the CPI args.
     let proven_value = stat_a.stat_to_prove.value;
+    let proven_value_b = stat_b.as_ref().map(|b| b.stat_to_prove.value);
     let event_stat_root = stat_a.event_stat_root;
     let events_sub_tree_root = fixture_summary.events_sub_tree_root;
     let root_key = ctx.accounts.daily_scores_merkle_roots.key();
@@ -133,6 +194,7 @@ pub fn handler(
     market.event_stat_root = event_stat_root;
     market.events_sub_tree_root = events_sub_tree_root;
     market.resolve_ts = ts;
+    market.proven_value_b = proven_value_b;
 
     // 9. Settle. No fund movement — winners pull via claim (P1.13).
     market.outcome = if predicate_true { OUT_YES } else { OUT_NO };
@@ -146,8 +208,8 @@ pub fn handler(
     emit!(MarketResolved {
         market: market.key(), fixture_id: market.fixture_id,
         stat_a_key: market.stat_a_key, stat_a_period: market.stat_a_period,
-        proven_value_a: market.proven_value_a, proven_value_b: None,
-        threshold: market.threshold, comparison: market.comparison, op: None,
+        proven_value_a: market.proven_value_a, proven_value_b: market.proven_value_b,
+        threshold: market.threshold, comparison: market.comparison, op: market.op,
         predicate_true, outcome: market.outcome,
         daily_root: market.daily_root, epoch_day: market.epoch_day,
         event_stat_root: market.event_stat_root, events_sub_tree_root: market.events_sub_tree_root,
