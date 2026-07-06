@@ -2,34 +2,65 @@
 import { Button } from "@/components/ui/button";
 import { BurnerWalletName } from "@/lib/burner-wallet-adapter";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useRef, useState } from "react";
 export function PlayAsGuestButton() {
   const { publicKey, select, connect, wallet, connecting } = useWallet();
+  const queryClient = useQueryClient();
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [gasStatus, setGasStatus] = useState<"idle" | "funding" | "error">("idle");
+  const fundedPubkey = useRef<string | null>(null);
   const isBurner = wallet?.adapter.name === BurnerWalletName;
   const pk = isBurner ? publicKey?.toBase58() ?? null : null;
 
   useEffect(() => {
     if (!busy || !isBurner || publicKey || connecting) return;
-    void connect()
-      .then(() => setFailed(false))
-      .catch(() => setFailed(true))
-      .finally(() => setBusy(false));
+    const timer = window.setTimeout(() => {
+      void connect()
+        .then(() => setFailed(false))
+        .catch(() => setFailed(true))
+        .finally(() => setBusy(false));
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, [busy, connect, connecting, isBurner, publicKey]);
+
+  useEffect(() => {
+    if (!pk || !isBurner || fundedPubkey.current === pk) return;
+    setBusy(false);
+    setFailed(false);
+    fundedPubkey.current = pk;
+    setGasStatus("funding");
+    void fetch("/api/faucet/sol", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ pubkey: pk }),
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error(`SOL faucet failed: ${response.status}`);
+        setGasStatus("idle");
+        return queryClient.invalidateQueries({ queryKey: ["balances", pk] });
+      })
+      .catch(() => setGasStatus("error"));
+  }, [isBurner, pk, queryClient]);
 
   return (
     <Button
-      variant={failed ? "destructive" : "secondary"}
+      variant={failed || gasStatus === "error" ? "destructive" : "secondary"}
       disabled={busy || connecting}
       onClick={async () => {
         setFailed(false);
+        setGasStatus("idle");
         setBusy(true);
         select(BurnerWalletName);
       }}
     >
       {pk
-        ? `Burner ${pk.slice(0, 4)}...${pk.slice(-4)}`
+        ? gasStatus === "funding"
+          ? "Funding gas..."
+          : gasStatus === "error"
+          ? "Gas faucet failed"
+          : `Burner ${pk.slice(0, 4)}...${pk.slice(-4)}`
         : failed
         ? "Guest failed"
         : busy || connecting
