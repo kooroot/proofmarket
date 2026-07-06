@@ -26,11 +26,11 @@ export function Navbar() {
           Switch to Devnet
         </div>
       )}
-      <nav className="flex flex-wrap items-center justify-between gap-y-2 p-3 max-w-5xl mx-auto">
-        <Link href="/" className="font-bold">
+      <nav className="mx-auto flex max-w-5xl flex-col gap-2 px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:p-3">
+        <Link href="/" className="font-bold leading-none">
           ProofMarket
         </Link>
-        <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-2 text-sm">
+        <div className="flex w-full min-w-0 flex-wrap items-center gap-x-3 gap-y-2 text-sm sm:w-auto sm:justify-end">
           <Link
             className="text-emerald-400 whitespace-nowrap"
             href="/replay/18172280"
@@ -47,7 +47,9 @@ export function Navbar() {
           )}
           <FaucetButton pubkey={pk} />
           <PlayAsGuestButton />
-          <WalletMultiButton />
+          <div className="min-w-0 max-w-full [&_.wallet-adapter-button]:h-9 [&_.wallet-adapter-button]:max-w-full [&_.wallet-adapter-button]:truncate [&_.wallet-adapter-button]:px-3 [&_.wallet-adapter-button]:text-xs sm:[&_.wallet-adapter-button]:text-sm">
+            <WalletMultiButton />
+          </div>
         </div>
       </nav>
     </header>

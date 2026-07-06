@@ -31,22 +31,24 @@ export function StakePanel({ m }: { m: UiMarket }) {
     m.feeBps
   );
   return (
-    <div className="space-y-3 rounded-lg border border-zinc-800 p-4">
+    <div className="space-y-3 rounded-lg border border-zinc-800 p-3 sm:p-4">
       <ToggleGroup
+        className="grid w-full grid-cols-2"
         value={side ? ["yes"] : ["no"]}
         onValueChange={(v) => {
           if (v.length > 0) setSide(v[v.length - 1] === "yes");
         }}
       >
-        <ToggleGroupItem value="yes">YES</ToggleGroupItem>
-        <ToggleGroupItem value="no">NO</ToggleGroupItem>
+        <ToggleGroupItem className="w-full" value="yes">YES</ToggleGroupItem>
+        <ToggleGroupItem className="w-full" value="no">NO</ToggleGroupItem>
       </ToggleGroup>
       <Input
+        className="w-full"
         value={usdc}
         onChange={(e) => setUsdc(e.target.value)}
         placeholder="USDC"
       />
-      <p className="text-sm text-zinc-400">
+      <p className="break-words text-sm text-zinc-400">
         {preview !== null
           ? `if ${side ? "YES" : "NO"}, you claim ≈ ${formatUsdc(preview)} USDC`
           : "one-sided pool — would Void & refund"}
@@ -79,12 +81,13 @@ export function StakePanel({ m }: { m: UiMarket }) {
             setBusy(false);
           }
         }}
+        className="w-full whitespace-normal leading-snug"
       >
         {err ?? (busy ? "Confirming…" : `Stake ${usdc} USDC`)}
       </Button>
-      {txErr && <p className="text-xs text-red-400">{txErr}</p>}
+      {txErr && <p className="break-words text-xs text-red-400">{txErr}</p>}
       {sig && (
-        <a className="text-xs text-emerald-400" href={explorerTx(sig)}>
+        <a className="break-all text-xs text-emerald-400" href={explorerTx(sig)}>
           View tx →
         </a>
       )}

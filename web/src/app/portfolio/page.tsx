@@ -18,7 +18,7 @@ function OpenPositionRow({ entry }: { entry: PortfolioPosition }) {
   return (
     <div className="flex flex-col gap-2 border-b border-zinc-800 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
       <div className="min-w-0">
-        <div className="truncate font-medium text-zinc-100">
+        <div className="break-words font-medium text-zinc-100 sm:truncate">
           {predicateToText({ label: "", statAKey: m.statAKey, statBKey: m.statBKey, op: m.op, comparison: m.comparison, threshold: m.threshold })}
         </div>
         <div className="text-zinc-400">
@@ -37,14 +37,14 @@ export default function Portfolio() {
   const markets = useMarkets();
   const positions = usePortfolioPositions(markets.data ?? []);
 
-  if (markets.isLoading) return <div className="p-6 text-zinc-400">Loading markets…</div>;
-  if (!publicKey) return <div className="p-6 text-zinc-400">Connect a wallet to see your positions.</div>;
-  if (positions.isLoading) return <div className="p-6 text-zinc-400">Loading positions…</div>;
+  if (markets.isLoading) return <div className="mx-auto max-w-2xl px-3 py-4 text-zinc-400 sm:p-6">Loading markets…</div>;
+  if (!publicKey) return <div className="mx-auto max-w-2xl px-3 py-4 text-zinc-400 sm:p-6">Connect a wallet to see your positions.</div>;
+  if (positions.isLoading) return <div className="mx-auto max-w-2xl px-3 py-4 text-zinc-400 sm:p-6">Loading positions…</div>;
 
   const rows = positions.data ?? [];
   if (!rows.length) {
     return (
-      <div className="p-6 text-zinc-400">
+      <div className="mx-auto max-w-2xl px-3 py-4 text-zinc-400 sm:p-6">
         No positions for this wallet yet — <Link className="text-emerald-400" href="/replay/18172280">try Replay demo →</Link>
       </div>
     );
@@ -53,9 +53,9 @@ export default function Portfolio() {
   const settled = rows.filter((row) => row.market.state === STATE.Resolved);
   const open = rows.filter((row) => row.market.state !== STATE.Resolved);
   return (
-    <div className="p-6 max-w-2xl mx-auto">
+    <div className="mx-auto max-w-2xl px-3 py-4 sm:p-6">
       <Tabs defaultValue="open">
-        <TabsList><TabsTrigger value="open">Open ({open.length})</TabsTrigger><TabsTrigger value="settled">Settled ({settled.length})</TabsTrigger></TabsList>
+        <TabsList className="grid w-full grid-cols-2 sm:inline-flex sm:w-fit"><TabsTrigger value="open">Open ({open.length})</TabsTrigger><TabsTrigger value="settled">Settled ({settled.length})</TabsTrigger></TabsList>
         <TabsContent value="open">
           <div data-state="open" className="mt-3">
             <div className="mb-2 text-sm font-medium text-zinc-200">Open positions</div>

@@ -18,8 +18,9 @@ export function MarketCard({ m, label, pFair, progress }: { m: UiMarket; label: 
   const lockIn = Math.max(0, Number(m.lockTs) - Date.now());
   return (
     <Link href={m.state === STATE.Resolved ? `/m/${m.pda}/receipt` : `/m/${m.pda}`}>
-      <Card className="p-4 space-y-2 hover:border-emerald-500/50 transition">
-        <div className="flex justify-between"><span className="font-medium">{predicateToText({ label, statAKey: m.statAKey, statBKey: m.statBKey, op: m.op, comparison: m.comparison, threshold: m.threshold })}</span>
+      <Card className="space-y-2 p-3 transition hover:border-emerald-500/50 sm:p-4">
+        <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <span className="min-w-0 break-words font-medium leading-snug">{predicateToText({ label, statAKey: m.statAKey, statBKey: m.statBKey, op: m.op, comparison: m.comparison, threshold: m.threshold })}</span>
           {m.state === STATE.Resolved ? <Badge className="bg-emerald-600">Proof ✓</Badge> : <Badge variant="outline" className="shrink-0 whitespace-nowrap">{lockIn > 0 ? `lock in ${fmtLockIn(lockIn)}` : "Awaiting result"}</Badge>}</div>
         {pFair !== null || !progress ? <TwinBar pYes={p ?? 0} pFair={pFair} />
           : <div className="text-sm text-zinc-400">{progress.value} / threshold {progress.threshold}</div>}

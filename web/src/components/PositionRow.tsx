@@ -39,12 +39,12 @@ export function PositionRow({
         )
       : 0n;
   return (
-    <div className="flex items-center justify-between border-b border-zinc-800 py-2 text-sm">
-      <span>
+    <div className="flex flex-col gap-2 border-b border-zinc-800 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+      <span className="min-w-0 break-words">
         YES ${formatUsdc(pos.yesAmount)} / NO ${formatUsdc(pos.noAmount)} —
         claim ≈ ${formatUsdc(payout ?? 0n)}
       </span>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <Link className="text-emerald-400" href={`/m/${m.pda}/receipt`}>
           View Proof Receipt →
         </Link>
@@ -72,9 +72,9 @@ export function PositionRow({
           {busy ? "Confirming…" : pos.claimed ? "Claimed" : "Claim"}
         </Button>
       </div>
-      {txErr && <span className="text-xs text-red-400">{txErr}</span>}
+      {txErr && <span className="break-words text-xs text-red-400">{txErr}</span>}
       {sig && (
-        <a className="text-xs text-emerald-400" href={explorerTx(sig)}>
+        <a className="break-all text-xs text-emerald-400" href={explorerTx(sig)}>
           tx →
         </a>
       )}

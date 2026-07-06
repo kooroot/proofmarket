@@ -16,7 +16,7 @@ export function ProofChain({ bundle, dailyRoot, epochDay, rootExists, validate, 
   const leaf2Bytes = bundle.statToProve2 ? [bundle.statToProve2.key, bundle.statToProve2.value, bundle.statToProve2.period].map(byteHex).join(" ") : null;
   const verdict = validate.predicateTrue === true ? "TRUE" : validate.predicateTrue === false ? "FALSE" : "pending";
   return (
-    <div className="grid grid-cols-[2.25rem_1fr] gap-x-2 sm:gap-x-3">
+    <div className="grid min-w-0 grid-cols-[1.75rem_minmax(0,1fr)] gap-x-2 sm:grid-cols-[2.25rem_minmax(0,1fr)] sm:gap-x-3">
       <ProofStep idx={0} title="Stat leaf — the fact being proven" subtitle="Straight from TxLINE's signed match feed: the stat leaf or leaves this market bets on."
         body={<><div className="text-sm font-semibold text-zinc-100">{leafLine(bundle.statToProve)}</div>
           <span className="text-zinc-500">leaf bytes </span><HashChip bytes={[bundle.statToProve.key, bundle.statToProve.value, bundle.statToProve.period]} tone="sky" /> <span className="text-zinc-500">= {leafBytes}</span>

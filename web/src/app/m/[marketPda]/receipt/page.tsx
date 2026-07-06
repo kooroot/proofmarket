@@ -17,11 +17,11 @@ export default function Receipt({ params }: { params: { marketPda: string } }) {
   const exists = useQuery({ queryKey: ["rootExists", pda.toBase58()], queryFn: async () => !!(await getConnection().getAccountInfo(pda)) });
   const receipt = useResolveReceipt(golden.resolveTx ?? undefined);
   const validate = receipt.data?.validate ?? { predicateTrue: null, returnBase64: null, returnBool: null };
-  if (!golden.resolved) return <div className="p-6 text-zinc-400">This market is still open. <Link className="text-emerald-400" href="/replay/18172280">See how resolution works → Replay</Link></div>;
+  if (!golden.resolved) return <div className="mx-auto max-w-5xl px-3 py-4 text-zinc-400 sm:p-6">This market is still open. <Link className="text-emerald-400" href="/replay/18172280">See how resolution works → Replay</Link></div>;
   return (
-    <div className="p-4 sm:p-6 max-w-5xl mx-auto">
-      <div className="rounded-2xl bg-zinc-950 text-zinc-100 p-4 sm:p-6">
-        <h1 className="text-2xl font-bold">No vote. No dispute window. Just math.</h1>
+    <div className="mx-auto max-w-5xl px-3 py-4 sm:p-6">
+      <div className="rounded-xl bg-zinc-950 p-3 text-zinc-100 sm:rounded-2xl sm:p-6">
+        <h1 className="text-xl font-bold leading-tight sm:text-2xl">No vote. No dispute window. Just math.</h1>
         <p className="text-sm text-zinc-400">The Proof Receipt for the frozen TxLINE fixture, replayed hash by hash.</p>
         <div className="my-5 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-100">
           <div className="font-medium">Live devnet markets stay open until a fresh post-lock proof exists.</div>
@@ -35,7 +35,7 @@ export default function Receipt({ params }: { params: { marketPda: string } }) {
           </p>
           <Link className="mt-2 inline-block text-emerald-300" href="/replay/18172280">Replay the fixture clock →</Link>
         </div>
-        <div className="grid md:grid-cols-[2fr_1fr] gap-6">
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,2fr)_minmax(16rem,1fr)] lg:gap-6">
           <ProofChain bundle={bundle} dailyRoot={pda.toBase58()} epochDay={epochDay} rootExists={!!exists.data} validate={validate} resolveTx={golden.resolveTx ?? undefined} claimTxs={golden.claimTxs ?? []} />
           <UmaContrastCard />
         </div>
