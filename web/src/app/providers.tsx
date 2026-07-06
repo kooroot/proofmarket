@@ -11,13 +11,18 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { getTxlineSettlementNetworkConfig } from "@/lib/txline-network";
+import { BurnerWalletAdapter } from "@/lib/burner-wallet-adapter";
 import "@solana/wallet-adapter-react-ui/styles.css";
 export function Providers({ children }: { children: React.ReactNode }) {
   const endpoint =
     process.env.NEXT_PUBLIC_RPC_URL ??
     getTxlineSettlementNetworkConfig().rpcUrl;
   const wallets = useMemo(
-    () => [new PhantomWalletAdapter(), new SolflareWalletAdapter()],
+    () => [
+      new BurnerWalletAdapter(),
+      new PhantomWalletAdapter(),
+      new SolflareWalletAdapter(),
+    ],
     []
   );
   const [qc] = useState(
