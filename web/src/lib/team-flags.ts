@@ -4,6 +4,7 @@ const TEAM_FLAGS: Record<string, string> = {
   Argentina: "🇦🇷",
   Belgium: "🇧🇪",
   Brazil: "🇧🇷",
+  "Cape Verde": "🇨🇻",
   Colombia: "🇨🇴",
   Egypt: "🇪🇬",
   England: "🇬🇧",

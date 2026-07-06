@@ -48,12 +48,12 @@ describe("demo market copy", () => {
     const fixture = WORLD_CUP_DEMO_FIXTURES[0];
     const copy = demoMarketCopy(market({ statAKey: 1 }), fixture);
 
-    expect(copy.fixtureTitle).toBe("🇺🇸 USA vs 🇧🇪 Belgium");
+    expect(copy.fixtureTitle).toBe("🇦🇷 Argentina vs 🇨🇻 Cape Verde");
     expect(copy.marketIcon).toBe("⚽");
     expect(copy.marketType).toBe("Team Goals");
-    expect(copy.question).toBe("Will USA score at least once?");
-    expect(copy.yesLabel).toBe("YES: USA scores");
-    expect(copy.noLabel).toBe("NO: USA does not score");
+    expect(copy.question).toBe("Will Argentina score at least once?");
+    expect(copy.yesLabel).toBe("YES: Argentina scores");
+    expect(copy.noLabel).toBe("NO: Argentina does not score");
     expect(copy.resolvePredicate).toBe("P1 goals > 0");
     expect(copy.featured).toBe(true);
   });
@@ -62,10 +62,10 @@ describe("demo market copy", () => {
     const fixture = WORLD_CUP_DEMO_FIXTURES[2];
     const copy = demoMarketCopy(market({ statAKey: 8 }), fixture);
 
-    expect(copy.fixtureTitle).toBe("🇦🇷 Argentina vs 🇪🇬 Egypt");
+    expect(copy.fixtureTitle).toBe("🇵🇹 Portugal vs 🇪🇸 Spain");
     expect(copy.marketIcon).toBe("🔎");
     expect(copy.marketType).toBe("Stat Proof Demo");
-    expect(copy.question).toBe("Can TxLINE prove Egypt's corner stat?");
+    expect(copy.question).toBe("Can TxLINE prove Spain's corner stat?");
     expect(copy.yesLabel).toBe("YES: stat proof available");
     expect(copy.noLabel).toBe("NO: predicate false");
     expect(copy.featured).toBe(false);

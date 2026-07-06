@@ -30,7 +30,9 @@ describe("GET /api/txline/fixtures/snapshot", () => {
 
     expect(res.status).toBe(200);
     expect(txlineFetchMock).toHaveBeenCalledWith(
-      "/api/fixtures/snapshot",
+      expect.stringMatching(
+        /^\/api\/fixtures\/snapshot\?startEpochDay=\d+&competitionId=72$/
+      ),
       "mainnet"
     );
     expect(body.count).toBe(1);

@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import Replay from "./page";
 
 const replayState = vi.hoisted(() => ({
-  frame: { stats: { "1": 1 } },
+  frame: { stats: { "1": 3, "2": 2 } },
   done: false,
 }));
 
@@ -21,18 +21,20 @@ vi.mock("@/components/UmaContrastCard", () => ({
 }));
 
 describe("Replay demo", () => {
-  it("uses the same World Cup market framing as the homepage while preserving devnet proof metadata", () => {
+  it("replays the mainnet Argentina vs Cape Verde match while preserving devnet settlement framing", () => {
     replayState.done = false;
 
     render(<Replay />);
 
-    expect(screen.getByText("🇺🇸 USA vs 🇧🇪 Belgium")).toBeInTheDocument();
-    expect(screen.getByText("⚽ Team Goals")).toBeInTheDocument();
-    expect(screen.getByText("Will USA score at least once?")).toBeInTheDocument();
-    expect(screen.getByText("YES: USA scores")).toBeInTheDocument();
-    expect(screen.getByText("NO: USA does not score")).toBeInTheDocument();
-    expect(screen.getByText(/Devnet replay fixture 18172280/i)).toBeInTheDocument();
+    expect(screen.getByText("🇦🇷 Argentina vs 🇨🇻 Cape Verde")).toBeInTheDocument();
+    expect(screen.getByText("🏁 Match Winner")).toBeInTheDocument();
+    expect(screen.getByText("Will Argentina beat Cape Verde?")).toBeInTheDocument();
+    expect(screen.getByText("YES: Argentina wins")).toBeInTheDocument();
+    expect(screen.getByText("NO: Argentina does not win")).toBeInTheDocument();
+    expect(screen.getByText(/Mainnet historical fixture 18175918/i)).toBeInTheDocument();
+    expect(screen.getByText(/devnet escrow pattern/i)).toBeInTheDocument();
     expect(screen.getByText("Raw stat leaf")).toBeInTheDocument();
-    expect(screen.getByText("P1 goals = 1")).toBeInTheDocument();
+    expect(screen.getByText("Argentina goals = 3")).toBeInTheDocument();
+    expect(screen.getByText("Cape Verde goals = 2")).toBeInTheDocument();
   });
 });

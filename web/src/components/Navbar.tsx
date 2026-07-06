@@ -6,6 +6,7 @@ import { PlayAsGuestButton } from "./PlayAsGuestButton";
 import { FaucetButton } from "./FaucetButton";
 import { useBalances } from "@/hooks/useBalances";
 import { getTxlineSettlementNetworkConfig } from "@/lib/txline-network";
+import { MAINNET_HISTORICAL_REPLAY_ROUTE } from "@/lib/replay-demo";
 const WalletMultiButton = dynamic(
   () =>
     import("@solana/wallet-adapter-react-ui").then((m) => m.WalletMultiButton),
@@ -33,7 +34,7 @@ export function Navbar() {
         <div className="flex w-full min-w-0 flex-wrap items-center gap-x-3 gap-y-2 text-sm sm:w-auto sm:justify-end">
           <Link
             className="text-emerald-400 whitespace-nowrap"
-            href="/replay/18172280"
+            href={MAINNET_HISTORICAL_REPLAY_ROUTE}
           >
             Replay demo
           </Link>

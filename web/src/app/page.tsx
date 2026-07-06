@@ -5,6 +5,7 @@ import { MainnetFixturePreviewPanel } from "@/components/MainnetFixturePreview";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMainnetFixturePreview } from "@/hooks/useMainnetFixturePreview";
 import { demoFixtureForMarket, isFeaturedDemoMarket } from "@/lib/demo-market";
+import { MAINNET_HISTORICAL_REPLAY_ROUTE } from "@/lib/replay-demo";
 import Link from "next/link";
 export default function MarketList() {
   const { data, isLoading } = useMarkets();
@@ -30,8 +31,8 @@ export default function MarketList() {
               Stake, settle, and inspect proof receipts
             </h2>
           </div>
-          <Link className="text-sm text-emerald-500" href="/replay/18172280">
-            Replay demo
+          <Link className="text-sm text-emerald-500" href={MAINNET_HISTORICAL_REPLAY_ROUTE}>
+            Argentina 3-2 replay
           </Link>
         </div>
 
@@ -44,7 +45,7 @@ export default function MarketList() {
         ) : !markets.length ? (
           <div className="text-zinc-400">
             No live devnet markets.{" "}
-            <Link className="text-emerald-400" href="/replay/18172280">
+            <Link className="text-emerald-400" href={MAINNET_HISTORICAL_REPLAY_ROUTE}>
               Try Replay demo
             </Link>
           </div>

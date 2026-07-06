@@ -10,5 +10,17 @@ const LOGS_FALSE = [...LOGS_TRUE.slice(0, 2), "Program log: Predicate evaluated 
 describe("parseValidateStatResult (inner log keyed to 6pW64g…)", () => {
   it("reads TRUE / AQ==", () => { const r = parseValidateStatResult(LOGS_TRUE); expect(r.predicateTrue).toBe(true); expect(r.returnBase64).toBe("AQ=="); expect(r.returnBool).toBe(true); });
   it("reads FALSE / AA==", () => { const r = parseValidateStatResult(LOGS_FALSE); expect(r.predicateTrue).toBe(false); expect(r.returnBool).toBe(false); });
+  it("can read mainnet validate_stat replay logs when the program id is supplied", () => {
+    const mainnetProgram = "9ExbZjAapQww1vfcisDmrngPinHTEfpjYRWMunJgcKaA";
+    const r = parseValidateStatResult(
+      [
+        "Program log: Predicate evaluated to: true",
+        `Program return: ${mainnetProgram} AQ==`,
+      ],
+      mainnetProgram
+    );
+
+    expect(r.returnBool).toBe(true);
+  });
   it("returns nulls when absent", () => { expect(parseValidateStatResult([]).returnBase64).toBeNull(); });
 });

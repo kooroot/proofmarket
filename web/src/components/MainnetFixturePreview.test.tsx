@@ -23,7 +23,7 @@ const preview: MainnetFixturePreview = {
         "Match Winner",
         "Over / Under Goals",
         "Team Goals",
-        "Corners Micro Market",
+        "Stat Proof Receipt",
       ],
     },
     {

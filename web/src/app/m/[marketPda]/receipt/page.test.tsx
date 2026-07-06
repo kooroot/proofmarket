@@ -1,35 +1,17 @@
 import "@testing-library/jest-dom/vitest";
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import Receipt from "./page";
 
-vi.mock("@tanstack/react-query", () => ({
-  useQuery: () => ({ data: true }),
-}));
-
-vi.mock("@/hooks/useResolveReceipt", () => ({
-  useResolveReceipt: () => ({
-    data: { validate: { predicateTrue: true, returnBase64: "AQ==", returnBool: true } },
-  }),
-}));
-
-vi.mock("@/lib/market", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/lib/market")>();
-  return {
-    ...actual,
-    dailyRootPda: () => ({ toBase58: () => "BcLwqHJehs8ut8ycRo6NhCGsrtmRnkZbFMm273SdcPGe" }),
-  };
-});
-
 describe("Receipt page", () => {
-  it("makes clear the receipt is a replay artifact when the live market remains open", () => {
+  it("uses the same mainnet historical proof story as the replay demo", () => {
     render(<Receipt params={{ marketPda: "Market1111111111111111111111111111111111" }} />);
 
-    expect(screen.getByText(/Live devnet markets stay open/i)).toBeInTheDocument();
-    expect(screen.getByText(/historical golden proof cannot satisfy a future finality guard/i)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /standalone validate_stat tx/i })).toHaveAttribute(
+    expect(screen.getByText(/Argentina 3-2 Cape Verde/i)).toBeInTheDocument();
+    expect(screen.getByText(/TxLINE mainnet historical proof/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Replay the fixture clock/i })).toHaveAttribute(
       "href",
-      expect.stringContaining("3PwENbNm"),
+      "/replay/18175918",
     );
   });
 });

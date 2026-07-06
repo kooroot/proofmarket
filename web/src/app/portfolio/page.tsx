@@ -13,6 +13,7 @@ import {
   demoMarketCopy,
 } from "@/lib/demo-market";
 import type { MainnetFixturePreviewItem } from "@/lib/mainnet-preview";
+import { MAINNET_HISTORICAL_REPLAY_ROUTE } from "@/lib/replay-demo";
 
 function EmptyState({ children }: { children: React.ReactNode }) {
   return <div className="rounded border border-zinc-800 p-4 text-sm text-zinc-400">{children}</div>;
@@ -64,7 +65,7 @@ export default function Portfolio() {
   if (!rows.length) {
     return (
       <div className="mx-auto max-w-2xl px-3 py-4 text-zinc-400 sm:p-6">
-        No positions for this wallet yet — <Link className="text-emerald-400" href="/replay/18172280">try Replay demo →</Link>
+        No positions for this wallet yet — <Link className="text-emerald-400" href={MAINNET_HISTORICAL_REPLAY_ROUTE}>try Replay demo →</Link>
       </div>
     );
   }

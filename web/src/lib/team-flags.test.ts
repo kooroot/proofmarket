@@ -9,6 +9,7 @@ describe("team flags", () => {
     expect(teamFlag("France")).toBe("🇫🇷");
     expect(teamFlag("Norway")).toBe("🇳🇴");
     expect(teamFlag("Switzerland")).toBe("🇨🇭");
+    expect(teamFlag("Cape Verde")).toBe("🇨🇻");
   });
 
   it("formats fixture titles with flags without hiding team names", () => {

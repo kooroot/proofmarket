@@ -32,7 +32,7 @@ const PREVIEW_MARKETS = [
   "Match Winner",
   "Over / Under Goals",
   "Team Goals",
-  "Corners Micro Market",
+  "Stat Proof Receipt",
 ];
 
 const FREE_TIERS = [

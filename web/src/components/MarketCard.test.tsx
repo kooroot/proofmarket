@@ -35,12 +35,12 @@ describe("MarketCard", () => {
       />
     );
 
-    expect(screen.getByText("🇺🇸 USA vs 🇧🇪 Belgium")).toBeInTheDocument();
+    expect(screen.getByText("🇦🇷 Argentina vs 🇨🇻 Cape Verde")).toBeInTheDocument();
     expect(screen.getByText("⚽ Team Goals")).toBeInTheDocument();
-    expect(screen.getByText("Will USA score at least once?")).toBeInTheDocument();
-    expect(screen.getByText("YES: USA scores")).toBeInTheDocument();
-    expect(screen.getByText("NO: USA does not score")).toBeInTheDocument();
-    expect(screen.getByText(/TxLINE mainnet fixtureId 18193785/i)).toBeInTheDocument();
+    expect(screen.getByText("Will Argentina score at least once?")).toBeInTheDocument();
+    expect(screen.getByText("YES: Argentina scores")).toBeInTheDocument();
+    expect(screen.getByText("NO: Argentina does not score")).toBeInTheDocument();
+    expect(screen.getByText(/TxLINE mainnet fixtureId 18175918/i)).toBeInTheDocument();
     expect(screen.getByText(/Resolve predicate\s+P1 goals > 0/i)).toBeInTheDocument();
   });
 
@@ -55,7 +55,7 @@ describe("MarketCard", () => {
     );
 
     expect(screen.getByText("🔎 Stat Proof Demo")).toBeInTheDocument();
-    expect(screen.getByText("Can TxLINE prove Argentina's corner stat?")).toBeInTheDocument();
+    expect(screen.getByText("Can TxLINE prove Portugal's corner stat?")).toBeInTheDocument();
     expect(screen.getByText("YES: stat proof available")).toBeInTheDocument();
     expect(screen.getByText("NO: predicate false")).toBeInTheDocument();
     expect(screen.queryByText("Corners Micro Market")).not.toBeInTheDocument();

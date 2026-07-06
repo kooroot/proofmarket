@@ -2,8 +2,10 @@ import type { MainnetFixturePreviewItem } from "./mainnet-preview";
 import { predicateToText } from "./predicate";
 import type { UiMarket } from "./market";
 import { fixtureTitleWithFlags } from "./team-flags";
+import { MAINNET_HISTORICAL_REPLAY_FIXTURE } from "./replay-demo";
 
 export const WORLD_CUP_DEMO_FIXTURES: MainnetFixturePreviewItem[] = [
+  MAINNET_HISTORICAL_REPLAY_FIXTURE,
   {
     fixtureId: 18193785,
     participant1: "USA",
@@ -14,7 +16,7 @@ export const WORLD_CUP_DEMO_FIXTURES: MainnetFixturePreviewItem[] = [
       "Match Winner",
       "Over / Under Goals",
       "Team Goals",
-      "Corners Micro Market",
+      "Stat Proof Receipt",
     ],
   },
   {
@@ -27,7 +29,7 @@ export const WORLD_CUP_DEMO_FIXTURES: MainnetFixturePreviewItem[] = [
       "Match Winner",
       "Over / Under Goals",
       "Team Goals",
-      "Corners Micro Market",
+      "Stat Proof Receipt",
     ],
   },
   {
@@ -40,7 +42,7 @@ export const WORLD_CUP_DEMO_FIXTURES: MainnetFixturePreviewItem[] = [
       "Match Winner",
       "Over / Under Goals",
       "Team Goals",
-      "Corners Micro Market",
+      "Stat Proof Receipt",
     ],
   },
   {
@@ -53,7 +55,7 @@ export const WORLD_CUP_DEMO_FIXTURES: MainnetFixturePreviewItem[] = [
       "Match Winner",
       "Over / Under Goals",
       "Team Goals",
-      "Corners Micro Market",
+      "Stat Proof Receipt",
     ],
   },
 ];
