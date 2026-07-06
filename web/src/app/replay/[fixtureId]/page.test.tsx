@@ -32,5 +32,7 @@ describe("Replay demo", () => {
     expect(screen.getByText("YES: USA scores")).toBeInTheDocument();
     expect(screen.getByText("NO: USA does not score")).toBeInTheDocument();
     expect(screen.getByText(/Devnet replay fixture 18172280/i)).toBeInTheDocument();
+    expect(screen.getByText("Raw stat leaf")).toBeInTheDocument();
+    expect(screen.getByText("P1 goals = 1")).toBeInTheDocument();
   });
 });

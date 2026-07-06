@@ -41,6 +41,7 @@ export default function Replay() {
   const bundle = adaptProofBundle(golden.bundle);
   const epochDay = epochDayFromTs(bundle.ts);
   const demo = demoMarketCopy(REPLAY_MARKET, WORLD_CUP_DEMO_FIXTURES[0]);
+  const currentP1Goals = frame?.stats?.["1"] ?? 0;
   if (!done)
     return (
       <div className="p-4 sm:p-6 max-w-2xl mx-auto">
@@ -64,7 +65,14 @@ export default function Replay() {
               {demo.noLabel}
             </div>
           </div>
-          <div className="text-4xl font-bold tabular-nums">P1 goals&nbsp;&nbsp;{frame?.stats?.["1"] ?? 0}</div>
+          <div className="rounded border border-zinc-800 bg-zinc-950 px-3 py-2">
+            <div className="text-[11px] font-medium uppercase tracking-wide text-zinc-500">
+              Raw stat leaf
+            </div>
+            <div className="font-mono text-sm font-semibold text-zinc-100">
+              P1 goals = {currentP1Goals}
+            </div>
+          </div>
           <div className="text-xs text-zinc-500">the moment this hits FT, the stat becomes a Merkle leaf — watch it walk to the on-chain root</div>
         </div>
       </div>
