@@ -15,12 +15,16 @@ export function buildHeaders(
 export function isNumericId(s: string | null): s is string {
   return s !== null && /^\d+$/.test(s);
 }
-export async function txlineFetch(path: string): Promise<unknown> {
-  const res = await fetch(txlineApiUrl(path), {
-    headers: buildHeaders(
-      process.env.TXLINE_JWT!,
-      process.env.TXLINE_API_TOKEN!
-    ),
+export async function txlineFetch(
+  path: string,
+  network?: "devnet" | "mainnet"
+): Promise<unknown> {
+  const jwt = process.env.TXLINE_JWT;
+  const apiToken = process.env.TXLINE_API_TOKEN;
+  if (!jwt || !apiToken) throw new Error("missing TxLINE credentials");
+
+  const res = await fetch(txlineApiUrl(path, network), {
+    headers: buildHeaders(jwt, apiToken),
     cache: "no-store",
   });
   if (!res.ok) throw new Error(`txline ${res.status} ${path}`);
