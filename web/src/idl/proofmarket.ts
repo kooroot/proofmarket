@@ -223,6 +223,24 @@ export type Proofmarket = {
           "type": "i32"
         },
         {
+          "name": "statBKey",
+          "type": {
+            "option": "u32"
+          }
+        },
+        {
+          "name": "statBPeriod",
+          "type": {
+            "option": "i32"
+          }
+        },
+        {
+          "name": "op",
+          "type": {
+            "option": "u8"
+          }
+        },
+        {
           "name": "threshold",
           "type": "i32"
         },
@@ -698,7 +716,7 @@ export type Proofmarket = {
     {
       "code": 6005,
       "name": "unsupportedPredicate",
-      "msg": "predicate not supported in v1"
+      "msg": "predicate not supported"
     },
     {
       "code": 6006,
@@ -784,6 +802,26 @@ export type Proofmarket = {
       "code": 6022,
       "name": "serializationFailed",
       "msg": "failed to serialize CPI args"
+    },
+    {
+      "code": 6023,
+      "name": "unauthorized",
+      "msg": "signer is not the market creator"
+    },
+    {
+      "code": 6024,
+      "name": "closeTooEarly",
+      "msg": "close before grace period elapsed"
+    },
+    {
+      "code": 6025,
+      "name": "missingSecondStat",
+      "msg": "missing second stat"
+    },
+    {
+      "code": 6026,
+      "name": "invalidBinaryOp",
+      "msg": "invalid binary op"
     }
   ],
   "types": [
@@ -1014,6 +1052,24 @@ export type Proofmarket = {
           {
             "name": "statAPeriod",
             "type": "i32"
+          },
+          {
+            "name": "statBKey",
+            "type": {
+              "option": "u32"
+            }
+          },
+          {
+            "name": "statBPeriod",
+            "type": {
+              "option": "i32"
+            }
+          },
+          {
+            "name": "op",
+            "type": {
+              "option": "u8"
+            }
           },
           {
             "name": "threshold",

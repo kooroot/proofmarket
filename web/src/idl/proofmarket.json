@@ -295,6 +295,24 @@
           "type": "i32"
         },
         {
+          "name": "stat_b_key",
+          "type": {
+            "option": "u32"
+          }
+        },
+        {
+          "name": "stat_b_period",
+          "type": {
+            "option": "i32"
+          }
+        },
+        {
+          "name": "op",
+          "type": {
+            "option": "u8"
+          }
+        },
+        {
           "name": "threshold",
           "type": "i32"
         },
@@ -767,10 +785,10 @@
       "name": "FeeTooHigh",
       "msg": "fee_bps exceeds maximum"
     },
-    {
-      "code": 6005,
-      "name": "UnsupportedPredicate",
-      "msg": "predicate not supported in v1"
+      {
+        "code": 6005,
+        "name": "UnsupportedPredicate",
+        "msg": "predicate not supported"
     },
     {
       "code": 6006,
@@ -862,12 +880,22 @@
       "name": "Unauthorized",
       "msg": "signer is not the market creator"
     },
-    {
-      "code": 6024,
-      "name": "CloseTooEarly",
-      "msg": "close before grace period elapsed"
-    }
-  ],
+      {
+        "code": 6024,
+        "name": "CloseTooEarly",
+        "msg": "close before grace period elapsed"
+      },
+      {
+        "code": 6025,
+        "name": "MissingSecondStat",
+        "msg": "missing second stat"
+      },
+      {
+        "code": 6026,
+        "name": "InvalidBinaryOp",
+        "msg": "invalid binary op"
+      }
+    ],
   "types": [
     {
       "name": "Claimed",
@@ -1096,6 +1124,24 @@
           {
             "name": "stat_a_period",
             "type": "i32"
+          },
+          {
+            "name": "stat_b_key",
+            "type": {
+              "option": "u32"
+            }
+          },
+          {
+            "name": "stat_b_period",
+            "type": {
+              "option": "i32"
+            }
+          },
+          {
+            "name": "op",
+            "type": {
+              "option": "u8"
+            }
           },
           {
             "name": "threshold",

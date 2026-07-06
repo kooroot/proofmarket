@@ -29,7 +29,7 @@ describe("resolve (validate_stat CPI)", () => {
     const market = marketPda(id);
     const threshold = thresholdMakesTrue ? 0 : 1; // value=1: 1>0 true ; 1>1 false
     await program.methods
-      .createMarket(id, new BN(g.raw.fixtureId), g.raw.statKey, g.raw.statPeriod, threshold, 0, new BN(resolveAfterMs), 1000)
+      .createMarket(id, new BN(g.raw.fixtureId), g.raw.statKey, g.raw.statPeriod, null, null, null, threshold, 0, new BN(resolveAfterMs), 1000)
       .accounts({ creator: payer.publicKey, market, vault: vaultPda(market), mint, feeDestination: feeDest })
       .rpc();
 

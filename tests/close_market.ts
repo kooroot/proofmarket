@@ -21,7 +21,7 @@ describe("close_market (fee+dust sweep + rent reclaim)", () => {
     const market = marketPda(id);
     // P4.2 vector: YES 60 (40+20), NO 40, fee_bps 100 (1%) -> residual fee = 400_000.
     await program.methods
-      .createMarket(id, new BN(g.raw.fixtureId), g.raw.statKey, g.raw.statPeriod, 0, 0, new BN(g.maxTsMs - 1000), 100)
+      .createMarket(id, new BN(g.raw.fixtureId), g.raw.statKey, g.raw.statPeriod, null, null, null, 0, 0, new BN(g.maxTsMs - 1000), 100)
       .accounts({ creator: payer.publicKey, market, vault: vaultPda(market), mint, feeDestination: feeDest })
       .rpc();
 
@@ -88,7 +88,7 @@ describe("close_market (fee+dust sweep + rent reclaim)", () => {
     const market = marketPda(id);
     // Same golden vector: YES 60 (40+20), NO 40, fee_bps 100 (1%) -> residual fee = 400_000.
     await program.methods
-      .createMarket(id, new BN(g.raw.fixtureId), g.raw.statKey, g.raw.statPeriod, 0, 0, new BN(g.maxTsMs - 1000), 100)
+      .createMarket(id, new BN(g.raw.fixtureId), g.raw.statKey, g.raw.statPeriod, null, null, null, 0, 0, new BN(g.maxTsMs - 1000), 100)
       .accounts({ creator: payer.publicKey, market, vault: vaultPda(market), mint, feeDestination: feeDest })
       .rpc();
 

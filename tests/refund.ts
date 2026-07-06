@@ -12,7 +12,7 @@ describe("refund (Void)", () => {
     const mint = await makeMint(context, payer);
     const fd = await fundUser(context, payer, mint, Keypair.generate(), 0n);
     const id = new BN(400); const market = marketPda(id);
-    await program.methods.createMarket(id, new BN(g.raw.fixtureId), g.raw.statKey, g.raw.statPeriod, 0, 0, new BN(g.maxTsMs - 1000), 1000)
+    await program.methods.createMarket(id, new BN(g.raw.fixtureId), g.raw.statKey, g.raw.statPeriod, null, null, null, 0, 0, new BN(g.maxTsMs - 1000), 1000)
       .accounts({ creator: payer.publicKey, market, vault: vaultPda(market), mint, feeDestination: fd }).rpc();
 
     const a = Keypair.generate(); const aAta = await fundUser(context, payer, mint, a, 1000n);

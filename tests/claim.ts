@@ -14,7 +14,7 @@ describe("claim", () => {
 
     const id = new BN(200);
     const market = marketPda(id);
-    await program.methods.createMarket(id, new BN(g.raw.fixtureId), g.raw.statKey, g.raw.statPeriod, 0, 0, new BN(g.maxTsMs - 1000), 1000)
+    await program.methods.createMarket(id, new BN(g.raw.fixtureId), g.raw.statKey, g.raw.statPeriod, null, null, null, 0, 0, new BN(g.maxTsMs - 1000), 1000)
       .accounts({ creator: payer.publicKey, market, vault: vaultPda(market), mint, feeDestination: feeDest }).rpc();
 
     // Yes 1000 (winner), No 1000 (loser)

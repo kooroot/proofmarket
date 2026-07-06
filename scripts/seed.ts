@@ -44,7 +44,7 @@ const RESOLVE_AFTER_MS = Date.now() + 30 * 86_400_000; // +30d → stays OPEN th
   console.log("feeDestination:", feeDest.toBase58());
 
   const createSig = await program.methods
-    .createMarket(MARKET_ID, FIXTURE_ID, STAT_KEY, STAT_PERIOD, THRESHOLD, COMPARISON, new BN(RESOLVE_AFTER_MS), FEE_BPS)
+    .createMarket(MARKET_ID, FIXTURE_ID, STAT_KEY, STAT_PERIOD, null, null, null, THRESHOLD, COMPARISON, new BN(RESOLVE_AFTER_MS), FEE_BPS)
     .accounts({ creator: deployer.publicKey, market, vault, mint: MINT, feeDestination: feeDest })
     .rpc();
   console.log("createMarket:", market.toBase58(), "sig", createSig);

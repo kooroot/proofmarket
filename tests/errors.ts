@@ -17,7 +17,7 @@ describe("error guards", () => {
     const fd = await fundUser(context, payer, mint, Keypair.generate(), 0n);
     const id = new BN(300); const market = marketPda(id);
     await expectCode(
-      program.methods.createMarket(id, new BN(1), 1, 7, 0, 0, new BN(1_700_000_999_000), 1001)
+      program.methods.createMarket(id, new BN(1), 1, 7, null, null, null, 0, 0, new BN(1_700_000_999_000), 1001)
         .accounts({ creator: payer.publicKey, market, vault: vaultPda(market), mint, feeDestination: fd }).rpc(),
       /6104|FeeTooHigh/);
   });
@@ -29,7 +29,7 @@ describe("error guards", () => {
     const mint = await makeMint(context, payer);
     const fd = await fundUser(context, payer, mint, Keypair.generate(), 0n);
     const id = new BN(301); const market = marketPda(id);
-    await program.methods.createMarket(id, new BN(g.raw.fixtureId), g.raw.statKey, g.raw.statPeriod, 0, 0, new BN(g.maxTsMs - 1000), 1000)
+    await program.methods.createMarket(id, new BN(g.raw.fixtureId), g.raw.statKey, g.raw.statPeriod, null, null, null, 0, 0, new BN(g.maxTsMs - 1000), 1000)
       .accounts({ creator: payer.publicKey, market, vault: vaultPda(market), mint, feeDestination: fd }).rpc();
     await expectCode(
       program.methods.resolve(g.args.ts, g.args.fixtureSummary, g.args.fixtureProof, g.args.mainTreeProof, g.args.statA, g.args.statB)
@@ -45,7 +45,7 @@ describe("error guards", () => {
     const mint = await makeMint(context, payer);
     const fd = await fundUser(context, payer, mint, Keypair.generate(), 0n);
     const id = new BN(302); const market = marketPda(id);
-    await program.methods.createMarket(id, new BN(g.raw.fixtureId), g.raw.statKey, g.raw.statPeriod, 0, 0, new BN(g.maxTsMs - 1000), 1000)
+    await program.methods.createMarket(id, new BN(g.raw.fixtureId), g.raw.statKey, g.raw.statPeriod, null, null, null, 0, 0, new BN(g.maxTsMs - 1000), 1000)
       .accounts({ creator: payer.publicKey, market, vault: vaultPda(market), mint, feeDestination: fd }).rpc();
     const a = Keypair.generate(); const aAta = await fundUser(context, payer, mint, a, 1000n);
     const b = Keypair.generate(); const bAta = await fundUser(context, payer, mint, b, 1000n);
@@ -66,7 +66,7 @@ describe("error guards", () => {
     const mint = await makeMint(context, payer);
     const fd = await fundUser(context, payer, mint, Keypair.generate(), 0n);
     const id = new BN(303); const market = marketPda(id);
-    await program.methods.createMarket(id, new BN("999999999"), g.raw.statKey, g.raw.statPeriod, 0, 0, new BN(g.maxTsMs - 1000), 1000)
+    await program.methods.createMarket(id, new BN("999999999"), g.raw.statKey, g.raw.statPeriod, null, null, null, 0, 0, new BN(g.maxTsMs - 1000), 1000)
       .accounts({ creator: payer.publicKey, market, vault: vaultPda(market), mint, feeDestination: fd }).rpc();
     const a = Keypair.generate(); const aAta = await fundUser(context, payer, mint, a, 1000n);
     const b = Keypair.generate(); const bAta = await fundUser(context, payer, mint, b, 1000n);
@@ -86,7 +86,7 @@ describe("error guards", () => {
     const mint = await makeMint(context, payer);
     const fd = await fundUser(context, payer, mint, Keypair.generate(), 0n);
     const id = new BN(304); const market = marketPda(id);
-    await program.methods.createMarket(id, new BN(1), 1, 7, 0, 0, new BN(1_700_999_999_000), 1000)
+    await program.methods.createMarket(id, new BN(1), 1, 7, null, null, null, 0, 0, new BN(1_700_999_999_000), 1000)
       .accounts({ creator: payer.publicKey, market, vault: vaultPda(market), mint, feeDestination: fd }).rpc();
     const a = Keypair.generate(); const aAta = await fundUser(context, payer, mint, a, 1000n);
     await program.methods.stake(true, new BN(1000)).accounts({ user: a.publicKey, market, position: positionPda(market, a.publicKey), vault: vaultPda(market), userTokenAccount: aAta, mint }).signers([a]).rpc();

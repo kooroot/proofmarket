@@ -13,7 +13,7 @@ describe("create_market", () => {
     const id = new BN(1);
     const market = marketPda(id);
     await program.methods
-      .createMarket(id, new BN(12345), 1, 7, 0, 0, new BN(1_700_000_999_000), 1000)
+      .createMarket(id, new BN(12345), 1, 7, null, null, null, 0, 0, new BN(1_700_000_999_000), 1000)
       .accounts({
         creator: payer.publicKey, market, vault: vaultPda(market),
         mint, feeDestination: feeDest,
@@ -31,7 +31,7 @@ describe("create_market", () => {
     try {
       const id2 = new BN(2);
       await program.methods
-        .createMarket(id2, new BN(12345), 999, 7, 0, 0, new BN(1_700_000_999_000), 1000)
+        .createMarket(id2, new BN(12345), 999, 7, null, null, null, 0, 0, new BN(1_700_000_999_000), 1000)
         .accounts({ creator: payer.publicKey, market: marketPda(id2), vault: vaultPda(marketPda(id2)), mint, feeDestination: feeDest })
         .rpc();
     } catch (e: any) { failed = true; assert.match(e.toString(), /6105|UnsupportedPredicate/); }

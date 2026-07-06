@@ -11,7 +11,7 @@ describe("stake", () => {
     const feeDest = await fundUser(context, payer, mint, Keypair.generate(), 0n);
     const id = new BN(10);
     const market = marketPda(id);
-    await program.methods.createMarket(id, new BN(12345), 1, 7, 0, 0, new BN(1_700_999_999_000), 1000)
+    await program.methods.createMarket(id, new BN(12345), 1, 7, null, null, null, 0, 0, new BN(1_700_999_999_000), 1000)
       .accounts({ creator: payer.publicKey, market, vault: vaultPda(market), mint, feeDestination: feeDest }).rpc();
 
     const alice = Keypair.generate();

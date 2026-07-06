@@ -82,7 +82,7 @@ export async function runEndToEnd(opts: RunOpts = {}): Promise<RunResult> {
 
   // create_market: (id, fixtureId, statAKey, statAPeriod, threshold, comparison, resolveAfterTsMs, feeBps)
   await program.methods
-    .createMarket(marketId, new BN(g.raw.fixtureId), g.raw.statKey, g.raw.statPeriod, 0, 0, new BN(resolveAfterMs), feeBps)
+    .createMarket(marketId, new BN(g.raw.fixtureId), g.raw.statKey, g.raw.statPeriod, null, null, null, 0, 0, new BN(resolveAfterMs), feeBps)
     .accounts({ creator: payer.publicKey, market, vault, mint, feeDestination })
     .rpc();
 
