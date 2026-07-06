@@ -6,9 +6,21 @@ const toNode = (n: ProofNodeWire): ProofNodeArg => ({ hash: n.hash, isRightSibli
 /**
  * Map a cached/live stat-validation bundle into the canonical resolve() positional args.
  * Mirrors validate-sim.ts:74-100 EXCEPT it omits predicate + op — P1 rebuilds those from
- * Market storage. statB is always null in v1 (single-stat). Leaf period echoed verbatim.
+ * Market storage. statB is null for single-stat and populated from statToProve2 for
+ * two-stat predicates. Leaf periods are echoed verbatim.
  */
 export function buildResolveArgs(bundle: ProofBundle): ResolveArgs {
+  const statB = bundle.statToProve2 === undefined
+    ? null
+    : {
+        statToProve: {
+          key: bundle.statToProve2.key,
+          value: bundle.statToProve2.value,
+          period: bundle.statToProve2.period,
+        },
+        eventStatRoot: bundle.eventStatRoot2 ?? bundle.eventStatRoot,
+        statProof: (bundle.statProof2 ?? bundle.statProof).map(toNode),
+      };
   return {
     ts: new BN(bundle.ts),
     fixtureSummary: {
@@ -31,6 +43,6 @@ export function buildResolveArgs(bundle: ProofBundle): ResolveArgs {
       eventStatRoot: bundle.eventStatRoot,
       statProof: bundle.statProof.map(toNode),
     },
-    statB: null,
+    statB,
   };
 }

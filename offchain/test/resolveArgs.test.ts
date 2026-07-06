@@ -42,3 +42,18 @@ test("v1 single-stat: statB is null and NO predicate/op fields exist (rebuilt on
   expect("predicate" in a).toBe(false);
   expect("op" in a).toBe(false);
 });
+
+test("two-stat bundles map statToProve2 into resolve statB", () => {
+  const a = buildResolveArgs({
+    ...BUNDLE,
+    statToProve2: { key: 2, value: 0, period: 7 },
+    eventStatRoot2: [11, 12, 13],
+    statProof2: [{ hash: [44, 45], isRightSibling: true }],
+  });
+
+  expect(a.statB).toEqual({
+    statToProve: { key: 2, value: 0, period: 7 },
+    eventStatRoot: [11, 12, 13],
+    statProof: [{ hash: [44, 45], isRightSibling: true }],
+  });
+});

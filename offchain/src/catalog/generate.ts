@@ -11,6 +11,8 @@ export { V1_TEMPLATES };
 export function buildCatalogForFixture(fx: Fixture): MarketDefinition[] {
   return V1_TEMPLATES.map((t) => {
     if (!isMonotoneKey(t.statKeyA)) throw new Error(`template ${t.id} key ${t.statKeyA} not monotone`);
+    if (t.statKeyB !== undefined && !isMonotoneKey(t.statKeyB)) throw new Error(`template ${t.id} key ${t.statKeyB} not monotone`);
+    if (t.statKeyB !== undefined && ![1, 2].includes(t.opCode ?? 0)) throw new Error(`template ${t.id} has invalid two-stat op`);
     const base: MarketDefinitionBase = {
       fixtureId: fx.FixtureId,
       marketScopePeriod: 0, // full-game

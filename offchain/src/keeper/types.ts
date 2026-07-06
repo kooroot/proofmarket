@@ -2,17 +2,20 @@ import type { BN } from "@coral-xyz/anchor";
 
 export interface ProofNodeWire { hash: number[]; isRightSibling: boolean; }
 
-/** GET /api/scores/stat-validation 200 shape (single-stat; probe-proofs4.log:21-28). */
+/** GET /api/scores/stat-validation 200 shape. statToProve2 fields appear when statKey2 is requested. */
 export interface ProofBundle {
   ts: number;
   statToProve: { key: number; value: number; period: number };
   eventStatRoot: number[];                 // [u8;32]
+  statToProve2?: { key: number; value: number; period: number };
+  eventStatRoot2?: number[];
   summary: {
     fixtureId: number;
     updateStats: { updateCount: number; minTimestamp: number; maxTimestamp: number };
     eventStatsSubTreeRoot: number[];       // API name; IDL field is events_sub_tree_root (§3.1)
   };
   statProof: ProofNodeWire[];
+  statProof2?: ProofNodeWire[];
   subTreeProof: ProofNodeWire[];
   mainTreeProof: ProofNodeWire[];
 }
@@ -36,5 +39,5 @@ export interface ResolveArgs {
   fixtureProof: ProofNodeArg[];
   mainTreeProof: ProofNodeArg[];
   statA: StatTermArg;
-  statB: StatTermArg | null;               // v1 = null (single-stat)
+  statB: StatTermArg | null;               // null for single-stat; populated from statToProve2 for two-stat
 }

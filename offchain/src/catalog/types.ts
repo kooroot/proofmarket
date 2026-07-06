@@ -1,4 +1,4 @@
-/** One sub-predicate. v1: single-stat GreaterThan ⇒ statKeyB=0, opCode=0, comparisonCode=0. */
+/** One sub-predicate. Single-stat ⇒ statKeyB=0, opCode=0. Two-stat ⇒ opCode 1=Add, 2=Subtract. */
 export interface Predicate {
   statKeyA: number;       // u32
   statKeyB: number;       // u32, 0 if single-stat
@@ -26,10 +26,12 @@ export interface MarketDefinition extends MarketDefinitionBase {
   resolveAfterTs: number; // = resolveAfterTsMs(StartTime); on-chain resolve_after_ts_ms (spec §2.8)
 }
 
-/** v1 template: single-stat GreaterThan over a monotone key. */
+/** Market template: GreaterThan over one or two monotone cumulative stat keys. */
 export interface MarketTemplate {
   id: string;
   statKeyA: number;
+  statKeyB?: number;
+  opCode?: number;
   threshold: number;
 }
 

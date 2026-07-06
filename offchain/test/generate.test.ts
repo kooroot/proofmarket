@@ -13,15 +13,52 @@ test("emits one market per template", () => {
   expect(buildCatalogForFixture(FX).length).toBe(V1_TEMPLATES.length);
 });
 
-test("every v1 market is single-stat GreaterThan on a monotone key (matches create_market guard)", () => {
+test("catalog includes the four submission market shapes", () => {
+  const byId = new Map(buildCatalogForFixture(FX).map((m) => [m.templateId, m.predicates[0]]));
+
+  expect(byId.get("match_winner_p1")!).toMatchObject({
+    statKeyA: 1,
+    statKeyB: 2,
+    opCode: 2,
+    comparisonCode: 0,
+    threshold: 0,
+  });
+  expect(byId.get("total_goals_over_2_5")!).toMatchObject({
+    statKeyA: 1,
+    statKeyB: 2,
+    opCode: 1,
+    comparisonCode: 0,
+    threshold: 2,
+  });
+  expect(byId.get("p1_team_goals_over_1_5")!).toMatchObject({
+    statKeyA: 1,
+    statKeyB: 0,
+    opCode: 0,
+    comparisonCode: 0,
+    threshold: 1,
+  });
+  expect(byId.get("p1_corners_matchup")!).toMatchObject({
+    statKeyA: 7,
+    statKeyB: 8,
+    opCode: 2,
+    comparisonCode: 0,
+    threshold: 0,
+  });
+});
+
+test("every generated predicate uses GreaterThan on monotone stat keys supported by create_market", () => {
   for (const m of buildCatalogForFixture(FX)) {
     expect(m.predicates.length).toBe(1);
     expect(m.combinatorCode).toBe(0);
     const p = m.predicates[0];
     expect(p.comparisonCode).toBe(0); // GreaterThan
-    expect(p.opCode).toBe(0);         // none
-    expect(p.statKeyB).toBe(0);       // single-stat
     expect(isMonotoneKey(p.statKeyA)).toBe(true);
+    if (p.statKeyB === 0) {
+      expect(p.opCode).toBe(0);
+    } else {
+      expect([1, 2]).toContain(p.opCode);
+      expect(isMonotoneKey(p.statKeyB)).toBe(true);
+    }
   }
 });
 
