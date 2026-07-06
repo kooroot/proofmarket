@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Space_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
-import { Navbar } from "@/components/Navbar";
+import { Shell } from "@/components/ledger/Shell";
 
 // Settlement Ledger typography: Space Mono for hashes/labels, Helvetica system
 // stack for display/body (defined in tailwind fontFamily.sans/display — no web font).
@@ -38,8 +38,7 @@ export default function RootLayout({
       </head>
       <body className="font-sans antialiased">
         <Providers>
-          <Navbar />
-          {children}
+          <Shell>{children}</Shell>
         </Providers>
       </body>
     </html>
