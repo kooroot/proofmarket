@@ -32,7 +32,7 @@ export default function MarketList() {
             </h2>
           </div>
           <Link className="text-sm text-emerald-500" href={MAINNET_HISTORICAL_REPLAY_ROUTE}>
-            Argentina 3-2 replay
+            Replay demo
           </Link>
         </div>
 

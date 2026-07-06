@@ -4,13 +4,20 @@ import { describe, expect, it, vi } from "vitest";
 import Replay from "./page";
 
 const replayState = vi.hoisted(() => ({
+  clockMs: 6720282,
   frame: { stats: { "1": 3, "2": 2 } },
   done: false,
 }));
 
-vi.mock("@/hooks/useReplayClock", () => ({
-  useReplayClock: () => replayState,
-}));
+vi.mock("@/hooks/useReplayClock", async () => {
+  const actual = await vi.importActual<typeof import("@/hooks/useReplayClock")>(
+    "@/hooks/useReplayClock"
+  );
+  return {
+    ...actual,
+    useReplayClock: () => replayState,
+  };
+});
 
 vi.mock("@/components/ProofChain", () => ({
   ProofChain: () => <div data-testid="proof-chain" />,
@@ -37,5 +44,12 @@ describe("Replay demo", () => {
     expect(screen.getByText("Raw stat leaf")).toBeInTheDocument();
     expect(screen.getByText("Argentina goals = 3")).toBeInTheDocument();
     expect(screen.getByText("Cape Verde goals = 2")).toBeInTheDocument();
+    expect(screen.getByText("Live score")).toBeInTheDocument();
+    expect(screen.getByText("Argentina 3 - 2 Cape Verde")).toBeInTheDocument();
+    expect(screen.getByText("Goal timeline")).toBeInTheDocument();
+    expect(screen.getByText("Replay clock 112:00")).toBeInTheDocument();
+    expect(screen.getByText("13:51")).toBeInTheDocument();
+    expect(screen.getAllByText("Argentina")[0]).toBeInTheDocument();
+    expect(screen.getByText("3-2")).toBeInTheDocument();
   });
 });

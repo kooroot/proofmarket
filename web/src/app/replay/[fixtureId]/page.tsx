@@ -1,5 +1,9 @@
 "use client";
-import { useReplayClock } from "@/hooks/useReplayClock";
+import {
+  formatReplayTime,
+  goalEventsFromTimeline,
+  useReplayClock,
+} from "@/hooks/useReplayClock";
 import { ProofChain } from "@/components/ProofChain";
 import { UmaContrastCard } from "@/components/UmaContrastCard";
 import { adaptProofBundle } from "@/lib/proof";
@@ -41,12 +45,19 @@ export default function Replay() {
   const t0 = replay.scoresTimeline.length ? replay.scoresTimeline[0].ts : 0;
   const timeline = replay.scoresTimeline.map((f) => ({ ts: f.ts - t0, stats: f.stats as Record<string, number> }));
   const finalMs = timeline.length ? timeline[timeline.length - 1].ts : 0;
-  const { frame, done } = useReplayClock(timeline, finalMs);
+  const { clockMs, frame, done } = useReplayClock(timeline, finalMs);
   const bundle = adaptProofBundle(replay.bundle);
   const epochDay = epochDayFromTs(bundle.ts);
   const demo = demoMarketCopy(REPLAY_MARKET, MAINNET_HISTORICAL_REPLAY_FIXTURE);
   const currentP1Goals = frame?.stats?.["1"] ?? 0;
   const currentP2Goals = frame?.stats?.["2"] ?? 0;
+  const goalEvents = goalEventsFromTimeline(timeline, {
+    homeStatKey: "1",
+    awayStatKey: "2",
+    homeLabel: "Argentina",
+    awayLabel: "Cape Verde",
+  });
+  const replayClockLabel = formatReplayTime(clockMs);
   if (!done)
     return (
       <div className="p-4 sm:p-6 max-w-2xl mx-auto">
@@ -68,6 +79,43 @@ export default function Replay() {
             </div>
             <div className="rounded border border-zinc-800 bg-zinc-950 px-2 py-1 font-medium text-zinc-300">
               {demo.noLabel}
+            </div>
+          </div>
+          <div className="grid gap-3 rounded border border-zinc-800 bg-zinc-950 px-3 py-3 sm:grid-cols-[1fr_1.2fr]">
+            <div className="space-y-1">
+              <div className="text-[11px] font-medium uppercase tracking-wide text-zinc-500">
+                Live score
+              </div>
+              <div className="text-xl font-bold text-zinc-100">
+                Argentina {currentP1Goals} - {currentP2Goals} Cape Verde
+              </div>
+              <div className="text-xs text-emerald-300">
+                Replay clock {replayClockLabel}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="text-[11px] font-medium uppercase tracking-wide text-zinc-500">
+                Goal timeline
+              </div>
+              <ol className="grid gap-1 text-xs">
+                {goalEvents.map((event) => {
+                  const isReached = event.clockMs <= clockMs;
+                  return (
+                    <li
+                      key={event.id}
+                      className={`grid grid-cols-[3.25rem_1fr_2.5rem] items-center gap-2 rounded px-2 py-1 ${
+                        isReached
+                          ? "bg-emerald-500/10 text-zinc-100"
+                          : "bg-zinc-900/60 text-zinc-500"
+                      }`}
+                    >
+                      <span className="font-mono">{event.timeLabel}</span>
+                      <span>{event.teamLabel}</span>
+                      <span className="font-mono text-right">{event.scoreLabel}</span>
+                    </li>
+                  );
+                })}
+              </ol>
             </div>
           </div>
           <div className="rounded border border-zinc-800 bg-zinc-950 px-3 py-2">
