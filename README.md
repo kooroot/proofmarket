@@ -1,6 +1,6 @@
 # ProofMarket
 
-**A Solana devnet parimutuel prediction market for the FIFA World Cup, settled by cryptographic Merkle proofs — no human vote, no dispute window.**
+**A Solana devnet World Cup football prediction market demo, settled by cryptographic Merkle proofs — no human vote, no dispute window.**
 
 > _"No vote. No dispute window. Just math."_
 
@@ -56,7 +56,7 @@ npm run check-txline:mainnet
 npm run check-txline:mainnet:live
 ```
 
-The mainnet config follows the official World Cup docs: API host `https://txline.txodds.com`,
+The mainnet config follows the TxLINE World Cup data docs: API host `https://txline.txodds.com`,
 program `9ExbZjAapQww1vfcisDmrngPinHTEfpjYRWMunJgcKaA`, TxL mint
 `Zhw9TVKp68a1QrftncMSd6ELXKDtpVMNuMGr1jNwdeL`, and free World Cup service levels SL1
 (60-second delay) and SL12 (real-time). Set `TXLINE_NETWORK=mainnet` plus a mainnet-activated

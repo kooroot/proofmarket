@@ -19,7 +19,7 @@ function OpenPositionRow({ entry }: { entry: PortfolioPosition }) {
     <div className="flex flex-col gap-2 border-b border-zinc-800 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
       <div className="min-w-0">
         <div className="truncate font-medium text-zinc-100">
-          {predicateToText({ label: "", statAKey: m.statAKey, op: m.op, comparison: m.comparison, threshold: m.threshold })}
+          {predicateToText({ label: "", statAKey: m.statAKey, statBKey: m.statBKey, op: m.op, comparison: m.comparison, threshold: m.threshold })}
         </div>
         <div className="text-zinc-400">
           YES ${formatUsdc(pos.yesAmount)} / NO ${formatUsdc(pos.noAmount)}

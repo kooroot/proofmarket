@@ -18,7 +18,7 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "ProofMarket — No vote. No dispute window. Just math.",
   description:
-    "Parimutuel World Cup prediction markets on Solana devnet, settled trustlessly by a single on-chain validate_stat proof — no human vote, no dispute window.",
+    "World Cup football prediction markets on Solana devnet, settled trustlessly by a single on-chain validate_stat proof — no human vote, no dispute window.",
 };
 
 export default function RootLayout({

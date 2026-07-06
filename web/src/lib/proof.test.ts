@@ -28,4 +28,16 @@ describe("adaptProofBundle (§4.6 JSON→Anchor renames)", () => {
     expect(a.maxTimestamp).toBe(json.summary.updateStats.maxTimestamp);
     expect(a.ts).toBe(json.ts);
   });
+  it("keeps optional statToProve2 fields for two-stat receipts", () => {
+    const a = adaptProofBundle({
+      ...json,
+      statToProve2: { key: 2, value: 0, period: 7 },
+      eventStatRoot2: [11, 12, 13],
+      statProof2: [{ hash: [44], isRightSibling: false }],
+    });
+
+    expect(a.statToProve2).toEqual({ key: 2, value: 0, period: 7 });
+    expect(a.eventStatRoot2).toEqual([11, 12, 13]);
+    expect(a.statProof2).toEqual([{ hash: [44], isRightSibling: false }]);
+  });
 });

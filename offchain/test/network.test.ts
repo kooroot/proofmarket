@@ -7,7 +7,7 @@ import {
   txlineExplorerTx,
 } from "../src/ingestion/network.ts";
 
-test("mainnet config matches the official World Cup free-tier docs", () => {
+test("mainnet config matches the TxLINE World Cup free-tier docs", () => {
   const cfg = getTxlineNetworkConfig("mainnet");
 
   expect(cfg.rpcUrl).toBe("https://api.mainnet-beta.solana.com");

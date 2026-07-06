@@ -30,6 +30,8 @@ const market = (patch: Partial<UiMarket>): UiMarket => ({
   fixtureId: 18172280n,
   statAKey: 1,
   statAPeriod: 7,
+  statBKey: null,
+  statBPeriod: null,
   op: null,
   threshold: 0,
   comparison: 0,

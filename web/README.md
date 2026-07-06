@@ -2,7 +2,7 @@
 
 **No vote. No dispute window. Just math.**
 
-ProofMarket is a parimutuel prediction market for FIFA World Cup fixtures that settles
+ProofMarket is a World Cup football prediction market demo that settles
 **trustlessly** with a single on-chain CPI into TxLINE's `validate_stat` oracle. There is no human
 resolver, no committee vote, and no challenge/dispute window — the escrow releases funds only when a
 cryptographic proof over a TxODDS-signed match statistic evaluates to `true`.

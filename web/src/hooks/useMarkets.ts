@@ -32,6 +32,8 @@ export function useMarkets() {
           fixtureId: BigInt(acc.fixtureId.toString()),
           statAKey: acc.statAKey,
           statAPeriod: acc.statAPeriod,
+          statBKey: acc.statBKey ?? null,
+          statBPeriod: acc.statBPeriod ?? null,
           op: acc.op ?? null,
           threshold: acc.threshold,
           comparison: acc.comparison,

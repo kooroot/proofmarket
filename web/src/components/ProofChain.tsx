@@ -4,24 +4,31 @@ import { VerifyToggle } from "./VerifyToggle";
 import type { AnchorBundle } from "@/lib/proof";
 import type { ValidateResult } from "@/lib/validate-result";
 import { explorerAddr, explorerTx } from "@/lib/constants";
+import { statKeyLabel } from "@/lib/predicate";
 
 const byteHex = (n: number) => n.toString(16).padStart(2, "0");
+const leafLine = (term: { key: number; value: number }) => `${statKeyLabel(term.key)} = ${term.value}`;
 
 /** The resolution walk as a connected diagram: each fold's output hash is visibly the next
  *  node's input, ending at the on-chain daily root that gates the escrow. */
 export function ProofChain({ bundle, dailyRoot, epochDay, rootExists, validate, resolveTx, claimTxs }: { bundle: AnchorBundle; dailyRoot: string; epochDay: number; rootExists: boolean; validate: ValidateResult; resolveTx: string | undefined; claimTxs: string[] }) {
   const leafBytes = [bundle.statToProve.key, bundle.statToProve.value, bundle.statToProve.period].map(byteHex).join(" ");
+  const leaf2Bytes = bundle.statToProve2 ? [bundle.statToProve2.key, bundle.statToProve2.value, bundle.statToProve2.period].map(byteHex).join(" ") : null;
   const verdict = validate.predicateTrue === true ? "TRUE" : validate.predicateTrue === false ? "FALSE" : "pending";
   return (
     <div className="grid grid-cols-[2.25rem_1fr] gap-x-2 sm:gap-x-3">
-      <ProofStep idx={0} title="Stat leaf — the fact being proven" subtitle="Straight from TxLINE's signed match feed: the one stat this market bets on."
-        body={<><div className="text-sm font-semibold text-zinc-100">P1 goals = {bundle.statToProve.value}</div>
-          <span className="text-zinc-500">leaf bytes </span><HashChip bytes={[bundle.statToProve.key, bundle.statToProve.value, bundle.statToProve.period]} tone="sky" /> <span className="text-zinc-500">= {leafBytes}</span></>}
+      <ProofStep idx={0} title="Stat leaf — the fact being proven" subtitle="Straight from TxLINE's signed match feed: the stat leaf or leaves this market bets on."
+        body={<><div className="text-sm font-semibold text-zinc-100">{leafLine(bundle.statToProve)}</div>
+          <span className="text-zinc-500">leaf bytes </span><HashChip bytes={[bundle.statToProve.key, bundle.statToProve.value, bundle.statToProve.period]} tone="sky" /> <span className="text-zinc-500">= {leafBytes}</span>
+          {bundle.statToProve2 && <div className="mt-2">
+            <div className="text-sm font-semibold text-zinc-100">{leafLine(bundle.statToProve2)}</div>
+            <span className="text-zinc-500">leaf bytes </span><HashChip bytes={[bundle.statToProve2.key, bundle.statToProve2.value, bundle.statToProve2.period]} tone="sky" /> <span className="text-zinc-500">= {leaf2Bytes}</span>
+          </div>}</>}
         source="/api/scores/stat-validation" />
       <div className="flex justify-center"><span className="w-px self-stretch bg-zinc-800" /></div>
       <div className="pt-1.5"><VerifyToggle bundle={bundle} enabled={process.env.NEXT_PUBLIC_FOLD_VERIFIED === "1"} /></div>
 
-      <FoldConnector idx={0} label={<>keccak256 fold ⊕ statProof[{bundle.statProof.length}] = <HashChip bytes={bundle.eventStatRoot} tone="violet" /></>} />
+      <FoldConnector idx={0} label={<>keccak256 fold ⊕ statProof[{bundle.statProof.length}{bundle.statProof2 ? ` + ${bundle.statProof2.length}` : ""}] = <HashChip bytes={bundle.eventStatRoot} tone="violet" /></>} />
       <ProofStep idx={1} title="Event-stat root" subtitle="Sibling hashes fold the leaf upward — change a single digit anywhere and this root no longer matches."
         body={<HashChip bytes={bundle.eventStatRoot} tone="violet" prefix="eventStatRoot" />}
         source="/api/scores/stat-validation" />

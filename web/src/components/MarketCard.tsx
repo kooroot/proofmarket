@@ -19,7 +19,7 @@ export function MarketCard({ m, label, pFair, progress }: { m: UiMarket; label: 
   return (
     <Link href={m.state === STATE.Resolved ? `/m/${m.pda}/receipt` : `/m/${m.pda}`}>
       <Card className="p-4 space-y-2 hover:border-emerald-500/50 transition">
-        <div className="flex justify-between"><span className="font-medium">{predicateToText({ label, statAKey: m.statAKey, op: m.op, comparison: m.comparison, threshold: m.threshold })}</span>
+        <div className="flex justify-between"><span className="font-medium">{predicateToText({ label, statAKey: m.statAKey, statBKey: m.statBKey, op: m.op, comparison: m.comparison, threshold: m.threshold })}</span>
           {m.state === STATE.Resolved ? <Badge className="bg-emerald-600">Proof ✓</Badge> : <Badge variant="outline" className="shrink-0 whitespace-nowrap">{lockIn > 0 ? `lock in ${fmtLockIn(lockIn)}` : "Awaiting result"}</Badge>}</div>
         {pFair !== null || !progress ? <TwinBar pYes={p ?? 0} pFair={pFair} />
           : <div className="text-sm text-zinc-400">{progress.value} / threshold {progress.threshold}</div>}

@@ -1,6 +1,6 @@
 # ProofMarket — Track 1 Design Spec
 
-*Solana DEVNET parimutuel prediction market for the FIFA World Cup, settled by cryptographic Merkle proofs via TxLINE `validate_stat`.*
+*Solana DEVNET World Cup football prediction market demo, settled by cryptographic Merkle proofs via TxLINE `validate_stat`.*
 
 > **Status:** Design **APPROVED 2026-06-30**; all 12 Open-Question defaults accepted (locked below). Proceeding to implementation planning (writing-plans).
 > **Target:** TxODDS World Cup Hackathon — Track 1 (Prediction Markets & Settlement, $18K; 1st=$12k). Deadline 2026-07-19 23:59 UTC. Solo builder, ~19 days.

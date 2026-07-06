@@ -6,4 +6,15 @@ const bundle: AnchorBundle = { statToProve: { key: 1, value: 1, period: 7 }, sta
 describe("ProofChain", () => {
   it("renders all six step cards", () => { const { container } = render(<ProofChain bundle={bundle} dailyRoot="BcLwqHJehs8ut8ycRo6NhCGsrtmRnkZbFMm273SdcPGe" epochDay={20634} rootExists={true} validate={{predicateTrue:true,returnBase64:"AQ==",returnBool:true}} resolveTx="SIG" claimTxs={[]} />); expect(container.querySelectorAll("[data-step]").length).toBe(6); });
   it("renders P1-goals leaf line, no period prose", () => { const { getByText, queryByText } = render(<ProofChain bundle={bundle} dailyRoot="X" epochDay={20634} rootExists={false} validate={{predicateTrue:null,returnBase64:null,returnBool:null}} resolveTx={undefined} claimTxs={[]} />); getByText(/goals = 1/); expect(queryByText(/period/i)).toBeNull(); });
+  it("renders both stat leaves for two-stat receipts", () => {
+    const twoStat = {
+      ...bundle,
+      statToProve2: { key: 2, value: 0, period: 7 },
+      eventStatRoot2: [12, 13, 14],
+      statProof2: [],
+    };
+    const { getByText } = render(<ProofChain bundle={twoStat} dailyRoot="X" epochDay={20634} rootExists={false} validate={{predicateTrue:true,returnBase64:"AQ==",returnBool:true}} resolveTx={undefined} claimTxs={[]} />);
+    getByText(/P1 goals = 1/);
+    getByText(/P2 goals = 0/);
+  });
 });

@@ -10,7 +10,7 @@ import {
 } from "./txline-network";
 
 describe("txline network config", () => {
-  it("pins official mainnet World Cup free-tier addresses", () => {
+  it("pins TxLINE mainnet World Cup free-tier addresses", () => {
     const cfg = getTxlineNetworkConfig("mainnet");
 
     expect(cfg.rpcUrl).toBe("https://api.mainnet-beta.solana.com");
