@@ -4,7 +4,7 @@ import { AnchorProvider } from "@coral-xyz/anchor";
 import { PublicKey, type Transaction, type VersionedTransaction } from "@solana/web3.js";
 import { useQuery } from "@tanstack/react-query";
 import { getProgram } from "@/lib/program";
-import { toUiMarket, type RawMarket, type UiMarket } from "@/lib/market";
+import { isDisplayableMarket, toUiMarket, type RawMarket, type UiMarket } from "@/lib/market";
 
 // Markets are public data — reads never sign. This typed stub replaces the plan's `{} as any` fallback so a visitor
 // with no connected wallet can still browse markets. Typed via structural compatibility with anchor's Wallet interface
@@ -45,7 +45,7 @@ export function useMarkets() {
           outcome: acc.outcome,
         };
         return toUiMarket(a.publicKey.toBase58(), raw);
-      });
+      }).filter((market) => isDisplayableMarket(market));
     },
   });
 }

@@ -21,5 +21,15 @@ export function toUiMarket(pda: string, raw: RawMarket): UiMarket {
     statBKey: raw.statBKey ?? null, statBPeriod: raw.statBPeriod ?? null, op: raw.op ?? null, threshold: raw.threshold, comparison: raw.comparison, yesPool: BigInt(raw.yesPool), noPool: BigInt(raw.noPool),
     feeBps: raw.feeBps, lockTs: BigInt(raw.resolveAfterTs), state: raw.state, outcome: raw.outcome };
 }
+export function isDisplayableMarket(market: UiMarket, nowMs = Date.now()): boolean {
+  const maxFutureMs = BigInt(nowMs + 370 * 86_400_000);
+  return (
+    market.fixtureId > 0n &&
+    market.lockTs > 0n &&
+    market.lockTs <= maxFutureMs &&
+    market.yesPool > 0n &&
+    market.noPool > 0n
+  );
+}
 export const STATE = { Open: 0, Locked: 1, Resolved: 2, Void: 3, Closed: 4 } as const;
 export const OUTCOME = { Unset: 0, Yes: 1, No: 2 } as const;
