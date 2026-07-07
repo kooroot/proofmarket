@@ -26,14 +26,14 @@ export function ProofChain({ bundle, dailyRoot, epochDay, rootExists, validate, 
   return (
     <div className="grid min-w-0 grid-cols-[1.75rem_minmax(0,1fr)] gap-x-2 sm:grid-cols-[2.25rem_minmax(0,1fr)] sm:gap-x-3">
       <ProofStep idx={0} title="Stat leaf — the fact being proven" subtitle="Straight from TxLINE's signed match feed: the stat leaf or leaves this market bets on."
-        body={<><div className="text-sm font-semibold text-zinc-100">{leafLine(bundle.statToProve)}</div>
-          <span className="text-zinc-500">leaf bytes </span><HashChip bytes={[bundle.statToProve.key, bundle.statToProve.value, bundle.statToProve.period]} tone="sky" /> <span className="text-zinc-500">= {leafBytes}</span>
+        body={<><div className="text-sm font-semibold text-ink">{leafLine(bundle.statToProve)}</div>
+          <span className="text-ink-2">leaf bytes </span><HashChip bytes={[bundle.statToProve.key, bundle.statToProve.value, bundle.statToProve.period]} tone="sky" /> <span className="text-ink-2">= {leafBytes}</span>
           {bundle.statToProve2 && <div className="mt-2">
-            <div className="text-sm font-semibold text-zinc-100">{leafLine(bundle.statToProve2)}</div>
-            <span className="text-zinc-500">leaf bytes </span><HashChip bytes={[bundle.statToProve2.key, bundle.statToProve2.value, bundle.statToProve2.period]} tone="sky" /> <span className="text-zinc-500">= {leaf2Bytes}</span>
+            <div className="text-sm font-semibold text-ink">{leafLine(bundle.statToProve2)}</div>
+            <span className="text-ink-2">leaf bytes </span><HashChip bytes={[bundle.statToProve2.key, bundle.statToProve2.value, bundle.statToProve2.period]} tone="sky" /> <span className="text-ink-2">= {leaf2Bytes}</span>
           </div>}</>}
         source="/api/scores/stat-validation" />
-      <div className="flex justify-center"><span className="w-px self-stretch bg-zinc-800" /></div>
+      <div className="flex justify-center"><span className="w-px self-stretch bg-rule" /></div>
       <div className="pt-1.5"><VerifyToggle bundle={bundle} enabled={process.env.NEXT_PUBLIC_FOLD_VERIFIED === "1"} /></div>
 
       <FoldConnector idx={0} label={<>keccak256 fold ⊕ statProof[{bundle.statProof.length}{bundle.statProof2 ? ` + ${bundle.statProof2.length}` : ""}] = <HashChip bytes={bundle.eventStatRoot} tone="violet" /></>} />
@@ -48,7 +48,7 @@ export function ProofChain({ bundle, dailyRoot, epochDay, rootExists, validate, 
 
       <FoldConnector idx={2} label={<>fold ⊕ mainTreeProof[{bundle.mainTreeProof.length}] → must equal the published on-chain root</>} />
       <ProofStep idx={3} title={`Daily root — the on-chain anchor (epochDay ${epochDay})`} subtitle="TxODDS publishes one Merkle root per day to this account. The walk must land exactly on it — this PDA is the only thing anyone has to trust."
-        body={<span className="text-zinc-300">{dailyRoot.slice(0, 8)}…{dailyRoot.slice(-6)}{rootExists && <span className="ml-1.5 rounded bg-emerald-500/20 border border-emerald-500/40 px-1 py-0.5 text-[10px] text-emerald-300">EXISTS ✓</span>}</span>}
+        body={<span className="text-ink-2">{dailyRoot.slice(0, 8)}…{dailyRoot.slice(-6)}{rootExists && <span className="ml-1.5 rounded-[3px] border border-proof bg-proof-soft px-1 py-0.5 text-[10px] text-proof">EXISTS ✓</span>}</span>}
         link={explorerAddrForNetwork(dailyRoot, proofNetwork)} linkLabel={`Explorer → ${proofNetwork} daily-root PDA${rootExists ? "" : " (checking…)"}`} green={rootExists}
         source={`PDA ["daily_scores_roots", ${epochDay} u16 LE]`} />
 
