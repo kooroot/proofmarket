@@ -5,13 +5,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import { AnchorProvider } from "@coral-xyz/anchor";
 import { PublicKey, Transaction } from "@solana/web3.js";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { getProgram } from "@/lib/program";
 import { buildStakeIx, validateStakeAmount } from "@/lib/tx-stake";
 import { payoutForStake, formatUsdc } from "@/lib/parimutuel";
 import type { UiMarket } from "@/lib/market";
 import { explorerTx } from "@/lib/constants";
+
 export function StakePanel({ m }: { m: UiMarket }) {
   const { connection } = useConnection();
   const wallet = useAnchorWallet();
@@ -23,36 +22,44 @@ export function StakePanel({ m }: { m: UiMarket }) {
   const [busy, setBusy] = useState(false);
   const amountBase = BigInt(Math.round(parseFloat(usdc || "0") * 1e6));
   const err = validateStakeAmount(amountBase);
-  const preview = payoutForStake(
-    amountBase,
-    side,
-    m.yesPool,
-    m.noPool,
-    m.feeBps
-  );
+  const preview = payoutForStake(amountBase, side, m.yesPool, m.noPool, m.feeBps);
+
+  const sideBtn = (active: boolean) =>
+    active
+      ? "rounded-[3px] bg-proof py-[10px] font-mono text-[13px] font-semibold text-paper"
+      : "rounded-[3px] border border-rule-2 py-[10px] font-mono text-[13px] text-ink-2 transition-colors hover:text-ink";
+
   return (
-    <div className="space-y-3 rounded-lg border border-zinc-800 p-3 sm:p-4">
-      <ToggleGroup
-        className="grid w-full grid-cols-2"
-        value={side ? ["yes"] : ["no"]}
-        onValueChange={(v) => {
-          if (v.length > 0) setSide(v[v.length - 1] === "yes");
-        }}
-      >
-        <ToggleGroupItem className="w-full" value="yes">YES</ToggleGroupItem>
-        <ToggleGroupItem className="w-full" value="no">NO</ToggleGroupItem>
-      </ToggleGroup>
-      <Input
-        className="w-full"
-        value={usdc}
-        onChange={(e) => setUsdc(e.target.value)}
-        placeholder="USDC"
-      />
-      <p className="break-words text-sm text-zinc-400">
+    <div className="rounded-[4px] border border-rule-2 p-5">
+      <div className="mb-[14px] font-mono text-[11px] uppercase tracking-[0.1em] text-ink-2">Stake</div>
+
+      <div className="mb-3 grid grid-cols-2 gap-2">
+        <button type="button" onClick={() => setSide(true)} aria-pressed={side} className={sideBtn(side)}>
+          YES
+        </button>
+        <button type="button" onClick={() => setSide(false)} aria-pressed={!side} className={sideBtn(!side)}>
+          NO
+        </button>
+      </div>
+
+      <div className="mb-3 flex items-center rounded-[3px] border border-rule-2 px-[14px]">
+        <input
+          value={usdc}
+          onChange={(e) => setUsdc(e.target.value)}
+          inputMode="decimal"
+          placeholder="USDC"
+          aria-label="Stake amount in USDC"
+          className="min-w-0 flex-1 bg-transparent py-3 font-mono text-[16px] text-ink outline-none placeholder:text-ink-2"
+        />
+        <span className="font-mono text-[12px] text-ink-2">USDC</span>
+      </div>
+
+      <p className="mb-[14px] break-words text-[13.5px] text-ink-2">
         {preview !== null
           ? `if ${side ? "YES" : "NO"}, you claim ≈ ${formatUsdc(preview)} USDC`
           : "one-sided pool — would Void & refund"}
       </p>
+
       <Button
         disabled={!wallet || !!err || busy}
         onClick={async () => {
@@ -81,13 +88,14 @@ export function StakePanel({ m }: { m: UiMarket }) {
             setBusy(false);
           }
         }}
-        className="w-full whitespace-normal leading-snug"
+        className="h-auto w-full whitespace-normal rounded-[3px] bg-proof py-[13px] font-mono text-[14px] font-semibold leading-snug text-paper hover:brightness-110"
       >
         {err ?? (busy ? "Confirming…" : `Stake ${usdc} USDC`)}
       </Button>
-      {txErr && <p className="break-words text-xs text-red-400">{txErr}</p>}
+
+      {txErr && <p className="mt-2 break-words text-[12px] text-revert">{txErr}</p>}
       {sig && (
-        <a className="break-all text-xs text-emerald-400" href={explorerTx(sig)}>
+        <a className="mt-2 block break-all font-mono text-[12px] text-proof underline" href={explorerTx(sig)}>
           View tx →
         </a>
       )}
