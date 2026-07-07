@@ -41,10 +41,10 @@ export function Masthead() {
       <div className="border-b border-rule font-mono text-[11px] tracking-[0.04em] text-ink-2">
         <div className="mx-auto flex max-w-[1160px] justify-between gap-4 px-7 py-[7px]">
           <span>PROOFMARKET · SETTLEMENT LEDGER</span>
-          <span className="flex flex-wrap gap-x-[18px]">
+          <span className="flex min-w-0 flex-wrap gap-x-[18px]">
             <span>SOLANA / DEVNET</span>
             <span>EPOCH 20641</span>
-            <span className="text-ink">{pathname}</span>
+            <span className="min-w-0 break-all text-ink">{pathname}</span>
           </span>
         </div>
       </div>
