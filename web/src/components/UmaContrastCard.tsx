@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+
 export function UmaContrastCard() {
   const rows: [string, string][] = [
     ["Correct by construction — cryptographic proof", "Correct by economic incentive — + dispute game"],
@@ -7,17 +8,30 @@ export function UmaContrastCard() {
     ["Resolves in 1 proof tx; no challenge window", "Multi-hour commit/reveal + dispute → re-vote / escalation"],
   ];
   return (
-    <div className="space-y-2">
-      <div className="grid grid-cols-2 gap-2 text-xs">
-        <div className="font-semibold text-emerald-400">ProofMarket</div><div className="font-semibold text-amber-400">Optimistic oracle (Polymarket-style)</div>
+    <div>
+      <div className="grid grid-cols-2 border-t-2 border-ink">
+        <div className="border-b border-r border-rule py-3 pr-[18px]">
+          <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.06em] text-proof">ProofMarket</span>
+        </div>
+        <div className="border-b border-rule py-3 pl-[18px]">
+          <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.06em] text-revert">
+            Optimistic oracle · Polymarket-style
+          </span>
+        </div>
         {rows.map(([l, r], i) => (
           <Fragment key={i}>
-            <div className="rounded bg-emerald-950/40 border border-emerald-800/50 p-2">{l}</div>
-            <div className="rounded bg-amber-950/40 border border-amber-800/50 p-2">{r}</div>
+            <div className="flex gap-[9px] border-b border-r border-rule py-[13px] pr-[18px] text-[13.5px] leading-[1.5]">
+              <span className="font-bold text-proof">+</span>
+              <span>{l}</span>
+            </div>
+            <div className="flex gap-[9px] border-b border-rule py-[13px] pl-[18px] text-[13.5px] leading-[1.5] text-ink-2">
+              <span className="text-revert">–</span>
+              <span>{r}</span>
+            </div>
           </Fragment>
         ))}
       </div>
-      <p className="text-xs text-zinc-400 border-t border-zinc-800 pt-2">{`An optimistic oracle can resolve any subjective question; ProofMarket resolves only predicates over the objective match stats TxLINE signs. For "how many corners," you don't need 103 people to vote.`}</p>
+      <p className="mt-4 max-w-[660px] text-[13px] leading-[1.6] text-ink-2">{`For "how many corners," you don't need 103 people to vote.`}</p>
     </div>
   );
 }

@@ -24,8 +24,10 @@ vi.mock("@/components/MainnetFixturePreview", () => ({
   MainnetFixturePreviewPanel: () => <section data-testid="mainnet-preview" />,
 }));
 
-vi.mock("@/components/MarketCard", () => ({
-  MarketCard: () => <article data-testid="market-card" />,
+// Hero renders the guest CTA, which pulls react-query + wallet context we don't
+// provide in this unit test. Stub it — this test only cares about the Replay link.
+vi.mock("@/components/PlayAsGuestButton", () => ({
+  PlayAsGuestButton: () => <button data-testid="play-guest" />,
 }));
 
 describe("MarketList", () => {
