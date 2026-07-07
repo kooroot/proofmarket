@@ -16,7 +16,7 @@ import type { MainnetFixturePreviewItem } from "@/lib/mainnet-preview";
 import { MAINNET_HISTORICAL_REPLAY_ROUTE } from "@/lib/replay-demo";
 
 function EmptyState({ children }: { children: React.ReactNode }) {
-  return <div className="rounded border border-zinc-800 p-4 text-sm text-zinc-400">{children}</div>;
+  return <div className="border-b border-rule px-1 py-6 text-[13.5px] text-ink-2">{children}</div>;
 }
 
 function OpenPositionRow({
@@ -29,22 +29,20 @@ function OpenPositionRow({
   const { market: m, position: pos } = entry;
   const demo = demoMarketCopy(m, demoFixtureForMarket(m, fixtures));
   return (
-    <div className="flex flex-col gap-2 border-b border-zinc-800 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-2 border-b border-rule px-1 py-[15px] sm:flex-row sm:items-center sm:justify-between sm:gap-4">
       <div className="min-w-0">
-        <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-500">
-          <span className="rounded-full bg-zinc-900 px-2 py-0.5 text-zinc-200">
+        <div className="mb-1 flex flex-wrap items-center gap-2">
+          <span className="rounded-[3px] border border-rule px-[7px] py-[2px] font-mono text-[10px] text-ink-2">
             {demo.marketIcon} {demo.marketType}
           </span>
-          <span>{demo.fixtureTitle}</span>
+          <span className="font-mono text-[10.5px] text-ink-2">{demo.fixtureTitle}</span>
         </div>
-        <div className="break-words font-medium text-zinc-100 sm:truncate">
-          {demo.question}
-        </div>
-        <div className="text-zinc-400">
+        <div className="break-words font-display text-[17px] sm:truncate">{demo.question}</div>
+        <div className="mt-1 font-mono text-[11.5px] tabular-nums text-ink-2">
           YES ${formatUsdc(pos.yesAmount)} / NO ${formatUsdc(pos.noAmount)}
         </div>
       </div>
-      <Link className="shrink-0 text-emerald-400" href={`/m/${m.pda}`}>
+      <Link className="shrink-0 whitespace-nowrap font-mono text-[11.5px] text-proof hover:underline" href={`/m/${m.pda}`}>
         View market →
       </Link>
     </div>
@@ -57,16 +55,20 @@ export default function Portfolio() {
   const mainnetPreview = useMainnetFixturePreview();
   const positions = usePortfolioPositions(markets.data ?? []);
 
-  if (markets.isLoading) return <div className="mx-auto max-w-2xl px-3 py-4 text-zinc-400 sm:p-6">Loading markets…</div>;
-  if (!publicKey) return <div className="mx-auto max-w-2xl px-3 py-4 text-zinc-400 sm:p-6">Connect a wallet to see your positions.</div>;
-  if (positions.isLoading) return <div className="mx-auto max-w-2xl px-3 py-4 text-zinc-400 sm:p-6">Loading positions…</div>;
+  const gate = (msg: React.ReactNode) => <div className="max-w-[820px] pt-[34px] text-[13.5px] text-ink-2">{msg}</div>;
+  if (markets.isLoading) return gate("Loading markets…");
+  if (!publicKey) return gate("Connect a wallet to see your positions.");
+  if (positions.isLoading) return gate("Loading positions…");
 
   const rows = positions.data ?? [];
   if (!rows.length) {
-    return (
-      <div className="mx-auto max-w-2xl px-3 py-4 text-zinc-400 sm:p-6">
-        No positions for this wallet yet — <Link className="text-emerald-400" href={MAINNET_HISTORICAL_REPLAY_ROUTE}>try Replay demo →</Link>
-      </div>
+    return gate(
+      <>
+        No positions for this wallet yet —{" "}
+        <Link className="lk" href={MAINNET_HISTORICAL_REPLAY_ROUTE}>
+          try Replay demo →
+        </Link>
+      </>
     );
   }
 
@@ -74,18 +76,22 @@ export default function Portfolio() {
   const open = rows.filter((row) => row.market.state !== STATE.Resolved);
   const fixtures = mainnetPreview.data?.fixtures;
   return (
-    <div className="mx-auto max-w-2xl px-3 py-4 sm:p-6">
+    <div className="max-w-[820px] pt-[34px]" style={{ animation: "fadeUp .4s both" }}>
+      <h1 className="mb-5 font-display text-[clamp(1.9rem,3.4vw,2.5rem)] font-bold tracking-[-0.03em]">Portfolio</h1>
       <Tabs defaultValue="open">
-        <TabsList className="grid w-full grid-cols-2 sm:inline-flex sm:w-fit"><TabsTrigger value="open">Open ({open.length})</TabsTrigger><TabsTrigger value="settled">Settled ({settled.length})</TabsTrigger></TabsList>
+        <TabsList className="mb-5 grid w-full grid-cols-2 sm:inline-flex sm:w-fit">
+          <TabsTrigger value="open">Open ({open.length})</TabsTrigger>
+          <TabsTrigger value="settled">Settled ({settled.length})</TabsTrigger>
+        </TabsList>
         <TabsContent value="open">
-          <div data-state="open" className="mt-3">
-            <div className="mb-2 text-sm font-medium text-zinc-200">Open positions</div>
+          <div data-state="open" className="border-t-2 border-ink">
+            <div className="px-1 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-ink-2">Open positions</div>
             {open.length ? open.map((entry) => <OpenPositionRow key={entry.position.pda} entry={entry} fixtures={fixtures} />) : <EmptyState>No open positions.</EmptyState>}
           </div>
         </TabsContent>
         <TabsContent value="settled">
-          <div className="mt-3">
-            <div className="mb-2 text-sm font-medium text-zinc-200">Settled positions</div>
+          <div className="border-t-2 border-ink">
+            <div className="px-1 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-ink-2">Settled positions</div>
             {settled.length ? settled.map((entry) => <PositionRow key={entry.position.pda} m={entry.market} pos={entry.position} demoFixture={demoFixtureForMarket(entry.market, fixtures)} />) : <EmptyState>No settled positions yet.</EmptyState>}
           </div>
         </TabsContent>

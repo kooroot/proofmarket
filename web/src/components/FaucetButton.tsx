@@ -20,7 +20,7 @@ export function FaucetButton({ pubkey }: { pubkey: string | undefined }) {
   return (
     <Button
       disabled={!pubkey || busy}
-      variant={status === "error" ? "destructive" : "default"}
+      variant={status === "error" ? "destructive" : "outline"}
       onClick={async () => {
         if (!pubkey) return;
         setBusy(true);
@@ -40,6 +40,7 @@ export function FaucetButton({ pubkey }: { pubkey: string | undefined }) {
           setBusy(false);
         }
       }}
+      className="h-9 rounded-[3px] border-rule-2 px-3 font-mono text-[11px] text-ink hover:border-proof hover:text-proof"
     >
       {label}
     </Button>

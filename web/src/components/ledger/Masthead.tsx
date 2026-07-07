@@ -76,7 +76,7 @@ export function Masthead() {
             </div>
           </Link>
 
-          <div className="flex items-center gap-[10px]">
+          <div className="flex flex-wrap items-center justify-end gap-[10px]">
             <span className="inline-flex items-center gap-[7px] rounded-[3px] border border-rule px-[11px] py-[7px] font-mono text-[11px] text-ink-2">
               <span className="h-[6px] w-[6px] rounded-full bg-proof" style={{ animation: "blink 2.4s infinite" }} />
               DEVNET

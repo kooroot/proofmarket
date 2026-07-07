@@ -44,10 +44,12 @@ export function PlayAsGuestButton() {
       .catch(() => setGasStatus("error"));
   }, [isBurner, pk, queryClient]);
 
+  const isError = failed || gasStatus === "error";
   return (
     <Button
-      variant={failed || gasStatus === "error" ? "destructive" : "secondary"}
+      variant={isError ? "destructive" : "default"}
       disabled={busy || connecting}
+      className={`h-auto rounded-[3px] px-5 py-3 font-mono text-[13px] font-semibold hover:brightness-110 ${isError ? "" : "bg-proof text-paper"}`}
       onClick={async () => {
         setFailed(false);
         setGasStatus("idle");

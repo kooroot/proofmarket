@@ -42,28 +42,31 @@ export function PositionRow({
           m.feeBps
         )
       : 0n;
+  const outcomeLabel = m.outcome === OUTCOME.Yes ? "YES" : m.outcome === OUTCOME.No ? "NO" : "VOID";
   const demo = demoFixture ? demoMarketCopy(m, demoFixture) : null;
   return (
-    <div className="flex flex-col gap-2 border-b border-zinc-800 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-2 border-b border-rule px-1 py-[15px] text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-4">
       <div className="min-w-0 break-words">
         {demo ? (
           <>
-            <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-500">
-              <span className="rounded-full bg-zinc-900 px-2 py-0.5 text-zinc-200">
+            <div className="mb-1 flex flex-wrap items-center gap-2">
+              <span className="rounded-[3px] border border-proof px-[7px] py-[2px] font-mono text-[10px] text-proof">
                 {demo.marketIcon} {demo.marketType}
               </span>
-              <span>{demo.fixtureTitle}</span>
+              <span className="font-mono text-[10.5px] text-ink-2">{demo.fixtureTitle}</span>
+              <span className="rounded-[3px] bg-proof px-[7px] py-[2px] font-mono text-[10px] font-semibold text-paper">
+                {won > 0n ? "WON" : "SETTLED"} · {outcomeLabel}
+              </span>
             </div>
-            <div className="font-medium text-zinc-100">{demo.question}</div>
+            <div className="font-display text-[17px]">{demo.question}</div>
           </>
         ) : null}
-        <div className="text-zinc-400">
-          YES ${formatUsdc(pos.yesAmount)} / NO ${formatUsdc(pos.noAmount)} —
-          claim ≈ ${formatUsdc(payout ?? 0n)}
+        <div className="mt-1 font-mono text-[11.5px] tabular-nums text-ink-2">
+          YES ${formatUsdc(pos.yesAmount)} / NO ${formatUsdc(pos.noAmount)} — claim ≈ ${formatUsdc(payout ?? 0n)}
         </div>
       </div>
-      <div className="flex flex-wrap items-center gap-2">
-        <Link className="text-emerald-400" href={`/m/${m.pda}/receipt`}>
+      <div className="flex flex-wrap items-center gap-3 whitespace-nowrap">
+        <Link className="font-mono text-[11.5px] text-proof hover:underline" href={`/m/${m.pda}/receipt`}>
           View Proof Receipt →
         </Link>
         <Button
@@ -86,13 +89,14 @@ export function PositionRow({
               setBusy(false);
             }
           }}
+          className="rounded-[3px] bg-proof font-mono text-[12.5px] font-semibold text-paper hover:brightness-110"
         >
           {busy ? "Confirming…" : pos.claimed ? "Claimed" : "Claim"}
         </Button>
       </div>
-      {txErr && <span className="break-words text-xs text-red-400">{txErr}</span>}
+      {txErr && <span className="break-words font-mono text-[11px] text-revert">{txErr}</span>}
       {sig && (
-        <a className="break-all text-xs text-emerald-400" href={explorerTx(sig)}>
+        <a className="block break-all font-mono text-[11px] text-proof underline" href={explorerTx(sig)}>
           tx →
         </a>
       )}
