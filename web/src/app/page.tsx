@@ -134,7 +134,7 @@ export default function MarketList() {
         <div className="mt-3 h-[2px] bg-ink" />
 
         {/* column header */}
-        <div className="grid grid-cols-[minmax(0,1fr)_140px_66px_66px_92px_152px] gap-3 border-b border-rule px-3 py-[9px] font-mono text-[10px] uppercase tracking-[0.08em] text-ink-2">
+        <div className="hidden grid-cols-[minmax(0,1fr)_140px_66px_66px_92px_152px] gap-3 border-b border-rule px-3 py-[9px] font-mono text-[10px] uppercase tracking-[0.08em] text-ink-2 sm:grid">
           <span>Market</span>
           <span>Implied YES</span>
           <span className="text-right">YES ×</span>

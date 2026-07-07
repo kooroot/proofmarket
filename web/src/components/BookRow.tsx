@@ -33,7 +33,7 @@ export function BookRow({ m, demoFixture }: { m: UiMarket; demoFixture?: Mainnet
   return (
     <Link
       href={href}
-      className="group grid grid-cols-[minmax(0,1fr)_140px_66px_66px_92px_152px] items-center gap-3 border-b border-rule px-3 py-[15px] transition-colors hover:bg-panel-2"
+      className="group grid grid-cols-1 gap-3 border-b border-rule px-3 py-[15px] transition-colors hover:bg-panel-2 sm:grid-cols-[minmax(0,1fr)_140px_66px_66px_92px_152px] sm:items-center"
     >
       <div className="min-w-0">
         <div className="mb-[5px] flex items-center gap-[9px]">
@@ -56,16 +56,29 @@ export function BookRow({ m, demoFixture }: { m: UiMarket; demoFixture?: Mainnet
           </div>
         )}
       </div>
-      <div>
-        <div className="h-[6px] overflow-hidden rounded-[2px] bg-panel-2">
-          <div className="h-full bg-proof" style={{ width: `${pct}%`, animation: "barGrow .6s ease-out" }} />
+      {/* stats: a wrapping row on mobile; on sm+ the wrapper dissolves (contents) so each
+          cell drops into the parent's 6-column ledger grid. */}
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-2 sm:contents">
+        <div className="min-w-[128px] flex-1 sm:min-w-0 sm:flex-none">
+          <div className="h-[6px] overflow-hidden rounded-[2px] bg-panel-2">
+            <div className="h-full bg-proof" style={{ width: `${pct}%`, animation: "barGrow .6s ease-out" }} />
+          </div>
+          <div className="mt-[5px] font-mono text-[12px] tabular-nums text-ink">{pct}%</div>
         </div>
-        <div className="mt-[5px] font-mono text-[12px] tabular-nums text-ink">{pct}%</div>
+        <div className="text-[14px] font-semibold tabular-nums text-proof sm:text-right">
+          <span className="mr-1 font-mono text-[9.5px] uppercase tracking-[0.06em] text-ink-2 sm:hidden">YES</span>
+          {fmtMult(yesMult)}
+        </div>
+        <div className="text-[14px] font-medium tabular-nums text-ink-2 sm:text-right">
+          <span className="mr-1 font-mono text-[9.5px] uppercase tracking-[0.06em] text-ink-2 sm:hidden">NO</span>
+          {fmtMult(noMult)}
+        </div>
+        <div className="text-[13.5px] tabular-nums sm:text-right">
+          <span className="mr-1 font-mono text-[9.5px] uppercase tracking-[0.06em] text-ink-2 sm:hidden">Vol</span>
+          ${formatUsdc(total)}
+        </div>
+        <div className="font-mono text-[10px] leading-[1.4] text-ink-2 sm:text-right">{resolveText}</div>
       </div>
-      <div className="text-right text-[14px] font-semibold tabular-nums text-proof">{fmtMult(yesMult)}</div>
-      <div className="text-right text-[14px] font-medium tabular-nums text-ink-2">{fmtMult(noMult)}</div>
-      <div className="text-right text-[13.5px] tabular-nums">${formatUsdc(total)}</div>
-      <div className="text-right font-mono text-[10px] leading-[1.4] text-ink-2">{resolveText}</div>
     </Link>
   );
 }
