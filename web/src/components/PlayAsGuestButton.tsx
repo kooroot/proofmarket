@@ -1,10 +1,18 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { BurnerWalletName } from "@/lib/burner-wallet-adapter";
+import { cn } from "@/lib/utils";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-export function PlayAsGuestButton() {
+
+export function PlayAsGuestButton({
+  className,
+  compact = false,
+}: {
+  className?: string;
+  compact?: boolean;
+}) {
   const { publicKey, select, connect, wallet, connecting } = useWallet();
   const queryClient = useQueryClient();
   const [busy, setBusy] = useState(false);
@@ -49,7 +57,12 @@ export function PlayAsGuestButton() {
     <Button
       variant={isError ? "destructive" : "default"}
       disabled={busy || connecting}
-      className={`h-auto rounded-[3px] px-5 py-3 font-mono text-[13px] font-semibold hover:brightness-110 ${isError ? "" : "bg-proof text-paper"}`}
+      className={cn(
+        "h-auto rounded-[3px] font-mono font-semibold hover:brightness-110",
+        compact ? "px-3 py-[9px] text-[11.5px]" : "px-5 py-3 text-[13px]",
+        isError ? "" : "bg-proof text-paper",
+        className
+      )}
       onClick={async () => {
         setFailed(false);
         setGasStatus("idle");

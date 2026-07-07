@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { FaucetButton } from "@/components/FaucetButton";
+import { PlayAsGuestButton } from "@/components/PlayAsGuestButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useBalances } from "@/hooks/useBalances";
 import { getTxlineSettlementNetworkConfig } from "@/lib/txline-network";
@@ -86,6 +87,7 @@ export function Masthead() {
                 {bal.data?.sol ?? "—"} SOL · ${bal.data?.usdc ?? "—"}
               </span>
             )}
+            <PlayAsGuestButton compact />
             <FaucetButton pubkey={pk} />
             <ThemeToggle />
             <div className="min-w-0 max-w-full [&_.wallet-adapter-button]:h-9 [&_.wallet-adapter-button]:max-w-full [&_.wallet-adapter-button]:truncate [&_.wallet-adapter-button]:rounded-[3px] [&_.wallet-adapter-button]:bg-ink [&_.wallet-adapter-button]:px-3 [&_.wallet-adapter-button]:font-mono [&_.wallet-adapter-button]:text-[11.5px] [&_.wallet-adapter-button]:text-paper">

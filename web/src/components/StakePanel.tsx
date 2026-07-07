@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { AnchorProvider } from "@coral-xyz/anchor";
 import { PublicKey, Transaction } from "@solana/web3.js";
 import { Button } from "@/components/ui/button";
+import { PlayAsGuestButton } from "@/components/PlayAsGuestButton";
 import { getProgram } from "@/lib/program";
 import { buildStakeIx, validateStakeAmount } from "@/lib/tx-stake";
 import { payoutForStake, formatUsdc } from "@/lib/parimutuel";
@@ -59,6 +60,16 @@ export function StakePanel({ m }: { m: UiMarket }) {
           ? `if ${side ? "YES" : "NO"}, you claim ≈ ${formatUsdc(preview)} USDC`
           : "one-sided pool — would Void & refund"}
       </p>
+
+      {!wallet && (
+        <div className="mb-3 rounded-[3px] border border-proof bg-proof-soft p-3">
+          <div className="mb-2 text-[13px] font-semibold text-proof">No wallet setup needed.</div>
+          <p className="mb-3 text-[12.5px] leading-[1.5] text-ink-2">
+            Start with a temporary devnet burner wallet, then use the faucet and place a test stake.
+          </p>
+          <PlayAsGuestButton className="w-full justify-center" />
+        </div>
+      )}
 
       <Button
         disabled={!wallet || !!err || busy}
