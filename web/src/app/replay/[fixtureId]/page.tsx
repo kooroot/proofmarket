@@ -1,4 +1,5 @@
 "use client";
+import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import {
   formatReplayTime,
@@ -58,6 +59,9 @@ export default function Replay() {
     homeLabel: "Argentina",
     awayLabel: "Cape Verde",
   });
+  const visibleGoalEvents = goalEvents.filter((event) => event.clockMs <= clockMs);
+  const latestGoal = visibleGoalEvents[visibleGoalEvents.length - 1];
+  const nextGoal = goalEvents.find((event) => event.clockMs > clockMs);
   const replayClockLabel = formatReplayTime(clockMs);
   if (!done)
     return (
@@ -95,29 +99,86 @@ export default function Replay() {
           <div className="grid sm:grid-cols-[1fr_1.2fr]">
             <div className="border-b border-rule p-5 sm:border-b-0 sm:border-r">
               <div className="mb-[9px] font-mono text-[10.5px] uppercase tracking-[0.08em] text-ink-2">Live score</div>
-              <div className="font-display text-[29px] font-bold leading-[1.1]">
+              <motion.div
+                key={`${currentP1Goals}-${currentP2Goals}`}
+                initial={{ opacity: 0.55, y: 8, scale: 0.985 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.26 }}
+                className="font-display text-[29px] font-bold leading-[1.1]"
+              >
                 Argentina {currentP1Goals} - {currentP2Goals} Cape Verde
-              </div>
+              </motion.div>
+              <AnimatePresence mode="popLayout">
+                {latestGoal && (
+                  <motion.div
+                    key={latestGoal.id}
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 8 }}
+                    transition={{ duration: 0.22 }}
+                    className="mt-3 inline-flex items-center gap-2 rounded-[3px] bg-proof px-2 py-1 font-mono text-[10.5px] font-semibold text-paper"
+                  >
+                    <span>GOAL</span>
+                    <span>
+                      {latestGoal.teamLabel} · {latestGoal.scoreLabel}
+                    </span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
               <div className="mt-3 font-mono text-[11px] text-proof">Replay clock {replayClockLabel}</div>
             </div>
             <div className="p-5">
-              <div className="mb-[10px] font-mono text-[10.5px] uppercase tracking-[0.08em] text-ink-2">Goal timeline</div>
-              <ol className="grid gap-1 text-[12px]">
-                {goalEvents.map((event) => {
-                  const isReached = event.clockMs <= clockMs;
-                  return (
-                    <li
-                      key={event.id}
-                      className={`grid grid-cols-[3.25rem_1fr_2.5rem] items-center gap-2 rounded-[3px] px-2 py-1 ${
-                        isReached ? "bg-proof-soft text-ink" : "bg-panel-2 text-ink-2"
-                      }`}
-                    >
-                      <span className="font-mono">{event.timeLabel}</span>
-                      <span>{event.teamLabel}</span>
-                      <span className="text-right font-mono">{event.scoreLabel}</span>
-                    </li>
-                  );
-                })}
+              <div className="mb-[10px] flex items-center justify-between gap-3 font-mono text-[10.5px] uppercase tracking-[0.08em] text-ink-2">
+                <span>Goal timeline</span>
+                <span>
+                  {visibleGoalEvents.length}/{goalEvents.length}
+                </span>
+              </div>
+              <ol className="grid min-h-[12.5rem] content-start gap-2 text-[12px]">
+                <AnimatePresence initial={false}>
+                  {visibleGoalEvents.map((event) => {
+                    const isLatest = event.id === latestGoal?.id;
+                    return (
+                      <motion.li
+                        key={event.id}
+                        layout
+                        initial={{ opacity: 0, y: 12, scale: 0.97 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                        transition={{ duration: 0.28 }}
+                        className={`grid grid-cols-[3.25rem_1fr_2.9rem] items-center gap-2 rounded-[3px] border px-2 py-1.5 ${
+                          isLatest
+                            ? "border-proof bg-proof-soft text-ink shadow-[inset_3px_0_0_var(--true)]"
+                            : "border-rule bg-panel text-ink"
+                        }`}
+                        style={isLatest ? { animation: "tick .45s both" } : undefined}
+                      >
+                        <span className="font-mono">{event.timeLabel}</span>
+                        <span className="min-w-0">
+                          <span
+                            className={`mr-2 rounded-[2px] px-1.5 py-0.5 font-mono text-[9.5px] font-semibold ${
+                              isLatest ? "bg-proof text-paper" : "border border-rule-2 text-ink-2"
+                            }`}
+                          >
+                            GOAL
+                          </span>
+                          {event.teamLabel}
+                        </span>
+                        <span className="text-right font-mono font-semibold">{event.scoreLabel}</span>
+                      </motion.li>
+                    );
+                  })}
+                </AnimatePresence>
+                {visibleGoalEvents.length === 0 && (
+                  <li className="rounded-[3px] border border-dashed border-rule-2 px-3 py-8 text-center font-mono text-[11px] text-ink-2">
+                    Awaiting first scoring update…
+                  </li>
+                )}
+                {visibleGoalEvents.length > 0 && nextGoal && (
+                  <li className="rounded-[3px] border border-dashed border-rule px-3 py-2 font-mono text-[10.5px] text-ink-2">
+                    Tracking next scoring update…
+                  </li>
+                )}
               </ol>
             </div>
           </div>
