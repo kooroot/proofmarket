@@ -6,9 +6,10 @@
 
 ProofMarket is a submission for the **TxODDS World Cup Hackathon — Track 1 (Prediction Markets & Settlement)**. Every market is a [TxLINE](https://txodds.com) `validate_stat` predicate (e.g. _"Brazil scores > 1.5 goals"_), collateralized in a devnet test-USDC, and resolved by a **single on-chain CPI into TxLINE's `validate_stat`** — gated on a self-authenticating Merkle proof. No optimistic-oracle commit/reveal, no UMA-style voting, no dispute window. A forged proof simply reverts inside `validate_stat`.
 
-The hero surface is a **"Proof Receipt"** that visualizes the full cryptographic resolution chain: stat leaf → eventStatRoot → fixture subtree → daily-root PDA → `validate_stat` TRUE → escrow release.
+The hero surface is a **"Proof Receipt"** that visualizes the full cryptographic resolution chain: stat leaf -> eventStatRoot -> fixture subtree -> daily-root PDA -> `validate_stat` TRUE -> escrow release.
 
-Current submission checklist and market taxonomy are in [docs/SUBMISSION-CHECKLIST.md](docs/SUBMISSION-CHECKLIST.md).
+Technical documentation for judges is in [docs/TECHNICAL-DOCUMENTATION.md](docs/TECHNICAL-DOCUMENTATION.md).
+The submission checklist and market taxonomy are in [docs/SUBMISSION-CHECKLIST.md](docs/SUBMISSION-CHECKLIST.md).
 The fact-based post-hackathon roadmap is in [docs/FUTURE-DEVELOPMENT.md](docs/FUTURE-DEVELOPMENT.md).
 
 ## 🔴 Live demo (devnet)
