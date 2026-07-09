@@ -9,7 +9,7 @@ interface Config {
   programId: string;
   txlTokenMint: string;
   explorerCluster?: "devnet";
-  freeServiceLevels: { id: number; label: string; latency: string }[];
+  freeServiceLevels: { id: number; label: string; note: string }[];
 }
 
 const CONFIG: Record<Network, Config> = {
@@ -24,7 +24,7 @@ const CONFIG: Record<Network, Config> = {
       {
         id: 1,
         label: "World Cup & Int Friendlies",
-        latency: "60-second delay",
+        note: "pricing matrix authoritative; odds stream sampling corrected to 0s",
       },
     ],
   },
@@ -38,9 +38,13 @@ const CONFIG: Record<Network, Config> = {
       {
         id: 1,
         label: "World Cup & Int Friendlies",
-        latency: "60-second delay",
+        note: "pricing matrix authoritative; do not trust obsolete IDL delay text",
       },
-      { id: 12, label: "World Cup & Int Friendlies", latency: "real-time" },
+      {
+        id: 12,
+        label: "World Cup & Int Friendlies",
+        note: "pricing matrix authoritative; odds stream sampling corrected to 0s",
+      },
     ],
   },
 };
@@ -82,7 +86,7 @@ async function main() {
   console.log(`  TxL mint: ${cfg.txlTokenMint}`);
   console.log(
     `  Free World Cup service levels: ${cfg.freeServiceLevels
-      .map((s) => `${s.id} (${s.latency})`)
+      .map((s) => `${s.id} (${s.note})`)
       .join(", ")}`
   );
 

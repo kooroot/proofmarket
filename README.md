@@ -62,8 +62,10 @@ npm run check-txline:mainnet:live
 
 The mainnet config follows the TxLINE World Cup data docs: API host `https://txline.txodds.com`,
 program `9ExbZjAapQww1vfcisDmrngPinHTEfpjYRWMunJgcKaA`, TxL mint
-`Zhw9TVKp68a1QrftncMSd6ELXKDtpVMNuMGr1jNwdeL`, and free World Cup service levels SL1
-(60-second delay) and SL12 (real-time). Set `TXLINE_NETWORK=mainnet` plus a mainnet-activated
+`Zhw9TVKp68a1QrftncMSd6ELXKDtpVMNuMGr1jNwdeL`, and free World Cup service levels including
+SL1 and SL12. TxLINE corrected an obsolete IDL/doc note that had described odds-stream sampling
+as 60 seconds; treat the on-chain pricing matrix and current API docs as authoritative for live
+sampling semantics. Set `TXLINE_NETWORK=mainnet` plus a mainnet-activated
 `TXLINE_JWT`/`TXLINE_API_TOKEN` to point the server-side `/api/txline/*` proxy at mainnet.
 
 ## Pinned toolchain (exact)

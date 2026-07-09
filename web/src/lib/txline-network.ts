@@ -5,7 +5,7 @@ export type TxlineNetwork = "devnet" | "mainnet";
 export interface TxlineServiceLevel {
   id: number;
   label: string;
-  latency: "60-second delay" | "real-time";
+  note: string;
 }
 
 export interface TxlineNetworkConfig {
@@ -32,7 +32,7 @@ const TXLINE_NETWORKS: Record<TxlineNetwork, TxlineNetworkConfig> = {
       {
         id: 1,
         label: "World Cup & Int Friendlies",
-        latency: "60-second delay",
+        note: "pricing matrix authoritative; odds stream sampling corrected to 0s",
       },
     ],
   },
@@ -47,9 +47,13 @@ const TXLINE_NETWORKS: Record<TxlineNetwork, TxlineNetworkConfig> = {
       {
         id: 1,
         label: "World Cup & Int Friendlies",
-        latency: "60-second delay",
+        note: "pricing matrix authoritative; do not trust obsolete IDL delay text",
       },
-      { id: 12, label: "World Cup & Int Friendlies", latency: "real-time" },
+      {
+        id: 12,
+        label: "World Cup & Int Friendlies",
+        note: "pricing matrix authoritative; odds stream sampling corrected to 0s",
+      },
     ],
   },
 };

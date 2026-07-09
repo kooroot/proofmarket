@@ -73,6 +73,12 @@ The submitted escrow deployment targets TxLINE devnet:
 | TxLINE devnet program | `6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS715wyP2J` |
 | ProofMarket devnet program | `6QNd5mHvV7czVkrRNdLPmuUybSwwdPWq9RYuwk5LZuEb` |
 
+TxLINE updated its documentation on 2026-07-09 to clarify that stale IDL/documentation text had
+incorrectly described odds-stream sampling as 60 seconds; the current odds-stream sampling period
+should be treated as zero where the active service-level metadata indicates it. ProofMarket therefore
+does not rely on a hard-coded delay assumption for settlement. Current service-level semantics should
+be read from the on-chain pricing matrix and current API documentation.
+
 The ingestion code is network-aware and can point at TxLINE mainnet World Cup tiers for data discovery, but real-fund mainnet settlement would require a separate ProofMarket mainnet deployment compiled against the mainnet TxLINE oracle.
 
 ## Settlement Proof Path

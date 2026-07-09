@@ -9,14 +9,19 @@ still devnet, but the same proxy/ingestion path can point at the official mainne
 
 | Network | API host | Solana RPC | TxLINE program | TxL mint | Free World Cup service levels |
 | --- | --- | --- | --- | --- | --- |
-| devnet | `https://txline-dev.txodds.com` | `https://api.devnet.solana.com` | `6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS715wyP2J` | `4Zao8ocPhmMgq7PdsYWyxvqySMGx7xb9cMftPMkEokRG` | SL1, 60-second delay |
-| mainnet | `https://txline.txodds.com` | `https://api.mainnet-beta.solana.com` | `9ExbZjAapQww1vfcisDmrngPinHTEfpjYRWMunJgcKaA` | `Zhw9TVKp68a1QrftncMSd6ELXKDtpVMNuMGr1jNwdeL` | SL1, 60-second delay; SL12, real-time |
+| devnet | `https://txline-dev.txodds.com` | `https://api.devnet.solana.com` | `6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS715wyP2J` | `4Zao8ocPhmMgq7PdsYWyxvqySMGx7xb9cMftPMkEokRG` | SL1; pricing matrix is authoritative |
+| mainnet | `https://txline.txodds.com` | `https://api.mainnet-beta.solana.com` | `9ExbZjAapQww1vfcisDmrngPinHTEfpjYRWMunJgcKaA` | `Zhw9TVKp68a1QrftncMSd6ELXKDtpVMNuMGr1jNwdeL` | SL1 and SL12; pricing matrix is authoritative |
 
 Mainnet World Cup data is therefore fetchable by setting `TXLINE_NETWORK=mainnet` and using a
 mainnet-activated JWT/API token. The official FAQ says the API does not impose call rate limits, but
 that is not "unlimited everything": it is scoped to the subscribed World Cup/International
 Friendlies tiers, depends on a valid activated token, and settlement proofs must be validated against
 the matching on-chain TxLINE program and daily-root PDA.
+
+TxLINE updated the docs on 2026-07-09 to clarify that an obsolete IDL/doc note had incorrectly
+described odds-stream sampling as 60 seconds when the actual odds stream sampling period is zero.
+Do not infer odds-stream latency from stale generated IDL text; fetch the pricing matrix and current
+API docs for the live service-level semantics.
 
 Dry-run config check:
 

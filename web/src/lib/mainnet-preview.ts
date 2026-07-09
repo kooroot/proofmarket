@@ -25,7 +25,7 @@ export interface MainnetFixturePreview {
   source: "TxLINE World Cup Free Tier";
   count: number;
   fixtures: MainnetFixturePreviewItem[];
-  freeTiers: Array<{ serviceLevel: number; latency: string }>;
+  freeTiers: Array<{ serviceLevel: number; note: string }>;
 }
 
 const PREVIEW_MARKETS = [
@@ -36,8 +36,14 @@ const PREVIEW_MARKETS = [
 ];
 
 const FREE_TIERS = [
-  { serviceLevel: 1, latency: "60-second delay" },
-  { serviceLevel: 12, latency: "real-time" },
+  {
+    serviceLevel: 1,
+    note: "pricing matrix authoritative; do not trust obsolete IDL delay text",
+  },
+  {
+    serviceLevel: 12,
+    note: "pricing matrix authoritative; odds stream sampling corrected to 0s",
+  },
 ];
 
 function asNumber(value: unknown): number | null {

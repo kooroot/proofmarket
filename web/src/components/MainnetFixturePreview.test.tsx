@@ -9,8 +9,14 @@ const preview: MainnetFixturePreview = {
   source: "TxLINE World Cup Free Tier",
   count: 10,
   freeTiers: [
-    { serviceLevel: 1, latency: "60-second delay" },
-    { serviceLevel: 12, latency: "real-time" },
+    {
+      serviceLevel: 1,
+      note: "pricing matrix authoritative; do not trust obsolete IDL delay text",
+    },
+    {
+      serviceLevel: 12,
+      note: "pricing matrix authoritative; odds stream sampling corrected to 0s",
+    },
   ],
   fixtures: [
     {
